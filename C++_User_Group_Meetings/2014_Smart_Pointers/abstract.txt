@@ -1,0 +1,11 @@
+Title:
+Smart pointers in C++
+
+Abstract:
+Avoiding memory leaks and writing exception safe programs is important if one
+wants to save oneself from hours of debugging. Albeit writing "good programs"
+with "dumb pointers" is possible, it is tedious and error prone, one can
+remedy most of these issues by using resource managing objects.
+
+In this presentation we will look at the smart pointers introduced in C++11
+and discuss use guidelines and pitfalls.
