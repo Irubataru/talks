@@ -1,0 +1,1150 @@
+\documentclass[14pt,a4paper,dvipsnames,usenames]{beamer}
+%\documentclass[14pt,a4paper,dvipsnames,usenames,handout]{beamer}
+\usepackage[T1]{fontenc}
+\usepackage{url}
+\usepackage{xcolor}
+\usepackage{amsmath,varwidth}
+\usepackage{tikz}
+\usepackage{listings,algpseudocode}
+\usepackage[quiet]{mathspec}
+
+\setmainfont[
+  ItalicFont={Yanone Kaffeesatz Light},
+  Scale=1.3,
+  LetterSpace=2.0
+]{Yanone Kaffeesatz Bold}
+
+\setmonofont{Hack}
+
+\input{style.tex}
+\input{defs.tex}
+\input{funcs.tex}
+
+\usefonttheme{serif}
+
+%\setbeameroption{show notes}
+
+% Turn off page numbering
+\setbeamertemplate{footline}{}
+
+\title{Thinking with templates}
+\author{\texorpdfstring{%
+    Jonas Rylund Glesaaen\newline\fontsize{12pt}{12pt}\selectfont\texttt{jonas@glesaaen.com}%
+  }{%
+    Jonas Rylund Glesaaen}}
+\date{\texorpdfstring{%
+    C++ User Group Meeting\newline{}January 27th 2016%
+    }{%
+      January 27th 2016}}
+
+\begin{document}
+
+\nocite{*}
+
+\frame{\titlepage}
+
+\begin{frame}[plain]
+  \nointerlineskip
+  \begin{tikzpicture}[overlay,remember picture]
+    \fill[Marty] (current page.north east) rectangle (current page.south west);
+    \node at ([yshift=-.25em] current page.center) [font=\LARGE, WhiteTrash] {Disclaimer};
+  \end{tikzpicture}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Today's topics}
+
+  \tableofcontents
+  
+\end{frame}
+
+\begin{frame}
+
+  \begin{center}
+    {\fontsize{24pt}{24pt}\selectfont\color{Tropiteal}Goal}
+
+    \vspace{1cm}
+    Write code that is {\color{FeebleWeek}easy} to use {\color{FeebleWeek}correctly}\\
+    but {\color{Marty}hard} to use {\color{Marty}incorrectly}
+  \end{center}
+  
+\end{frame}
+
+\section{Understanding types}
+
+\frame[plain]{\sectionpage}
+
+\begin{frame}[fragile]
+  \frametitle{The information stored in types}
+
+  
+  \begin{onlyenv}<1|handout:1>
+  \begin{center}
+      \begin{lstlisting}[basicstyle=\ttfamily]
+  double power(double, int);
+      \end{lstlisting}
+  \end{center}
+  \end{onlyenv}
+
+  \note<1|handout:1>{
+    This function accepts a single double and a single integer. If something else is passed to the function it will be converted
+    to doubles and integers first, the function knows nothing about this.
+    
+    \vspace{.5em}
+    Since the function copies the arguments passed to it it will have to know the size of the objects, which restricts its
+    behaviour.
+  }
+
+  \begin{onlyenv}<2|handout:2>
+  \begin{center}
+      \begin{lstlisting}[basicstyle=\ttfamily]
+  void start(Widget &);
+      \end{lstlisting}
+  \end{center}
+  \end{onlyenv}
+
+  \note<2|handout:2>{
+    This function accepts a reference to a Widget, meaning that it will accept anything that looks sufficiently like a Widget
+    object (including children).
+    
+    \vspace{.5em}
+    The only information the function uses about Widget is its explicit interface.
+  }
+
+  \begin{onlyenv}<3-4|handout:3>
+    The type tells the compiler
+
+    \vspace{1em}
+    \begin{itemize}
+    \setlength\itemsep{.5cm}
+      \item How much space an object needs in memory
+      \item {\only<4>{\color{Marty}}What operations can be carried out on the object}
+    \end{itemize}
+
+    \vspace{1cm}
+    {\fontsize{10pt}{10pt}\selectfont{}(lets ignore type specifiers for now)}
+    
+  \end{onlyenv}
+
+  \begin{onlyenv}<5-|handout:4>
+  \begin{center}
+      \begin{lstlisting}[basicstyle=\ttfamily]
+  Widget w = Widget{} + Widget{};
+      \end{lstlisting}
+  \end{center}
+
+  \only<6|handout:4>{%
+    \vspace{1cm}
+    What are the requirements on the \lstinline!Widget! type for this line to compile?%
+  }
+  \end{onlyenv}
+
+  \note<6|handout:4>{%
+    Whether this is a valid "expression" or not is information 100\% stored in the Widget type and is completely independent of
+    the runtime dynamics of the code.
+  }
+  
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Declaring typenames}
+  \framesubtitle{Class declaration}
+
+  \begin{lstlisting}[basicstyle=\ttfamily]
+struct my_struct { ... };
+  \end{lstlisting}
+
+  \vspace{.5cm}
+  \begin{lstlisting}[basicstyle=\ttfamily]
+class my_class { ... };
+  \end{lstlisting}
+
+  \vspace{.5cm}
+  \begin{lstlisting}[basicstyle=\ttfamily]
+enum class my_enum { ... };
+  \end{lstlisting}
+
+  \vspace{.75cm}
+  Can be compared to variable declaration
+  
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Declaring typenames}
+  \framesubtitle{Class declaration}
+
+  \begin{lstlisting}[basicstyle=\ttfamily]
+class my_class
+  : public my_base_class { ... };
+  \end{lstlisting}
+
+  \vspace{.3cm}
+  Reads:\\[5pt]
+  "The class {\color{Tropiteal}my\_class} is a {\color{Tropiteal}my\_base\_class}"
+
+  \begin{onlyenv}<2|handout:1>
+  \vspace{1cm}
+  Much like variable assignment
+
+  \vspace{.1cm}
+  \begin{lstlisting}[basicstyle=\ttfamily,morekeywords={var}]
+var my_var = my_base_var;
+  \end{lstlisting}
+  \end{onlyenv}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Declaring typenames}
+  \framesubtitle{Type aliasing}
+
+  \begin{lstlisting}[basicstyle=\ttfamily]
+typedef std::vector<double> Vec;
+  \end{lstlisting}
+
+  \vspace{.5cm}
+  \begin{lstlisting}[basicstyle=\ttfamily]
+using WidgetFunction =
+  std::function<void(Widget&)>;
+  \end{lstlisting}
+  
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Explicit interfaces}
+
+  \begin{lstlisting}[escapeinside={(*}{*)},deletekeywords={Widget}]
+class Widget
+{
+public:
+  using value_type = double;
+  using refernce = double&;
+    \end{lstlisting}
+    \begin{lstlisting}[escapeinside={(*}{*)},morekeywords={reference, value_type,size_t}]
+  Widget();
+  ~Widget();
+
+  reference operator[](std::size_t);
+  value_type calculate() const;
+
+  void swap(Widget &);
+};
+  \end{lstlisting}
+  
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Nested types}
+
+  Types can be nested inside of other compound types
+
+  \vspace{.3cm}
+  \begin{lstlisting}[deletekeywords={Widget}]
+class Widget
+{
+  class iterator { ... };
+
+  enum class AccessType { ... };
+
+  using pointer = std::unique_ptr<DataType>;
+  
+  ...
+};
+  \end{lstlisting}
+
+  \vspace{.3cm}
+  They provide an extended explicit interface
+  
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Nested types}
+  \framesubtitle{Example: Type array}
+
+  \begin{lstlisting}[morekeywords={WidgetFunction,string,nullptr_t}]
+struct TypeArray
+{
+  using one = double;
+  using two = std::string;
+  using three = WidgetFunction;
+  using four = std::list<int>;
+  using five = std::nullptr_t;
+  ...
+};
+  \end{lstlisting}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Nested types}
+  \framesubtitle{Example: Type map}
+
+  \vspace*{-.3cm}
+  \begin{lstlisting}[morekeywords={function,string}]
+struct TypeMap
+{
+  struct one
+  {
+    using first = int;
+    using second = std::string;
+  };
+
+  struct two
+  {
+    using first = double**;
+    using second = function<void(double**)>;
+  };
+  ...
+};
+  \end{lstlisting}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Nested types}
+
+  The nested types can be accessed using {\color{Tropiteal}::}
+
+  \vspace{1cm}
+  \begin{lstlisting}[basicstyle=\ttfamily]
+using x = TypeArray::three;
+using y = TypeMap::two::first;
+  \end{lstlisting}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Nested types}
+
+  Nested types should provide information about its parent type
+
+  \vspace{.3cm}
+  \begin{onlyenv}<1>
+  \begin{lstlisting}[deletekeywords={Widget},morekeywords={DataType}]
+class Widget
+{
+  using pointer = DataType*;
+  \end{lstlisting}
+  \end{onlyenv}
+  \begin{onlyenv}<2>
+  \begin{lstlisting}[deletekeywords={Widget},morekeywords={DataType}]
+class Widget
+{
+  using pointer = std::shared_ptr<DataType>;
+  \end{lstlisting}
+  \end{onlyenv}
+  \begin{lstlisting}[morekeywords={pointer}]
+  pointer data() const;
+
+  ...
+};
+
+Widget w {};
+Widget::pointer data_ptr = w.data();
+  \end{lstlisting}
+  
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Why should you care?}
+
+  Types is the language your compiler speaks
+
+  \vspace{.5cm}
+  \begin{itemize}
+    \setlength\itemsep{.25cm}
+    \item Better control over the compiler through type manipulation
+    \item Type specific logic errors to be checked at compile time
+    \item Can wirte code that are optimized and readable at the same time
+  \end{itemize}
+  
+\end{frame}
+
+\section{Transcending types}
+
+\frame[plain]{\sectionpage}
+
+\begin{frame}[fragile]
+  \frametitle{Types as compile time variables}
+
+  Standard scenario: dereference \& swap
+
+  \vspace{.25cm}
+  \begin{lstlisting}
+using VecIterator
+  = std::vector<double>::iterator;
+  \end{lstlisting}
+  \begin{lstlisting}[morekeywords={VecIterator}]
+void
+iterator_swap(VecIterator i1, VecIterator i2)
+{
+  double tmp = *i1;
+  *i1 = *i2;
+  *i2 = tmp;
+}
+  \end{lstlisting}
+
+  \vspace{.25cm}
+  It would be natural that this function should work for all iterators that can be dereferenced \& assigned
+  
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Types as compile time variables}
+
+  \begin{lstlisting}[escapeinside={(*}{*)}]
+template <typename InputIt1, typename InputIt2>
+  \end{lstlisting}
+  \vspace*{-.4cm}
+  \begin{lstlisting}[escapeinside={(*}{*)},morekeywords={InputIt1,InputIt2}]
+void iterator_swp(InputIt1 it1, InputIt2 it2)
+{
+     (*\tikzmark{missingType}*)    tmp = *it1;
+
+  *it1 = *it2;
+  *it2 = tmp;
+}
+  \end{lstlisting}
+
+  \vspace{.5cm}
+  Have we lost information?
+
+  \vspace{.5cm}
+  The compiler should know what type {\color{Tropiteal}*it1} gives when instansiating the template function 
+
+  \nointerlineskip
+  \begin{tikzpicture}[overlay,remember picture]
+    \node at ([yshift=.1cm]missingType) [scale=1.5,color=Marty]{?};
+  \end{tikzpicture}
+  
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Types as compile time variables}
+
+  This information that can be stored in nested types
+
+  \vspace{.5cm}
+  \begin{lstlisting}[escapeinside={(*}{*)}]
+template <typename InputIt1, typename InputIt2>
+  \end{lstlisting}
+  \vspace*{-.4cm}
+  \begin{lstlisting}[morekeywords={InputIt1,InputIt2,value_type}]
+void iterator_swp(InputIt1 it1, InputIt2 it2)
+{
+  using deref_type
+    = typename InputIt1::value_type;
+  \end{lstlisting}
+  \begin{lstlisting}[morekeywords={deref_type}]
+  deref_type tmp = *it1;
+  *it1 = *it2;
+  *it2 = tmp;
+}
+  \end{lstlisting}
+
+  \vspace{.5cm}
+  But no way to make it compatible with built in types
+\end{frame}
+
+\begin{frame}
+
+  \begin{center}\fontsize{16pt}{16pt}\selectfont\color{Tropiteal}
+    Fundamental theorem of software engineering
+  \end{center}
+
+  \vspace{.25cm}
+  \begin{center}
+    \begin{minipage}{8cm}
+      We can solve any problem by introducing an extra level of indirection.
+    \end{minipage}
+  \end{center}
+
+  \vspace{.25cm}
+  \begin{flushright}\color{ICantExpress!50!WhiteTrash}
+    David J. Wheeler
+  \end{flushright}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Types as compile time variables}
+
+  \begin{lstlisting}
+template <typename Iterator>
+struct iterator_traits
+{
+  using value_type
+  \end{lstlisting}
+  \vspace*{-.4cm}
+  \begin{lstlisting}[morekeywords={Iterator,value_type}]
+    = typename Iterator::value_type;
+  ...
+};
+  \end{lstlisting}
+  \begin{lstlisting}
+template <typename Ptr>
+struct iterator_traits<Ptr*>
+{
+  \end{lstlisting}
+  \vspace*{-.4cm}
+  \begin{lstlisting}[morekeywords={Ptr}]
+  using value_type = Ptr;
+  ...
+};
+  \end{lstlisting}
+
+  \uncover<2|handout:1>{
+  \vspace{.25cm}
+  blah blah blah...
+  }
+
+  \note<2|handout:1>{
+    There should exist a better solution, the information is already there
+  }
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Automatic type deduction}
+
+  {\large\color{FeebleWeek}auto}
+  
+  \vspace{.1cm}
+  Used as a type definition, {\fontsize{10pt}{10pt}\selectfont{}(mostly)} carries out standard template type deduction on the
+  right hand side of the assignment operator
+
+  \vspace{1cm}
+  {\large\color{FeebleWeek}decltype}
+
+  \vspace{.1cm}
+  Given a name or an expression, returns the name's or expression's type
+  
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Automatic type deduction}
+
+  We can use {\color{FeebleWeek}auto} to fix our type issue
+
+  \vspace{.5cm}
+  \begin{lstlisting}
+template <typename InputIt1, typename InputIt2>
+  \end{lstlisting}
+  \vspace*{-.4cm}
+  \begin{lstlisting}[morekeywords={InputIt1,InputIt2,value_type}]
+void iterator_swp(InputIt1 it1, InputIt2 it2)
+{
+  auto tmp = *it1;
+  *it1 = *it2;
+  *it2 = tmp;
+}
+  \end{lstlisting}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Return type deduction}
+
+  \begin{lstlisting}
+template <typename Func, typename Type>
+  \end{lstlisting}
+  \vspace*{-.2cm}
+  \begin{lstlisting}[escapeinside={(*}{*)},morekeywords={Func,Type},deletekeywords={map}]
+(*\tikzmark{unknownReturn}*)        map_function(Func f, Type val)
+{
+
+  return f.apply(val)(*\tikzmark{returnValue}*);
+}
+  \end{lstlisting}
+
+  \nointerlineskip
+  \begin{tikzpicture}[overlay,remember picture]
+    \node at ([shift={(.8cm,.1cm)}]unknownReturn) [scale=1.5,color=Marty]{?};
+    \only<2>{
+    \draw[pointy arrow] ([shift={(-5ex,-.75ex)}] returnValue) .. controls +(0,-.5cm) and +(-.5cm,0) .. +(0,-1cm)
+      node[right,scale=0.75] {%
+        We want whatever type this expression returns
+      };
+    }
+  \end{tikzpicture}
+   
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Return type deduction}
+  \framesubtitle{Attempt one}
+
+  We know basically what we want
+
+  \vspace{.5cm}
+  \begin{lstlisting}
+template <typename Func, typename Type>
+  \end{lstlisting}
+  \vspace*{-.4cm}
+  \begin{lstlisting}[escapeinside={(*}{*)},morekeywords={Func,Type,decltype},deletekeywords={map}]
+decltype(f.apply(val)) (*\tikzmark{decltype}*)
+map_function(Func f, Type val)
+{
+  return f.apply(val);
+}
+  \end{lstlisting}
+
+  \vspace{.5cm}
+  But how do we wrangle this information from the compiler?
+
+  \only<2>{
+  \nointerlineskip
+  \begin{tikzpicture}[overlay,remember picture]
+    \draw[pointy arrow] ([yshift=.35ex] decltype) -- +(3.5cm,0)
+      node[right,align=left,scale=0.75] {%
+        names {\color{Tropiteal}f} and {\color{Tropiteal}val}\\
+        not yet declared
+      };
+  \end{tikzpicture}
+  }
+   
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Return type deduction}
+
+  \begin{onlyenv}<1|handout:1>
+  C++11 trailing return type
+
+  \vspace{.5cm}
+  \begin{lstlisting}
+template <typename Func, typename Type>
+  \end{lstlisting}
+  \vspace*{-.4cm}
+  \begin{lstlisting}[morekeywords={Func,Type,decltype},deletekeywords={map}]
+auto map_function(Func f, Type val)
+  -> decltype(f.apply(val))
+{
+  return f.apply(val);
+}
+  \end{lstlisting}
+  \end{onlyenv}
+
+  \begin{onlyenv}<2-3|handout:2>
+  C++14 automatic return type deduction
+
+  \vspace{.5cm}
+  \begin{lstlisting}
+template <typename Func, typename Type>
+  \end{lstlisting}
+  \vspace*{-.4cm}
+  \begin{lstlisting}[morekeywords={Func,Type,decltype},deletekeywords={map}]
+auto map_function(Func f, Type val)
+{
+  return f.apply(val);
+}
+  \end{lstlisting}
+
+  \vspace{.5cm}
+  \uncover<3|handout:2>{
+    Might not always produce the expected return type
+  }
+  \end{onlyenv}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Template type deduction}
+
+  Assume the following piece of template pseudocode
+
+  \vspace{1cm}
+  \lstinline!template <typename! {\ttfamily\bfseries\color{Marty}Type}\lstinline!>!\\
+  \lstinline!void foo(! {\ttfamily\bfseries\color{Marty}ParamType}\lstinline! param);!\\[10pt]
+  \lstinline!foo(! {\ttfamily\bfseries\itshape\color{Marty}expr}\lstinline!);!
+
+  \vspace{1cm}
+  The deduced types of {\ttfamily\bfseries\color{Marty}Type} and {\ttfamily\bfseries\color{Marty}ParamType} from
+  {\ttfamily\bfseries\itshape\color{Marty}expr} depends on the form of {\itshape{}ParamType}
+  
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Template type deduction}
+
+  \lstinline!template <typename! {\ttfamily\bfseries\color{Marty}Type}\lstinline!>!\\
+  \lstinline!void foo(! {\ttfamily\bfseries\color{Marty}ParamType}\lstinline! param);!\\[5pt]
+  \lstinline!foo(! {\ttfamily\bfseries\itshape\color{Marty}expr}\lstinline!);!
+
+  \vspace{.5cm}
+  \begin{overlayarea}{\textwidth}{6cm}
+  \only<1|handout:1>{
+  Case 1:\\[5pt]
+  {ParamType} is a reference or a pointer\\{\fontsize{10pt}{10pt}\selectfont{}(but not a \&\& reference)}
+
+  \vspace{.5cm}
+  \begin{enumerate}
+    \item Ignore reference part of expr
+    \item Pattern-match expr's type with ParamType to deduce Type
+  \end{enumerate}
+  }
+
+  \only<2|handout:2>{
+  Case 2:\\[5pt]
+  {ParamType} is a universal reference
+
+  \vspace{.5cm}
+  \begin{itemize}
+    \item If expr is an lvalue reference, ParamType will be deduced to be an lvalue reference
+    \item If expr is an rvalue reference, standard rules apply
+  \end{itemize}
+  }
+
+  \only<3|handout:3>{
+  Case 3:\\[5pt]
+  {ParamType} is not a pointer nor a reference
+
+  \vspace{.5cm}
+  \begin{enumerate}
+    \item Ignore reference and const part of expr
+    \item Pattern-match expr's type with ParamType to deduce Type
+  \end{enumerate}
+  }
+  \end{overlayarea}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Return type deduction}
+
+  \begin{onlyenv}<1>
+  This will slice any references from the return type
+
+  \vspace{.5cm}
+  \begin{lstlisting}
+template <typename Func, typename Type>
+  \end{lstlisting}
+  \vspace*{-.4cm}
+  \begin{lstlisting}[morekeywords={Func,Type,decltype},deletekeywords={map}]
+auto map_function(Func f, Type val)
+{
+  return f.apply(val);
+}
+  \end{lstlisting}
+  \end{onlyenv}
+
+  \begin{onlyenv}<2>
+  Using {\color{FeebleWeek}decltype} will pattern match correctly
+
+  \vspace{.5cm}
+  \begin{lstlisting}
+template <typename Func, typename Type>
+  \end{lstlisting}
+  \vspace*{-.4cm}
+  \begin{lstlisting}[morekeywords={Func,Type,decltype},deletekeywords={map}]
+decltype(auto) map_function(Func f, Type val)
+{
+  return f.apply(val);
+}
+  \end{lstlisting}
+  \end{onlyenv}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Template pattern matching}
+
+  Can use the pattern matching to extract types from templates
+
+  \vspace{.5cm}
+  \begin{lstlisting}[basicstyle=\ttfamily]
+template <typename Type>
+  \end{lstlisting}
+  \vspace*{-.4cm}
+  \begin{lstlisting}[basicstyle=\ttfamily,morekeywords={Type}]
+Type extract(Widget<Type>) { ... }
+  \end{lstlisting}
+  
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Template pattern matching}
+
+  ...or the other way around
+
+  \vspace{.5cm}
+  \begin{lstlisting}
+template <
+  template Other,
+  template <typename...> class Policy
+>
+  \end{lstlisting}
+  \vspace*{-.4cm}
+  \begin{lstlisting}[morekeywords={Policy, Other}]
+Policy<Other> replace(Policy<Widget>) { ... }
+  \end{lstlisting}
+  
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Template pattern matching}
+
+  Also good for restricting pattern matching when you know what patterns you expect to be valid
+
+  \vspace{.5cm}
+  \begin{lstlisting}
+template <
+  template <typename...> class CreationPolicy
+>
+  \end{lstlisting}
+  \vspace*{-.4cm}
+  \begin{lstlisting}[morekeywords={CreationPolicy}]
+class WidgetManager 
+  : public CreationPolicy<Widget> 
+{ ... }
+  \end{lstlisting}
+  
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Template pattern matching}
+
+  Note that no implicit conversions are considered during type deduction
+
+  \vspace{.5cm}
+  \begin{lstlisting}[escapeinside={(*}{*)}]
+template <typename T>
+void fill(std::vector<T> &v, T x); 
+
+std::vector<double> vec(6);
+fill(vec, 1); (*\tikzmark{compileError}*)
+  \end{lstlisting}
+
+  \vspace{.5cm}
+  \begin{overlayarea}{\textwidth}{2cm}
+  \only<1>{\ttfamily\fontsize{8pt}{8pt}\selectfont%
+    {\color{Marty}error}: no matching function for call to 'fill'\\
+    \hspace{.3cm}fill(vec, 1);\\
+    \hspace{.3cm}{\color{FeebleWeek}\^{}---}\\
+    note: candidate template ignored: deduced conflicting types for parameter 'T' ('double' vs. 'int')
+  }
+  \only<2>{
+  Not even between built in types
+  }
+  \end{overlayarea}
+
+  \note<2>{
+    This is good as it means you can be more restrictive with your pattern matching, making sure to write code that only compiles
+    with the types you want
+  }
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Template pattern matching}
+
+  Recursive pattern matching for variadic templates
+
+  \vspace{.5cm}
+
+  \begin{lstlisting}[basicstyle=\ttfamily\fontsize{8pt}{8pt}\selectfont,morekeywords={ostream}]
+void println(std::ostream & os)
+{
+  os << std::endl;
+}
+
+template <typename H, typename... T>
+  \end{lstlisting}
+  \vspace*{-.4cm}
+  \begin{lstlisting}[basicstyle=\ttfamily\fontsize{8pt}{8pt}\selectfont,morekeywords={H,T,ostream}]
+void println(std::ostream & os, const H & head, T... tail)
+{
+  os << head;
+  if( sizeof...(tail) != 0)
+    os << ", ";
+
+  println(os,tail...);
+}
+
+
+println(std::cout, 7, 8.43, 'c', "Hello");
+  \end{lstlisting}
+  
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Encoding intent in types}
+
+  The C++ Guidelines have suggested a new template type to signal resource ownership
+
+  \vspace{.5cm}
+  \begin{lstlisting}[basicstyle=\ttfamily]
+template <typename T>
+using owner = T;
+  \end{lstlisting}
+
+  \vspace{.5cm}
+  \begin{enumerate}
+    \item The code signals the intent of the programmer
+    \item Can be checked by the compiler
+  \end{enumerate}
+  
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Encoding intent in types}
+
+  \begin{lstlisting}[escapeinside={(*}{*)},morekeywords={owner}]
+owner<Widget*> FactoryMethod() {...}; (*\tikzmark{factory}*)
+
+Widget* w1 = FactoryMethod(); (*\tikzmark{err1}*)
+
+Widget* w2 = new Widget {}; (*\tikzmark{err2}*)
+
+
+auto w3 = FactoryMethod();
+Widget* w4 = w3; (*\tikzmark{ok1}*)
+...
+delete w4; (*\tikzmark{err3}*)
+  \end{lstlisting}
+
+  \nointerlineskip
+  \begin{tikzpicture}[overlay,remember picture]
+    \only<1>{
+    \draw[pointy arrow] ([yshift=.35ex] factory) -- +(.5cm,0)
+      node[right,align=left,scale=0.65] {%
+        factory methods need\\
+        to return owner types
+      };
+    }
+    \only<2>{
+    \draw[pointy arrow] ([yshift=.35ex] err1) -- +(1cm,0)
+      node[right,align=left,scale=0.65] {%
+        {\color{Marty}error:} information on\\
+        ownership lost
+      };
+    }
+    \only<3>{
+    \draw[pointy arrow] ([yshift=.35ex] err2) -- +(1cm,0)
+      node[right,align=left,scale=0.65] {%
+        {\color{Marty}error:} cannot assign newed\\
+        objects to non-owners
+      };
+    }
+    \only<4>{
+    \draw[pointy arrow] ([yshift=.35ex] ok1) -- +(3cm,0)
+      node[right,align=left,scale=0.65] {%
+        {\color{FeebleWeek}ok:} a raw pointer simply\\
+        points to something
+      };
+    }
+    \only<5>{
+    \draw[pointy arrow] ([yshift=.35ex] err3) -- +(3cm,0)
+      node[right,align=left,scale=0.65] {%
+        {\color{Marty}error:} cannot\\
+        delete non-owners
+      };
+    }
+  \end{tikzpicture}
+  
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Implicit interfaces}
+
+  \begin{lstlisting}[deletekeywords={Widget}]
+template <typename Widget, typename Operator>
+  \end{lstlisting}
+  \vspace*{-.4cm}
+  \begin{lstlisting}[morekeywords={Operator}]
+void check_and_apply(Widget &w, Operator op)
+{
+  if (w.size() > 10 and !w.bad())
+    op.apply(w);
+}
+  \end{lstlisting}
+
+  \vspace{.5cm}
+  The expressions in the functon body make up the template's implicit interface
+
+  
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Curiously recurring template pattern}
+
+  \begin{lstlisting}[basicstyle=\ttfamily]
+template <typename T>
+class Base { ... };
+
+class Derived
+  \end{lstlisting}
+  \vspace*{-.4cm}
+  \begin{lstlisting}[basicstyle=\ttfamily,morekeywords={Base,Derived}]
+  : public Base<Derived> { ... };
+  \end{lstlisting}
+  
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Curiously recurring template pattern}
+
+  Allows for static polymorphism
+
+  %\vspace{.2cm}
+  \begin{overlayarea}{\textwidth}{6.5cm}
+  \begin{onlyenv}<1>
+  \begin{lstlisting}
+template <typename Type>
+class Base
+{
+public:
+  Type& self()
+  {
+    return static_cast<Type&>(*this);
+  }
+
+  void implementation()
+  {
+    self().implementation();
+  }
+};
+
+  \end{lstlisting}
+  \end{onlyenv}
+
+  \begin{onlyenv}<2>
+  \begin{lstlisting}
+class Derived
+  \end{lstlisting}
+  \vspace*{-.4cm}
+  \begin{lstlisting}[morekeywords={Base}]
+  : public Base<Derived>
+{
+public:
+  void implementation() { ... };
+};
+
+template <typename Type>
+void call(Base<Type> widget)
+{
+  widget.implementation();
+}
+  \end{lstlisting}
+  \end{onlyenv}
+  \end{overlayarea}
+  
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Curiously recurring template pattern}
+
+  Makes it easier to put things in a common box
+  \vspace{.2cm}
+  
+  \begin{overlayarea}{\textwidth}{6.5cm}
+  \begin{onlyenv}<1>
+  \begin{lstlisting}[basicstyle=\ttfamily\fontsize{8pt}{8pt}\selectfont]
+template <typename Val>
+class unary { ... };
+
+template <typename LVal, typename RVal>
+class binary { ... };
+  \end{lstlisting}
+  %\vspace*{-.4cm}
+  \begin{lstlisting}[basicstyle=\ttfamily\fontsize{8pt}{8pt}\selectfont,morekeywords={unary,binary}]
+template <typename LValU, RValU>
+auto operate(unary<LValU> left, unary<RValU> right)
+ -> binary<unary<LValU>, unary<RValU>> { ... };
+
+template <typename LValU, RValBL, RValBR>
+auto operate(unary<LValU> left, binary<RValBL,RValBR> right)
+ -> binary<unary<LValU>, binary<RValBL,RValBR>> { ... };
+
+...
+  \end{lstlisting}
+  \end{onlyenv}
+
+  \begin{onlyenv}<2>
+  \begin{lstlisting}[basicstyle=\ttfamily\fontsize{8pt}{8pt}\selectfont]
+template <typename Type>
+class base { ... };
+  \end{lstlisting}
+  \begin{lstlisting}[basicstyle=\ttfamily\fontsize{8pt}{8pt}\selectfont,morekeywords={base}]
+template <typename Val>
+class unary : public base<unary<Val>> { ... };
+
+template <typename LVal, typename RVal>
+class binary : public base<binary<LVal,RVal>> { ... };
+  \end{lstlisting}
+  %\vspace*{-.4cm}
+  \begin{lstlisting}[basicstyle=\ttfamily\fontsize{8pt}{8pt}\selectfont,morekeywords={base,unary,binary}]
+template <typename LExpr, RExpr>
+auto operate(base<LExpr> left, base<RExpr> right)
+ -> binary<LExpr,RExpr> { ... };
+  \end{lstlisting}
+  \end{onlyenv}
+  \end{overlayarea}
+
+
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Building trees}
+
+  \begin{lstlisting}[basicstyle=\ttfamily\fontsize{8pt}{8pt}\selectfont]
+struct plus {};
+struct minus {};
+struct times {};
+struct divide {};
+
+
+template <typename Expr>
+struct base_expr {};
+
+
+template <typename Op, typename Le, typename Re>
+  \end{lstlisting}
+  \vspace*{-.4cm}
+  \begin{lstlisting}[basicstyle=\ttfamily\fontsize{8pt}{8pt}\selectfont,morekeywords={base_expr,Op,Le,Re}]
+struct binary_expr : base_expr<binary_expr<Op,Le,Re>> {};
+
+
+struct val : base_expr<val> {};
+  \end{lstlisting}
+  
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Building trees}
+
+  \begin{lstlisting}[basicstyle=\ttfamily\fontsize{8pt}{8pt}\selectfont,morekeywords={base_expr,binary_expr,val,plus}]
+template <typename Le, typename Re>
+auto operator+(base_expr<Le>, base_expr<Re>)
+  -> binary_expr<plus,Le,Re>
+{
+  return {};
+}
+
+template <typename Le, typename Re>
+auto operator-(base_expr<Le>, base_expr<Re>) {...}
+
+template <typename Le, typename Re>
+auto operator*(base_expr<Le>, base_expr<Re>) {...}
+
+template <typename Le, typename Re> {...}
+auto operator/(base_expr<Le>, base_expr<Re>) {...}
+
+int main()
+{
+  val v;
+  auto expr = v + v - v * v / (v + v);
+}
+  \end{lstlisting}
+  
+\end{frame}
+
+\begin{frame}
+  \frametitle{Resources}
+  \bibliographystyle{plain}
+  {\footnotesize
+    \bibliography{ref}}
+\end{frame}
+  
+\end{document}
