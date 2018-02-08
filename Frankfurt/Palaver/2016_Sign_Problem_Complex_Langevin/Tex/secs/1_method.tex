@@ -1,0 +1,156 @@
+\section{Complex Langevin and Random Matrix Theory}
+\frame[plain]{\sectionpage}
+\addtocounter{framenumber}{-1}
+
+\begin{frame}
+  \frametitle{Stochastic quantisation}
+
+  \vskip .3cm
+  Introduce a fictional flow time $\scalemath{1.3}{\alpha}$
+  \[
+    \phi_i(x) \to \phi_i(x, \alpha)
+  \]
+  and the stochastic flow in $\scalemath{1.3}{\alpha}$
+  \[
+    \frac{\partial \phi_i (x, \alpha)}{\partial \alpha} = - \frac{\delta
+      S[\phi_i]}{\delta \phi_i} + \eta (x, \alpha)\tikzmark{noise}
+  \]
+  then if\; \raisebox{.02cm}{$\scalemath{0.8}{\frac{\delta S}{\delta \phi}} \in \mathbb{R}$}\hskip .2cm
+  \inlinecite{Damgaard and Huffel, 1987}
+  \[
+    \lim_{\alpha \to \infty} \big\langle O [\phi(x, \alpha)]_i \big\rangle_{\eta} =
+      \big\langle O [\phi(x)]_i \big\rangle
+  \]
+
+  \nointerlineskip
+  \begin{tikzpicture}[overlay,remember picture]
+    \only<2>{
+      \draw[{Stealth[round]}-,line width=1pt,Marty]
+        ([shift={(.2cm,.5ex)}] noise) .. controls +(.75,0) and +(0,-.75) ..  +(1,1)
+          node[above, scale=0.8, align=center] {Stochastic\\noise};
+    }
+  \end{tikzpicture}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Complex Langevin}
+
+  Much the same as Real Langevin, however
+
+  \vskip .5cm
+  \[
+    \frac{\delta S}{\delta \phi} \in \raisebox{-.05cm}{$\mathbb{C}$}
+    \hskip .5cm\Rightarrow\hskip .5cm \phi_i(x, \alpha) \in\raisebox{-.05cm}{$\mathbb{C}$}
+  \]
+
+  \vskip .5cm
+  proof for convergence to the right theory no longer holds,
+  exceptions have been found \inlinecite{Ambj\o{}rn and Yang, 1985}
+  
+\end{frame}
+
+% Presentation note:
+% Bring up example of times when people have set out to disprove something
+% only to come up with an algorithm that fixes everything
+
+\begin{frame}
+  \frametitle{Why stochastic quantisation?}
+
+  How the CL converges to the wrong theory not well understood
+
+  \vskip .5cm
+  Much interest in methods for "{\color{TealDrop}repairing}" CL
+
+  \begin{itemize}
+    \setlength\itemsep{.5em}
+    \item Gauge cooling
+    \item Utilising the Lefschetz thimbles
+    \item ... ?
+  \end{itemize}
+
+  \vskip .35cm
+  Need a signal for {\color{Marty}failure} applicable to QCD
+  
+\end{frame}
+
+\begin{frame}
+  \frametitle{Random matrix theory}
+
+  Start with a simpler system that also suffer from a strong sign problem
+
+  \vskip .75cm
+  Same flavour symmetries as QCD (in the $\scalemath{1.3}{\epsilon}$-regime)
+
+  \vskip .75cm
+  Numerically a lot cheaper than full lattice studies
+
+  \vskip .75cm
+  First attempts studying the Osborn model\\
+  \inlinecite{Mollgaard and Splittorff, 2013-2014; Nagata, Nishimura and
+    Shimasaki, 2015-2016}
+  
+\end{frame}
+
+\begin{frame}
+  \frametitle{The Stephanov model}
+  \framesubtitle{Definition \inlinecite{Stephanov, 1996}}
+
+  \vskip -.5cm
+  \begin{equation*}
+    \mathcal{Z} = \int \big[d W\big] \, e^{- N \Sigma^2 \tr W^{\dagger} W}
+      \det{}^{N_f}
+      \begin{pmatrix}
+        M & i W + \mu \\
+        i W^{\dagger} + \mu & M
+      \end{pmatrix}
+  \end{equation*}
+
+  \vskip .5cm
+  For random matrices\: $\scalemath{1.3}{W \in M_{\mathbb{C}}(N,N)}$
+
+  \vskip .5cm
+  Define chiral condensate and baryon number density
+  %
+  \begin{align*}
+    \scalemath{1.1}{\langle \bar{\eta} \eta \rangle}\: &\scalemath{1.1}{= \partial_M \log \mathcal{Z}}\\
+    \scalemath{1.1}{\langle \eta^{\dagger} \eta \rangle}\: &\scalemath{1.1}{= \partial_{\mu} \log \mathcal{Z}}
+  \end{align*}
+  
+\end{frame}
+
+\begin{frame}
+  \frametitle{The Stephanov model}
+  \framesubtitle{Properties}
+
+  Solvable via bosonisation \inlinecite{Stephanov, 1996; Halasz, Jackson and
+    Verbaarschot, 1997}
+  %
+  \[
+    \mathcal{Z} = \int \mathrm{d} \sigma \mathrm{d} \sigma^* \, e^{- N\sigma^2}
+    (\sigma^*\sigma + m(\sigma + \sigma^*) + m^2 - \mu^2)^N
+  \]
+
+  \vskip .35cm
+  where $\scalemath{1.3}{\sigma \in M_{\mathbb{C}}(N_f,N_f)}$, \;for\;
+  $\scalemath{1.3}{N_f = 1}$
+  %
+  \[
+    \mathcal{Z} = \pi e^{-N m^2}\int_0^{\infty} \mathrm{d} u \, (u-\mu^2)^N
+      I_0(2m N\sqrt{u})e^{-Nu}
+  \]
+\end{frame}
+
+\begin{frame}
+  \frametitle{The Stephanov model}
+  \framesubtitle{Properties}
+
+  The model has a phase transition as it develops non-zero baryon number
+  density
+
+  \vskip .75cm
+  Solvable in the thermodynamic limit via a saddle point approximation
+
+  \vskip .75cm
+  In the chiral limit one finds $\scalemath{1.1}{\mu_c = 0.572...}$ and $\scalemath{1.1}{\mu_c = i}$
+
+\end{frame}

@@ -1,0 +1,20 @@
+% -------------------------- %
+% Standard LaTeX definitions %
+% -------------------------- %
+
+\DeclareGraphicsExtensions{.pdf}
+\renewcommand\textbullet{\ensuremath{\bullet}}
+
+\DeclareMathOperator{\tr}{tr}
+\DeclareMathOperator{\real}{Re}
+
+% --------------------------- %
+% Useful function definitions %
+% --------------------------- %
+
+\newcommand{\tikzmark}[1]{\tikz[overlay,remember picture] \coordinate (#1);}
+
+\newcommand\scalemath[2]{\scalebox{#1}{\mbox{\ensuremath{\displaystyle #2}}}}
+\newcommand{\qmat}{\ensuremath{Q_{\mathrm{uark}}}}
+\newcommand{\minus}{\scalebox{0.75}[1.0]{$-$}}
+\newcommand{\inlinecite}[1]{\scalebox{0.6}{[#1]}}

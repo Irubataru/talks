@@ -1,0 +1,33 @@
+\newcommand{\dimtext}[2]%
+{
+  { \transparent{0.7}
+  \begin{tikzpicture}[overlay, remember picture]
+    \fill[white] ( #1 -| current page.north west) -- ++(0,.8em) -- ++(\paperwidth,0) -- (#2 -| current page.north east)
+   -- ++(0,-.5em) -- ++(-\paperwidth,0) -- cycle;
+  \end{tikzpicture}
+  }
+}
+
+\newcommand{\specialcell}[2][c]{%
+  \begin{tabular}
+    [#1]{@{}c@{}}#2
+  \end{tabular}
+}
+
+\newcommand{\tikzmark}[1]{\tikz[overlay,remember picture] \coordinate (#1);}
+
+\newcommand{\qmat}{\ensuremath{Q_{\mathrm{uark}}}}
+\newcommand{\mathfont}{\fontsize{10pt}{12pt}}
+\newcommand{\minus}{\scalebox{0.75}[1.0]{$-$}}
+\newcommand{\sectionframe}{%
+  \addtocounter{framenumber}{-1}%
+  \frame[plain]{\begin{center}\LARGE \color{beameralert} \insertsection\end{center}}}
+
+\newcommand{\breakline}{%
+  \begin{center} \begin{tikzpicture}
+      \draw[beamerprimary] ({-0.5 * \textwidth},0) -- ({0.5 * \textwidth},0);
+      \node[inner sep=0, minimum size=7pt, fill=white,circle] {};
+      \node[inner sep=0, minimum size=4pt, draw=beamerprimary,circle] {};
+      \node[inner sep=0, minimum size=1pt, fill=beamerprimary,circle] {};
+  \end{tikzpicture} \end{center}
+}

@@ -1,0 +1,833 @@
+\documentclass[10pt,a4paper,usenames,dvipsnames]{beamer}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{xcolor,amsmath,tikz,graphicx,mathtools}
+\usepackage{listings,algpseudocode,url}
+\usepackage{slashed}
+\usepackage{jonasmath}
+
+\usetheme{jonas}
+\usefonttheme[onlymath]{serif}
+
+\usetikzlibrary{calc,positioning,intersections,fit,matrix,shapes.misc}
+\usetikzlibrary{decorations.markings,decorations.pathreplacing}
+
+%\newcommand{\exp}{\mathrm{exp}\,}
+\newcommand{\tr}{\mathrm{tr}}
+
+\newcommand{\strikeout}[1]{%
+  \tikz[baseline] \node[strike out,draw=orangecorp,thick,anchor=text] {$#1$};
+}
+
+\renewcommand{\rightarrow}{\text{\tikz[baseline=-0.25em]{%
+\draw[opacity=0] (-0.1,0) -- (0.5,0);
+\draw[->,>=stealth] (0,0) -- (0.4,0);
+}}}
+
+\renewcommand{\hookrightarrow}{\text{\tikz[baseline=-0.25em]{%
+\draw (0,0) arc (270:90:0.04);
+\draw[->,>=stealth] (0,0) -- (0.4,0);
+}}}
+
+\renewcommand{\Rightarrow}{\text{\tikz[baseline=-0.15em]{%
+  \draw[opacity=0] (-0.1,0) -- (0.6,0);
+  \draw (0,0.2em) -- (0.4,0.2em);
+  \draw (0,0.0) -- (0.4,0);
+  \fill[black] (0.3,0.35em) -- (0.5,0.1em) -- (0.3,-0.15em) -- (0.35,0.1em) -- cycle;
+}}}
+
+\title[Hopping Expansion]{Generating the Strong Coupling Hopping Expansion}
+\subtitle{and the SU($N$) Gauge Integrals}
+\author[Glesaaen]{Jonas R. Glesaaen}
+\institute[Goethe-Uni]{Goethe-Universit\"{a}t Frankfurt am Main}
+\date{18. June 2014}
+
+\showboxdepth=\maxdimen
+\showboxbreadth=\maxdimen
+
+\begin{document}
+
+{
+  \setbeamertemplate{footline}{}
+  \begin{frame}
+    \titlepage
+  \end{frame}
+}
+
+\begin{frame}
+  \frametitle{Introduction}
+
+  \begin{alertblock}{Goal}
+    Hopping expand the fermion determinant and calculate the spatial gauge links analytically
+  \end{alertblock}
+
+  \vfill
+
+  \begin{block}{Motivation}
+    \begin{itemize} \color{black} 
+      \item The fermion determinant is computationally expensive
+      \item Reduce the DOF to traces over Polyakov loop constructs
+      \item Makes complex Langevin a viable simulation algorithm
+      \item The series is convergent at some order in $\kappa$
+    \end{itemize}
+  \end{block}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Preliminaries: The hopping expansion}
+
+  Start off with the standard Wilson QCD action:
+  \begin{block}{}
+    \centering
+    $Z = {\displaystyle\int} \mathcal{D} U_{\mu} \mathcal{D} \bar{\psi} \mathcal{D} \psi \, e^{-S_F -S_G}$, with \\
+    $S_F = a^4 {\displaystyle\sum_{\mathclap{n,m \in \Omega}}} \bar{\psi}(n) D(n|m) \psi(m)$,
+  \end{block}
+  where the Fermion determinant is
+  \begin{block}{}
+    \centering
+    $\begin{aligned}
+      D(n|m) &= (m + {\textstyle\frac{4}{a}}) \delta_{n,m} - {\textstyle\frac{1}{2a}} {\displaystyle\sum_{\mathclap{\mu = \pm 0}}^{\pm 3}} (1 - \gamma_{\mu})
+      U_{\mu}(n) \, \delta(n + \hat{\mu}, m) \\
+      &= D_0 \big( \delta_{n,m} - \kappa H(n|m) \big), \:\: \kappa = \frac{1}{2(am + 4)}
+    \end{aligned}$
+  \end{block}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Preliminaries: The hopping expansion}
+
+  Carrying out the fermion integrals in the partition function
+  %
+  \begin{block}{}
+    \centering
+    $Z = \displaystyle\int \mathcal{D} U_{\mu} \, e^{-S_G} \det \big[ D \big]$,
+  \end{block}
+
+  \vspace{0.5em}
+
+  and using the standard trace-log identity:
+  
+  \begin{block}{Determinant expansion}
+    \centering
+    $\begin{aligned}
+      \det \big[ D \big] &= \exp \bigg\{ -\displaystyle\sum_{n=1}^{\infty} \frac{\kappa^n}{n} \tr \big[ H^n \big] \bigg\} \\
+      &= 1 - \kappa \, \tr \big[ H \big] + \frac{1}{2} \kappa^2 \Big( \tr \big[ H \big] \Big)^2 - \frac{1}{2} \kappa^2 \tr \big[ H^2
+      \big] + \mathcal{O}(\kappa^3)
+    \end{aligned}$
+  \end{block}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{The effective 3D theory}
+
+  Start by separating the temporal and spatial hops:
+
+  \begin{block}{}
+    \centering
+    $\begin{aligned}
+      \det \big[ D \big] &= \det \big[ 1 - T - S^+ - S^- \big] \\
+      &= \det \big[ 1 - T \big] \det \big[ 1 - (1 - T)^{-1}(S^+ + S^-) \big] \\
+      &\equiv \det \big[ Q_{\mathrm{stat}} \big] \det \big[ 1 - P - M \big]
+    \end{aligned}$
+  \end{block}
+
+  $\det Q_{\mathrm{det}}$ is known so the terms of interest come from
+
+  \begin{block}{}
+    \centering
+    $\det \big[ 1 - P - M \big] = \exp \bigg\{ - \displaystyle\sum_{n=1}^{\infty} \frac{1}{n} \tr \big[ (P + M)^n
+    \big] \bigg\},$
+  \end{block}
+  %
+  where the trace is over all free indices (space, time, Dirac, colour).
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Index overload}
+
+  \begin{block}{Ingredients}
+    \centering
+    $\begin{aligned}
+      P(\vec{x},t \, | \, \vec{y},\tau) &= \kappa Q_{\mathrm{stat}}^{-1}(t,\tau) \sum_{i = 1}^3 (1 - \gamma_i) U_i(\vec{x})
+      \delta_{\vec{x},\vec{y} - \hat{i}} \\
+      M(\vec{x},t \, | \, \vec{y},\tau) &= \kappa Q_{\mathrm{stat}}^{-1}(t,\tau) \sum_{i = 1}^3 (1 + \gamma_i)
+      U_i^{\dagger}(\vec{y}) \delta_{\vec{x} - \hat{i},\vec{y}} 
+    \end{aligned}$
+  \end{block}
+
+  \vfill
+
+  Every factor of $P$ or $M$ bring a full set of free indices which needs to be reduced before we can carry out the spatial gauge
+  integrals.
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{The trace is our friend}
+
+  \begin{block}{Initial expression}
+    \centering
+    $\det D = \exp \bigg\{ - \displaystyle\sum_{n=1}^{\infty} \frac{1}{n} \tr \big[ (P + M)^n \big] \bigg\}$
+  \end{block}
+
+  \only<1>{
+    Both $P$ and $M$ has temporal movement because of $Q_{\mathrm{stat}}^{-1}$, but primarily
+
+    \begin{itemize}
+      \item<1-> $P$ does one forwards spatial jump
+      \item<1-> $M$ does one backwards spatial jump
+    \end{itemize}
+  }
+
+  \begin{alertblock}{Rule \#1}
+    \centering
+    $N_P = N_M$, to satisfy the spatial trace
+  \end{alertblock}
+
+  \only<2->{
+
+    \vspace{1em}
+
+    \centering
+    $\begin{aligned}
+      \det D &= \exp \Big\{ - \strikeout{\tr \big[P\big]} - \strikeout{\tr \big[M\big]} - \frac{1}{2} \strikeout{\tr \big[ P^2 \big]}  \\
+      &\phantom{{}= \exp \Big\{ } - \frac{1}{2} \tr \big[ PM \big] - 
+      \frac{1}{2} \tr \big[ MP \big] - \frac{1}{2} \strikeout{\tr \big[ M^2 \big]} + \mathcal{O}(\kappa^4) \Big\} \\
+      &= \exp \Big\{ - \tr \big[ PM \big] + \mathcal{O}(\kappa^4) \Big\}
+    \end{aligned}$
+  }
+\end{frame}
+
+\begin{frame}
+  \frametitle{Limiting spatial indices}
+
+  Every term includes the direction the jump is to be taken, we want to limit this as much as possible.
+
+  \begin{block}{}
+    \centering
+    $P(\vec{x},t \, | \, \vec{y},\tau) = \kappa Q_{\mathrm{stat}}^{-1}(t,\tau) {\color{orangecorp} \displaystyle\sum_{i = 1}^3} 
+    (1 - \gamma_{\color{orangecorp}i}) U_{\color{orangecorp}i}(\vec{x}) \delta_{\vec{x},\vec{y} - \hat{\color{orangecorp}i}}$
+  \end{block}
+
+  Tracing a contribution and carrying out the intermediate sums leaves us with:
+
+  \begin{alertblock}{Rule \#2}
+    \centering
+    $\displaystyle\sum_{\mathclap{i_1, i_2, \dots , i_n}} \delta\big( s_1 \hat{i_1} + s_2 \hat{i_2} + \dots +
+    s_n \hat{i_n} \big), \;\;\; s_j = %
+    \begin{aligned}
+      1, &\: \text{$i_j$ from $P$} \\
+      -1, &\: \text{$i_j$ from $M$}
+    \end{aligned}$
+  \end{alertblock}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Example: PPMM}
+
+  Assume we pull the jump-indices out of $P$ and $M$:
+  %
+  \begin{exampleblock}{}
+    \centering
+    $\tr \big[ PPMM \big] = \tr \displaystyle\sum_{\mathclap{i,j,k,l \, \in \, \{\hat{x}, \hat{y}, \hat{z}\}}} P_i P_j M_k M_l $
+  \end{exampleblock}
+  %
+  This gives the following Delta:
+  %
+  \begin{exampleblock}{}
+    \centering
+    $\displaystyle\sum_{\mathclap{i,j,k,l \, \in \, \{\hat{x}, \hat{y}, \hat{z}\}}} \delta \big( i + j - k - l \big)$
+  \end{exampleblock}
+  %
+  which has two solutions
+  \begin{exampleblock}{}
+    \centering
+    $\begin{aligned}
+      i = l \;\; &\text{and} \;\; j = k, \;\; \text{or} \\
+      i = k \;\; &\text{and} \;\; j = l
+    \end{aligned}$
+  \end{exampleblock}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Example: PPMM cont.}
+
+  These two solutions can graphically be represented as
+
+  \vfill
+
+  %\begin{exampleblock}{}
+    \begin{columns}[onlytextwidth]
+      \column{.5\textwidth}
+      \centering
+      \includegraphics[scale=2.5]{Figures/ppmm_valid.pdf} \\
+      $i = l \;\; \text{and} \;\; j = k$
+      \column{.5\textwidth}
+      \centering
+      \includegraphics[scale=2.5]{Figures/ppmm_invalid.pdf} \\
+      $i = k \;\; \text{and} \;\; j = l$
+    \end{columns}
+  %\end{exampleblock}
+\end{frame}
+
+\begin{frame}
+  \frametitle{A look into the future}
+
+  These diagrams yield the following spatial gauge integrals
+
+  \vspace{1em}
+
+  \begin{exampleblock}{$i = l \; \text{and} \; j = k$}
+    \centering
+    \only<1>{
+      $\displaystyle\int \mathcal{D} U_{\mu} \, U_i(\vec{x}) U_j(\vec{x} + \hat{i}) U_j^{\dagger}(\vec{x} + \hat{i})
+      U_i^{\dagger}(\vec{x})\vphantom{\bigg)^2}$
+    }
+    \only<2>{
+      $\bigg(\displaystyle\int \mathrm{d} U \, U U^{\dagger} \bigg)^2$
+    }
+  \end{exampleblock}
+
+  \vspace{1em}
+
+  \begin{exampleblock}{$i = k \; \text{and} \; j = l$}
+    \centering
+    \only<1>{
+      $\displaystyle\int \mathcal{D} U_{\mu} \, U_i(\vec{x}) U_j(\vec{x} + \hat{i}) U_i^{\dagger}(\vec{x} + \hat{j})
+      U_j^{\dagger}(\vec{x})\vphantom{\bigg)^2}$
+    }
+    \only<2>{
+      $\bigg( \displaystyle\int \mathrm{d} U  \, U \bigg)^2 \bigg( \displaystyle\int \mathrm{d} U \, U^{\dagger} \bigg)^2$
+    }
+  \end{exampleblock}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Vanishing gauge integrals}
+
+  A quick result from a paper by Creutz%
+  \footnote{M. Creutz, ``On Invariant Integration Over SU($N$)'', \emph{J.Math.Ph, 1978}}
+
+  \begin{alertblock}{Vanishing integrals}
+    \centering
+    $\displaystyle\int\limits_{\mathclap{U \, \in \, \mathrm{SU}(3)}} \mathrm{d} U \, U^n \big(U^{\dagger}\big)^m = 0, \; \;
+    \text{if} \;\; \left\{ \begin{aligned}
+      n + 2m &\neq 0 \pmod{3}, \; \text{or} \\
+      2n + m &\neq 0 \pmod{3}
+    \end{aligned}\right.$
+  \end{alertblock}
+
+  \only<2>{
+    \begin{exampleblock}{Examples}
+      \centering
+      $\displaystyle\int \mathrm{d} U \, U^{\dagger} = \displaystyle\int \mathrm{d} U \, U U = \displaystyle\int \mathrm{d} U \, U U U
+      U^{\dagger}= 0$
+    \end{exampleblock}
+  }
+\end{frame}
+
+\begin{frame}
+  \frametitle{Different contributions}
+
+  \begin{block}{Mesonic contributions}
+    \centering
+    $\displaystyle\int \mathrm{d} U \, \big(U U^{\dagger}\big)^{n_m}$
+  \end{block}
+
+  \begin{block}{Baryonic contributions}
+    \centering
+    $\displaystyle\int \mathrm{d} U \, \big( U U U \big)^{n_b} \; \; \text{or} \; \; \displaystyle\int \mathrm{d} U \, \big(
+    U^{\dagger} U^{\dagger} U^{\dagger} \big)^{\bar{n_b}}$
+  \end{block}
+
+  \begin{block}{Mixed contributions}
+    \centering
+    $\displaystyle\int \mathrm{d} U \, \big( U U^{\dagger} \big)^{n_m} \big( U U U \big)^{n_b} \big( U^{\dagger} 
+    U^{\dagger} U^{\dagger} \big)^{\bar{n_b}}$
+  \end{block}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Mesonic contributions}
+
+  One can get these contributions by connecting pairs of $P$'s and $M$'s with the following rule:
+
+  \begin{alertblock}{Rule \#3}
+    \noindent Every connected $P$ and $M$ must have a equal number of $P$'s and $M$'s in between, to allow for complete backtracking.
+  \end{alertblock}
+
+  A connected pair must be at the same space-time position, and must jump in the same spatial direction.
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Diagrammic notation}
+
+  \tikzset{
+        pnode/.style={rectangle,draw=blue!50!black,fill=blue!20,minimum size=15pt},
+        mnode/.style={rectangle,draw=orangecorp!50!black,fill=orangecorp!20,minimum size=15pt},
+        skip loop/.style={to path={-- ++(0,#1) -| (\tikztotarget)}}
+  }
+
+  \vspace{2em}
+
+  \begin{columns}[onlytextwidth]
+    \column{.5\textwidth}
+    \centering
+    \begin{tikzpicture}
+      \node[pnode] (one) {p};
+      \node[pnode] (two) [right=1pt of one] {p};
+      \node[mnode] (three) [right=1pt of two] {m};
+      \node[mnode] (four) [right=1pt of three] {m};
+      \path (one.north) edge [thick,skip loop=12pt] (four.north);
+      \path (two.north) edge [thick,skip loop=6pt] (three.north);
+    \end{tikzpicture}
+
+    \vspace{2em}
+
+    \begin{tikzpicture}
+      \node[pnode] (one) {p};
+      \node[mnode] (two) [right=1pt of one] {m};
+      \node[pnode] (three) [right=1pt of two] {p};
+      \node[mnode] (four) [right=1pt of three] {m};
+      \path (one.north) edge [thick,skip loop=12pt] (four.north);
+      \path (two.north) edge [thick,skip loop=6pt] (three.north);
+    \end{tikzpicture}
+
+    \column{.5\textwidth}
+    \centering
+    \begin{tikzpicture}
+      \node[pnode] (one) {p};
+      \node[pnode] (two) [right=1pt of one] {p};
+      \node[mnode] (three) [right=1pt of two] {m};
+      \node[mnode] (four) [right=1pt of three] {m};
+      \only<1>{
+        \path (one.north) edge [thick,skip loop=6pt] (three.north);
+        \path (two.north) edge [thick,skip loop=12pt] (four.north);
+      }
+      
+      \only<2->{
+        \path (one.north) edge [thick,orangecorp,skip loop=6pt] (three.north);
+        \path (two.north) edge [thick,orangecorp,skip loop=12pt] (four.north);
+      }
+    \end{tikzpicture}
+
+    \vspace{2em}
+
+    \begin{tikzpicture}
+      \node[pnode] (one) {p};
+      \node[mnode] (two) [right=1pt of one] {m};
+      \node[pnode] (three) [right=1pt of two] {p};
+      \node[mnode] (four) [right=1pt of three] {m};
+      \path (one.north) edge [thick,skip loop=12pt] (two.north);
+      \path (three.north) edge [thick,skip loop=12pt] (four.north);
+      \path[white] (one.north) -- +(0,12pt);
+    \end{tikzpicture}
+  \end{columns}
+
+  \vspace{2em}
+
+
+  \uncover<3->{
+
+    Sometimes also impose additional index restrictions
+
+    \vspace{1em}
+
+    \centering
+    \begin{tikzpicture}
+      \node[pnode] (one) {p$_i$};
+      \node[mnode] (two) [right=1pt of one] {m$_j$};
+      \node[pnode] (three) [right=1pt of two] {p$_k$};
+      \node[mnode] (four) [right=1pt of three] {m$_i$};
+      \node[pnode] (five) [right=1pt of four] {p$_j$};
+      \node[mnode] (six) [right=1pt of five] {m$_k$};
+      \path (one.north) edge [thick,skip loop=6pt] (four.north);
+      \path (two.north) edge [thick,skip loop=12pt] (five.north);
+      \path (three.north) edge [thick,skip loop=18pt] (six.north);
+      \draw[decorate,decoration={brace,amplitude=5pt},thick]  ([yshift=-5pt]three.south east) -- ([yshift=-5pt]two.south west)
+      node[midway,yshift=-1.2em] {$\delta(k - j)$};
+    \end{tikzpicture}
+  }
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Multi-trace contributions}
+
+  \begin{block}{Determinant expansion}
+    \centering
+    $\begin{aligned}
+      \det \big[ D \big] &= \exp \bigg\{ -\displaystyle\sum_{n=1}^{\infty} \frac{\kappa^n}{n} \tr \big[ H^n \big] \bigg\} \\
+      &= 1 - \kappa \, \tr \big[ H \big] + {\color{orangecorp} \frac{1}{2} \kappa^2 \Big( \tr \big[ H \big] \Big)^2} - \frac{1}{2} \kappa^2 \tr \big[ H^2
+      \big] + \mathcal{O}(\kappa^3)
+    \end{aligned}$
+  \end{block}
+
+  \vspace{1em}
+
+  Multi-trace contributions are separate diagrams which can be located anywhere on the lattice.
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Multi-trace contributions: Example}
+
+  \tikzset{
+        pnode/.style={rectangle,draw=blue!50!black,fill=blue!20,minimum size=15pt},
+        mnode/.style={rectangle,draw=orangecorp!50!black,fill=orangecorp!20,minimum size=15pt},
+        skip loop/.style={to path={-- ++(0,#1) -| (\tikztotarget)}}
+  }
+
+  So the %
+  \begin{tikzpicture}[baseline=-.2em,scale=.6,every node/.style={scale=.6}]
+    \node[pnode] (one) {p};
+    \node[pnode] (two) [right=1pt of one] {p};
+    \node[mnode] (three) [right=1pt of two] {m};
+    \node[mnode] (four) [right=1pt of three] {m};
+    \path (one.north) edge [thick,skip loop=12pt] (four.north);
+    \path (two.north) edge [thick,skip loop=6pt] (three.north);
+    \node[circle,fill=black,inner sep=0pt,minimum size=5pt] (dot) [right=2pt of four] {};
+    \node[pnode] (five) [right=2pt of dot] {p};
+    \node[mnode] (six) [right=1pt of five] {m};
+    \path (five.north) edge [thick,skip loop=12pt] (six.north);
+  \end{tikzpicture}%
+  %
+  \hspace{.25em} would graphically be represented as:
+
+  \vfill
+
+  {
+    \centering
+    \includegraphics[scale=2.5]{Figures/pm_ppmm.pdf} \par
+  }
+
+  \vfill
+
+  However, it doesn't get interesting until they somehow overlap.
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Resummation}
+
+  \begin{block}{}
+    \centering
+    $\begin{aligned}
+      Z &= 1 + \displaystyle\sum_{\vec{x},t} S_{PM} + S_{PPMM} + S_{PMPM} + S_{PM.PM} + \mathcal{O}(\kappa^6) \\
+      &= \exp \bigg\{ \displaystyle\sum_{\vec{x},t} S_{PM} + S_{PPMM} + S_{PMPM} + S_{PM.PM} \\
+      &\hspace{2cm} - \text{counter terms} + \mathcal{O}(\kappa^6) \bigg\}
+    \end{aligned}$
+  \end{block}
+
+  The counter terms are the disconnected multi-trace terms.
+
+  \[
+    \sum_{\mathclap{\vec{x},\vec{y},t,\tau}} S_{PM}(\vec{x},t) S_{PM}(\vec{y},\tau) = \sum_{\vec{x},t}
+    S_{PM.PM}^{\mathrm{d}}(\vec{x},t)
+  \]
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Contributing multi-trace diagrams}
+
+  \tikzset{
+        pnode/.style={rectangle,draw=blue!50!black,fill=blue!20,minimum size=15pt},
+        mnode/.style={rectangle,draw=orangecorp!50!black,fill=orangecorp!20,minimum size=15pt},
+        skip loop/.style={to path={-- ++(0,#1) -| (\tikztotarget)}}
+  }
+
+  Only new contributions from $\tr \big[ PPMM \big] \tr \big[ PM \big]$ are:
+  
+  \vspace {2em}
+
+  \begin{columns}[onlytextwidth,c]
+    \column{.5\textwidth}
+    \centering
+    \begin{tikzpicture}[baseline=-.2em,scale=.8,every node/.style={scale=.8}]
+      \node[pnode] (one) {p\smash{$_i$}};
+      \node[pnode] (two) [right=1pt of one] {p\smash{$_j$}};
+      \node[mnode] (three) [right=1pt of two] {m\smash{$_j$}};
+      \node[mnode] (four) [right=1pt of three] {m\smash{$_i$}};
+      \node[circle,fill=black,inner sep=0pt,minimum size=5pt] (dot) [right=2pt of four] {};
+      \node[pnode] (five) [right=2pt of dot] {p\smash{$_j$}};
+      \node[mnode] (six) [right=1pt of five] {m\smash{$_j$}};
+
+      \path (one.north) edge [thick,skip loop=6pt] (four.north);
+      \path (two.north) edge [thick,skip loop=18pt] (six.north);
+      \path (three.north) edge [thick,skip loop=12pt] (five.north);
+    \end{tikzpicture} 
+
+    \vspace{1em}
+
+    \includegraphics[scale=2.5]{Figures/pm_ppmm_valid.pdf}
+
+    \column{.5\textwidth}
+    \centering
+    \begin{tikzpicture}[baseline=-.2em,scale=.8,every node/.style={scale=.8}]
+      \node[pnode] (one) {p\smash{$_i$}};
+      \node[pnode] (two) [right=1pt of one] {p\smash{$_j$}};
+      \node[mnode] (three) [right=1pt of two] {m\smash{$_j$}};
+      \node[mnode] (four) [right=1pt of three] {m\smash{$_i$}};
+      \node[circle,fill=black,inner sep=0pt,minimum size=5pt] (dot) [right=2pt of four] {};
+      \node[pnode] (five) [right=2pt of dot] {p\smash{$_i$}};
+      \node[mnode] (six) [right=1pt of five] {m\smash{$_i$}};
+
+      \draw[white] (one.north) -- +(0,18pt);
+
+      \path (one.north) edge [thick,skip loop=12pt] (six.north);
+      \path (two.north) edge [thick,skip loop=6pt] (three.north);
+      \path (four.north) edge [thick,skip loop=6pt] (five.north);
+    \end{tikzpicture} 
+
+    \vspace{1em}
+
+    \includegraphics[scale=2.5]{Figures/pm_ppmm_valid2.pdf}
+  \end{columns}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{The large $N_T$ limit}
+
+  \only<1>{
+    The last two steps of the analytic part of the calculation are:
+
+    \begin{itemize}
+      \item Further restricting temporal variables
+      \item Inserting the proper gauge integrals
+    \end{itemize}
+  }
+
+  \only<1-2>{
+    \begin{exampleblock}{$P_iM_iP_jM_j$}
+      \centering
+      $\displaystyle\sum_{i,j}\sum_{t,\tau}\int \mathrm{d} U_i(t) \mathrm{d} U_j(\tau) \, U_i(t) U_i^{\dagger}(t) U_j(\tau) U_j^{\dagger}(\tau)$
+    \end{exampleblock}
+  }
+
+  \only<2-3>{
+    The sums over $t$ and $\tau$ can be divided into two different regions:
+
+    \begin{exampleblock}{$i \neq j$ or $t \neq \tau$}
+      \centering
+      $\sim N_T ( N_T - 1 ) \displaystyle \bigg( \int \mathrm{d} U \, U U^{\dagger} \bigg)^2$
+    \end{exampleblock}
+
+    \vspace*{-1em}
+
+    \begin{exampleblock}{$i = j$ and $t = \tau$}
+      \centering
+      $\sim N_T \displaystyle \bigg( \int \mathrm{d} U \, U U^{\dagger} U U^{\dagger} \bigg) \phantom{N_T-1}$
+    \end{exampleblock}
+  }
+
+  \only<3>{
+    Thus in the limit $N_T \rightarrow \infty$, only the simple mesonic integrals contribute.
+  }
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Intermediate summary}
+
+  Rules of the game
+  \begin{enumerate}
+    \item Only terms with equally many $P$'s and $M$'s contribute
+    \item One have to link every $P$ with an $M$ (or sets of three $P$'s and $M$'s)
+    \item Between every single-trace link there must be a valid term
+    \item (Multi-trace links are a bit more difficult\dots)
+  \end{enumerate}
+
+  \uncover<2>{
+
+    \vspace{2em}
+
+    And Now for Something Completely Different\texttrademark
+  }
+\end{frame}
+
+\begin{frame}
+  \frametitle{SU($N$) gauge integrals}
+
+  \begin{alertblock}{Goal}
+
+    Calculate integrals of the form:
+    
+    \[
+      I = \int\limits_{\mathclap{U \, \in \, \mathrm{SU}(N)}} \mathrm{d} U \, U_{i_1,j_1} \dots U_{i_n,j_n} U_{k_1,l_1}^{\dagger}
+      \dots U_{k_m,l_m}^{\dagger}
+    \]
+
+    in the fundamental representation.
+  \end{alertblock}
+
+  \vspace{1em}
+
+  This presentation will closely follow the previously cited paper by M. Creutz%
+  \footnote{M. Creutz, ``On Invariant Integration Over SU($N$)'', \emph{J.Math.Ph, 1978}}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Generating function}
+
+  Introduce the generating function $W$ in the standard way:
+  %
+  \begin{block}{Generating function}
+    \[
+      W(J,K) = \int \mathrm{d} U \, \exp \Big\{ \tr \big[ J U + K U^{\dagger} \big] \Big\}
+    \]
+  \end{block}
+  %
+  where $J$ and $K$ are arbitray $N \times N$ matrices. Thus:
+  %
+  \begin{block}{}
+    \[
+      I = \bigg( \frac{\delta}{\delta J_{j_1,i_1}} \cdots \frac{\delta}{\delta J_{j_n,i_n}} \frac{\delta}{\delta K_{l_1,k_1}}
+      \cdots \frac{\delta}{\delta K_{l_m,k_m}} W(J,K) \bigg) \bigg|_{J=K=0}
+    \]
+  \end{block}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Rewriting $U^{\dagger}$}
+
+  We can rewrite all $U^{\dagger}$ ($ = U^{-1}$) matrices in terms of the cofactor of $U$ using the identity $U^{-1} = \big(
+  \mathrm{cof} U \big)^T$
+
+  \vfill
+
+  \begin{block}{}
+    \centering
+    $U_{i,j}^{\dagger} = \displaystyle\frac{1}{(N-1)!} \varepsilon_{j,k_1,\dots,k_{N-1}} \varepsilon_{i,l_1,\dots,l_{N-1}} U_{k_1,l_1} \cdots
+    U_{k_{N-1},l_{N-1}}$
+  \end{block}
+
+  \vfill
+
+  We can thus eliminate $K$ from the generating funtional, and from now on, $W = W(J)$.
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{An analytic expression for $W(J)$}
+
+  Because of the properties of the gauge group elements of SU($N$), $W(J)$ can only be a function of $J$'s determinant:
+
+  \begin{block}{}
+    \centering
+    $W(J) = \displaystyle\sum_{n=0}^{\infty} a_n \big( \det J \big)^n$
+  \end{block}
+
+  Using the fact that, $\det U = 0 \;\; \forall \;\; U \in \mathrm{SU}(N)$, and a bit of algebra, it follows that
+
+  \begin{block}{}
+    \centering
+    $W(J) = \displaystyle\sum_{n=0}^{\infty} \frac{2! \cdots (N-1)!}{n! \cdots (n + N - 1)!} \big( \det J \big)^n$
+  \end{block}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{The final piece}
+
+  Finally, inserting the analytic expression for a matrix determinant, one is ready to go
+
+  \begin{block}{}
+    \centering
+    $\det J = \displaystyle\frac{1}{N!} \varepsilon_{i_1, \dots, i_N} \varepsilon_{j_1, \dots, j_N} J_{i_1,j_1} \cdots J_{i_N, j_N}$
+  \end{block}
+
+  From this we can see that the equation for the vanishing integrals presented earlier is correct as $W \sim 1 + J^N + J^{2N} +
+  \dots$, and an integral of type
+  
+  \begin{block}{}
+    \centering
+    $\displaystyle\int \mathrm{d} U \, U^n \big( U^{\dagger} \big)^m$
+  \end{block}
+
+  requires $n + (N-1) m$ derivatives w.r.t. $J$.
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{The Levi-Civita symbol}
+
+  To finalise the computation we need a way to sum over repeated indices in Levi-Civita symbols:
+  
+  \vfill
+
+  \centering
+  \begin{tikzpicture}
+    \only<1>{ \node (expr) {$\varepsilon_{i_1,i_2,i_3,\dots,i_N}\varepsilon_{j_1,j_2,\dots,j_N}$}; }
+    \only<2>{ \node (expr) {$\displaystyle\sum_{i}\varepsilon_{i_1,i_2,i,\dots,i_N}\varepsilon_{j_1,i,\dots,j_N}$}; }
+    \node (equal) at (2cm,0) {$=$};
+    \matrix[left delimiter=|,right delimiter=|,right=1em of equal,ampersand replacement=\&] (lcdet) [matrix of math nodes]
+    {
+      \delta_{i_1,j_1} \& \delta_{i_1,j_2} \& \cdots \& \delta_{i_1,j_N} \\
+      \delta_{i_2,j_1} \& \delta_{i_2,j_2} \& \cdots \& \delta_{i_2,j_N} \\
+      \delta_{i_3,j_1} \& \delta_{i_3,j_2} \& \cdots \& \delta_{i_3,j_N} \\
+      \vdots \& \vdots \& \ddots \& \vdots \\
+      \delta_{i_N,j_1} \& \delta_{i_N,j_2} \& \cdots \& \delta_{i_N,j_N} \\
+    };
+
+    \only<2>{
+      \draw[orangecorp,thick] (lcdet-1-2.north) -- (lcdet-5-2.south);
+      \draw[orangecorp,thick] (lcdet-3-1.west) -- (lcdet-3-4.east);
+    }
+  \end{tikzpicture}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{An example}
+
+  Finally, a short example
+
+  \begin{block}{}
+    \centering
+    $I = \displaystyle\int\limits_{\mathclap{U \, \in \, \mathrm{SU}(N)}} \mathrm{d} U \, U_{i,j} U_{k,l}^{\dagger}$ 
+  \end{block}
+
+  \vspace*{-1em}
+
+  \begin{align*}
+    I &= \frac{1}{(N-1)!} \varepsilon_{l,i_1,\dots,i_{N-1}}\varepsilon_{k,j_1,\dots,j_{N-1}} \int \mathrm{d} U \, U_{i,j} U_{i_1,j_1} \cdots U_{i_{N-1},j_{N-1}} \\
+    &= \frac{1}{(N-1)!} \varepsilon_{l,i_1,\dots,i_{N-1}}\varepsilon_{k,j_1,\dots,j_{N-1}} \bigg( \frac{\delta}{\delta J_{i,j}} \frac{\delta}{\delta
+      J_{i_1,j_1}} \cdots \frac{\delta}{\delta J_{i_{N-1},j_{N-1}}} W(J) \bigg) \bigg|_{J=0} \\
+      &= \frac{1}{(N-1)!N!} \varepsilon_{l,i_1,\dots,i_{N-1}}\varepsilon_{k,j_1,\dots,j_{N-1}} \varepsilon_{i,i_1,\dots,i_{N-1}} \varepsilon_{j,j_1,\dots,j_{N-1}} \\
+      &= \frac{1}{(N-1)!N!} \, (N-1)! \, \delta_{i,l} \, (N-1)! \, \delta_{j,k} = \frac{1}{N} \delta_{i,l} \delta_{j,k}
+  \end{align*}
+
+  %\begin{align*}
+    %I &= \frac{1}{2!} \varepsilon_{l,i_1,i_2}\varepsilon_{k,j_1,j_2} \int \mathrm{d} U \, U_{i,j} U_{i_1,j_1} U_{i_2,j_2} \\
+    %&= \frac{1}{2!} \varepsilon_{l,i_1,i_2}\varepsilon_{k,j_1,j_2} \bigg( \frac{\delta}{\delta J_{i,j}} \frac{\delta}{\delta
+      %J_{i_1,j_1}} \frac{\delta}{\delta J_{i_2,j_2}} W(J) \bigg) \bigg|_{J=0} \\
+      %&= \frac{1}{2!3!} \varepsilon_{l,i_1,i_2}\varepsilon_{k,j_1,j_2} \varepsilon_{i,i_1,i_2} \varepsilon_{j,j_1,j_2} \\
+      %&= \frac{1}{2!3!} \, 2! \, \delta_{i,l} \, 2! \, \delta_{j,k} = \frac{1}{3} \delta_{i,l} \delta_{j,k}
+  %\end{align*}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Final summary}
+
+  \begin{itemize}
+    \item Used a generating function to simplify the calculation of SU($N$) group integrals
+    \item Rewrote the generating function as the determinant of its sources
+    \item Showed how gauge integrals can be written as products of Levi-Civita symbols
+  \end{itemize}
+
+\end{frame}
+
+\end{document}

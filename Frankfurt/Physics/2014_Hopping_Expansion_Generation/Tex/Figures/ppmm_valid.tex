@@ -1,0 +1,32 @@
+\documentclass[11pt]{minimal}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{textcomp,tikz}
+
+\usetikzlibrary{calc}
+\usetikzlibrary{decorations.markings}
+
+\pagestyle{empty}
+\usepackage[active,tightpage]{preview}
+\PreviewEnvironment{tikzpicture}
+\setlength\PreviewBorder{0cm}
+
+\begin{document}
+
+\begin{tikzpicture}
+  \draw[step=.5cm,gray,very thin] (-.4,-.4) grid (.9,.9);
+  \draw[green!50!black, decoration={
+    markings,
+    mark=at position .4cm with {\pgftransformscale{.7}\arrow{stealth}},
+    mark=at position .88cm with {\pgftransformscale{.7}\arrow{stealth}},
+    mark=at position 1.42cm with {\pgftransformscale{.7}\arrow{stealth}},
+    mark=at position 1.92cm with {\pgftransformscale{.7}\arrow{stealth}}},
+    postaction={decorate},
+    rounded corners=.5pt] (0,.02) -- (.48,.02) -- (.48,.5) -- (.52,.5) -- (.52,-.02) -- (0,-.02) -- cycle;
+    %rounded corners=.5pt] (0,.02) -- (.48,.02) -- (.48,.5) -- (.52,.5) -- (.52,-.02) -- (0,-.02);
+    %\fill[green!50!black] circle [radius=.03cm];
+\end{tikzpicture}
+
+\end{document}
+
+

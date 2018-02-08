@@ -1,0 +1,71 @@
+\definecolor{LightUIBase}{RGB}{44,62,80}
+\definecolor{LightUIRed}{RGB}{231,76,60}
+\definecolor{LightUIGray}{RGB}{236,240,241}
+\definecolor{LightUILightBlue}{RGB}{72,172,239}
+\definecolor{LightUIBlue}{RGB}{41,128,185}
+
+\colorlet{col1}{LightUIBlue}
+\colorlet{col2}{LightUIRed}
+\colorlet{col3}{LightUIBase}
+\definecolor{col4}{RGB}{125,138,46}
+
+\tikzset{
+  inner/.style={
+    fill=#1,
+    circle,
+    inner sep=0pt,
+    minimum size=4
+  },
+  outer/.style={
+    draw=#1,
+    thick,
+    circle,
+    inner sep=0pt,
+    minimum size=7,
+  },
+  outerouter/.style={
+    draw=#1,
+    thick,
+    circle,
+    inner sep=0pt,
+    minimum size=10,
+  },
+  linestyle/.style={
+    thick,
+  },
+  inner1/.style={
+    inner=col1,
+  },
+  inner2/.style={
+    inner=col2,
+  },
+  inner3/.style={
+    inner=col3,
+  },
+  inner4/.style={
+    inner=col4,
+  },
+  outer1/.style={
+    outer=col1,
+  },
+  outer2/.style={
+    outer=col2,
+  },
+  outer3/.style={
+    outer=col3,
+  },
+  outer4/.style={
+    outer=col4,
+  },
+  ->-/.style={decoration={
+    markings,
+    mark=at position #1 with {\arrow[LightUIRed]{stealth}}},
+    postaction={decorate}
+  },
+  -<-/.style={decoration={
+    markings,
+    mark=at position #1 with {\arrow[LightUIRed]{stealth reversed}}},
+    postaction={decorate}
+  }
+}
+

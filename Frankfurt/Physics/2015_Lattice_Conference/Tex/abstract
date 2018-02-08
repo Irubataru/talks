@@ -1,0 +1,7 @@
+We discuss the fermionic contribution to a three dimensional effective lattice theory for heavy quarks.
+We first study the mathematical structure of higher order contributions of the hopping parameter 
+expansion to the effective action. We then examine how to apply a graphical linked cluster expansion to
+retrieve analytical results for various lattice quantities such as nucleon number and nucleon binging
+energy. The free parameters of the analytic results are temperature, chemical potential and the hopping
+parameter. The results are compared to Monte Carlo simulations of the dimensionally reduced theory. Finally
+a note on the inclusion of gauge corrections will be given.

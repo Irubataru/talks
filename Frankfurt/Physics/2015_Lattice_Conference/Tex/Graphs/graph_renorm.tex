@@ -1,0 +1,61 @@
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{textcomp,tikz}
+
+\input{style.tex}
+
+\pagestyle{empty}
+\usepackage[active,tightpage]{preview}
+\PreviewEnvironment{tikzpicture}
+\setlength\PreviewBorder{0mm}
+
+\usetikzlibrary{decorations,decorations.markings}
+
+\begin{document}
+\begin{tikzpicture}[linestyle, every node/.style={col3}]
+    \node[draw=col3,inner sep=0pt, minimum size=5pt,circle] (n1) {};
+    \coordinate (n2) at (0,-1) {}
+      edge[col3] (n1);
+
+    \node (equal) at (.8,-.5) {$=$};
+
+    \node[inner=col3] (g2n1) at (1.6,0) {};
+    \coordinate (g2n2) at (1.6,-1)
+      edge[col3] (g2n1);
+
+    \node (plus1) at ([shift={(.5,-.5)}] g2n1) {$+$};
+
+    \coordinate (g3n1) at ([shift={(.5,-.5)}] plus1);
+    \node[inner=col3] (g3n2) at ([shift={(60:{1/sin(60)})}] g3n1) {}
+      edge[col3] (g3n1);
+    \node[inner=col3] (g3n3) at ([shift={(300:{1/sin(60)})}] g3n2) {}
+      edge[col3] (g3n2);
+
+    \node (plus2) at ([shift={(.5,.5)}] g3n3) {$+$};
+
+    \coordinate (g4n1) at ([shift={(.5,-.5)}] plus2);
+    \node[inner=col3] (g4n2) at ([shift={(60:{1/sin(60)})}] g4n1) {}
+      edge[col3] (g4n1);
+    \node[inner=col3] (g4n3) at ([shift={(300:{1/sin(60)})}] g4n2) {}
+      edge[col3] (g4n2);
+    \node[inner=col3] (g4n4) at ([shift={(60:{1/sin(60)})}] g4n3) {}
+      edge[col3] (g4n3);
+
+    \node (plus4) at ([shift={(.5,-.5)}] g4n4) {$+$};
+
+    \coordinate (g5n1) at ([shift={(.5,-.5)}] plus4);
+    \node[inner=col3] (g5n2) at ([shift={(60:{1/sin(60)})}] g5n1) {}
+      edge[col3] (g5n1);
+    \node[inner=col3] (g5n3) at ([shift={(300:{1/sin(60)})}] g5n2) {}
+      edge[col3] (g5n2);
+    \node[inner=col3] (g5n4) at ([shift={(60:{1/sin(60)})}] g5n3) {}
+      edge[col3] (g5n2);
+
+    \node (plus3) at ([shift={(.5,-.5)}] g5n4) {$+$};
+    \node (dots) at ([shift={(.8,0)}] plus3) {$\dots$};
+
+\end{tikzpicture}
+\end{document}
+
+

@@ -1,23 +1,17 @@
 # Talks
 
-Various talks I have held throughout the years
+Talks I have given throught the years.
 
-## C++ User Group Meetings
+## Building
 
- * 2014: Smart Pointers
+A pre-built PDF is available in every directory. Most folders contain
+instructions if necessary for building. In general, almost all of the talks use
+my own custom beamer themes. They are available
+[on github](https://github.com/Irubataru/custom-beamer-themes).
  
- Introduction to the C++11 smart pointers and how to use them correctly
+## Other
  
- * 2015: Template Metaprogramming
- 
- First steps towards using template metaprogramming, introducing the concepts and the syntac
- 
- * 2016: Thinking with Templates
- 
- Various template applications and uses of generic programming, explicit explanation of template type deduction,
- uses of the curiously recurring template pattern, short template expression example
- 
- ## Other
- 
- I also gave an introductory lecture to the C++ programming language, which can be found 
- [here](https://github.com/Irubataru/cpp-lecture-2015).
+ * I also gave an introductory lecture to the C++ programming language, which can be found 
+   [here](https://github.com/Irubataru/cpp-lecture-2015).
+
+ * My Ph.D. disputation can be found [here](https://github.com/Irubataru/phd-defence).

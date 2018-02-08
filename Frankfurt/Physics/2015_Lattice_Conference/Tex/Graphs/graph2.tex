@@ -1,0 +1,25 @@
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{textcomp,tikz}
+
+\input{style.tex}
+
+\pagestyle{empty}
+\usepackage[active,tightpage]{preview}
+\PreviewEnvironment{tikzpicture}
+\setlength\PreviewBorder{0mm}
+
+\usetikzlibrary{decorations,decorations.markings}
+
+\begin{document}
+\begin{tikzpicture}
+  \node[inner=col2] (n1) {};
+  \node[inner=col2] at (300:{1/sin(60)}) {}
+    edge[linestyle,col2,-<-=.5] (n1);
+  \node[inner=col2] at (240:{1/sin(60)}) {}
+    edge[linestyle,col2,-<-=.5] (n1);
+\end{tikzpicture}
+\end{document}
+
+

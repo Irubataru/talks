@@ -1,0 +1,48 @@
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{textcomp,tikz}
+
+\pagestyle{empty}
+\usepackage[active,tightpage]{preview}
+\PreviewEnvironment{tikzpicture}
+\setlength\PreviewBorder{0mm}
+
+\begin{document}
+
+\begin{tikzpicture}
+
+  %\pgfmathsetseed{}
+
+  \foreach \x in {-1,...,5}{
+    \foreach \y in {0,...,4}{
+      \pgfmathrandominteger{\ang}{1}{360}
+      \pgfmathrandominteger{\imgnr}{1}{9}
+      \node[rotate=\ang] at (\x,\y) {\includegraphics[scale=0.4]{graph\imgnr.pdf}};
+    }
+  }
+
+  \foreach \x in {-2,...,5}{
+    \foreach \y in {0,...,3}{
+      \pgfmathrandominteger{\ang}{1}{360}
+      \pgfmathrandominteger{\imgnr}{1}{9}
+      \node[rotate=\ang] at (\x+.5,\y+.5) {\includegraphics[scale=0.3]{graph\imgnr.pdf}};
+    }
+  }
+
+  \foreach \x in {-2,...,4}{
+    \pgfmathrandominteger{\ang}{1}{360}
+    \pgfmathrandominteger{\imgnr}{1}{9}
+    \node[rotate=\ang] at (\x+.5,4.5) {\includegraphics[scale=0.3]{graph\imgnr.pdf}};
+  }
+
+  \foreach \x in {-2,...,5}{
+    \pgfmathrandominteger{\ang}{1}{360}
+    \pgfmathrandominteger{\imgnr}{1}{9}
+    \node[rotate=\ang] at (\x+.5,-.5) {\includegraphics[scale=0.3]{graph\imgnr.pdf}};
+  }
+\end{tikzpicture}
+
+\end{document}
+
+

@@ -1,0 +1,40 @@
+# vim temp files
+*.swp
+.lvimrc
+
+# LaTeX temporary files
+*.aux
+*.log
+*.toc
+
+# Output files
+*.dvi
+*.pdf
+
+# Beamer files
+*.snm
+*.vrb
+*.nav
+*.out
+
+# Various
+*.glo
+*.idx
+*.ist
+*.acn
+*.acr
+*.alg
+*.bbl
+*.blg
+*.glg
+*.gls
+*.ilg
+*.ind
+*.lof
+*.lot
+*.maf
+*.mtc
+*.mtc1
+*.synctex.gz
+*.fdb_latexmk
+*.fls

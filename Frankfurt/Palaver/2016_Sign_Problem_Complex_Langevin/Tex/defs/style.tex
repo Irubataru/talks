@@ -1,0 +1,38 @@
+% --------------------- %
+% Beamer theme settings %
+% --------------------- %
+
+\usetheme{CodeCourse}
+\setbeamertemplate{navigation symbols}{} %Remove beamer navigation symbols
+
+% ------------- %
+% tikz settings %
+% ------------- %
+
+\usetikzlibrary{arrows.meta}
+
+% ------------- %
+% Font settings %
+% ------------- %
+
+% Load the eulervm package in the preamble to make sure one imports all the
+% necessary mathematics symbols needed, then to get the font specification I
+% want I need to lie to beamer about which font has which feature.
+
+% Tells beamer that math mode should use serif fonts
+\usefonttheme[onlymath]{serif}
+
+% Sets the serif font (which is the main font)
+\setmainfont[
+  ItalicFont={Linux Libertine O}
+]{Neo Euler}
+
+% Sets the font beamer uses, which is sans-serif by default
+\setsansfont[
+  ItalicFont={Yanone Kaffeesatz Light},
+  Scale=1.3,
+  LetterSpace=2.0
+]{Yanone Kaffeesatz Bold}
+
+% Replaces every explicit \mathrm call to use this font
+\setmathrm{Linux Libertine O}

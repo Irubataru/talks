@@ -1,0 +1,70 @@
+% -------------------------- %
+% Standard LaTeX definitions %
+% -------------------------- %
+
+\DeclareGraphicsExtensions{.pdf}
+\renewcommand\textbullet{\ensuremath{\bullet}}
+
+\DeclareMathOperator{\tr}{tr}
+
+% ----------------------------------- %
+% Various tikz styles and definitions %
+% ----------------------------------- %
+
+\usetikzlibrary{calc,intersections,positioning,matrix,chains,scopes}
+\usetikzlibrary{decorations.pathmorphing,decorations.pathreplacing,shapes}
+\usetikzlibrary{patterns}
+
+\tikzset{
+  % style to apply some styles to each segment of a path
+  on each segment/.style={
+    decorate,
+    decoration={
+      show path construction,
+      moveto code={},
+      lineto code={
+        \path [#1]
+        (\tikzinputsegmentfirst) -- (\tikzinputsegmentlast);
+      },
+      curveto code={
+        \path [#1] (\tikzinputsegmentfirst)
+        .. controls
+        (\tikzinputsegmentsupporta) and (\tikzinputsegmentsupportb)
+        ..
+        (\tikzinputsegmentlast);
+      },
+      closepath code={
+        \path [#1]
+        (\tikzinputsegmentfirst) -- (\tikzinputsegmentlast);
+      },
+    },
+  },
+  % style to add an arrow in the middle of a path
+  mid arrow/.style={postaction={decorate,decoration={
+        markings,
+        mark=at position .55 with {\arrow[#1]{stealth}}
+      }}},
+  ->-/.style={decoration={
+    markings,
+    mark=at position #1 with {\arrow{stealth}}},
+    postaction={decorate}
+  },
+  fermion/.style={
+    circle,
+    inner sep=0pt,
+    minimum size=4pt,
+    fill=LightUIBlue
+  },
+  gluon/.style={
+    draw=LightUIRed,
+    thick
+  },
+  gluonx/.style={
+    gluon,
+    ->-=.55
+  },
+  gluonz/.style={
+    gluon,
+    ->-=.7
+  }
+}

@@ -1,0 +1,26 @@
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{textcomp,tikz}
+
+\input{style.tex}
+
+\pagestyle{empty}
+\usepackage[active,tightpage]{preview}
+\PreviewEnvironment{tikzpicture}
+\setlength\PreviewBorder{0mm}
+
+\usetikzlibrary{decorations,decorations.markings}
+
+\begin{document}
+\begin{tikzpicture}[every node/.style={scale=.5}]
+  \node[inner=col3] (n1) {};
+  \node[inner=col3] (n2) at (60:1) {}
+    edge[col3,bend right=20] (n1);
+  \node[inner=col3] (n3) at ([shift={(300:1)}] n2) {}
+    edge[col3,bend left] (n2)
+    edge[col3,bend right] (n2);
+  \node[inner=col3] (n4) at ([shift={(60:1)}] n3) {}
+    edge[col3,bend left=20] (n3);
+\end{tikzpicture}
+\end{document}

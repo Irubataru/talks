@@ -1,0 +1,207 @@
+\section{Results and analysis}
+\frame[plain]{\sectionpage}
+\addtocounter{framenumber}{-1}
+
+\begin{frame}
+  \frametitle{Numerical validity, matrix size}
+
+  \vskip -.3cm
+  {\centering
+    \includegraphics[trim=0 2.1cm 0 1.78cm,clip,width=0.9\textwidth]{plts/compare_size_baryon_mu_scan.pdf}\\[2pt]
+    \includegraphics[trim=0 2.1cm 0 1.8cm,clip,width=0.9\textwidth]{plts/compare_size_cond_mass_scan.pdf}
+  \par}
+
+  \nointerlineskip
+  \begin{tikzpicture}[overlay,remember picture]
+    \node[anchor=west] at ([shift={(-1.75cm,-.25cm)}]current page.east) [scale=0.6] {$\mu$};
+    \node[anchor=west] at ([shift={(-1.75cm,1.5cm)}]current page.east) [scale=0.6,align=left] {$N_f = 1$\\$m = 0$};
+    \node[anchor=west] at ([shift={(-1.75cm,.75cm)}]current page.south east) [scale=0.6] {$m$};
+    \node[anchor=west] at ([shift={(-1.75cm,2.5cm)}]current page.south east) [scale=0.6,align=left] {$N_f = 1$\\$\mu = 1$};
+  \end{tikzpicture}
+  
+\end{frame}
+
+\begin{frame}
+  \frametitle{Numerical validity, step size}
+
+  \vskip -.3cm
+  {\centering
+    \includegraphics[trim=0 2.1cm 0 1.78cm,clip,width=0.9\textwidth]{plts/compare_step_baryon_mu_scan.pdf}\\[2pt]
+    \includegraphics[trim=0 2.1cm 0 1.8cm,clip,width=0.9\textwidth]{plts/compare_step_cond_mass_scan.pdf}
+  \par}
+
+  \nointerlineskip
+  \begin{tikzpicture}[overlay,remember picture]
+    \node[anchor=west] at ([shift={(-1.75cm,-.25cm)}]current page.east) [scale=0.6] {$\mu$};
+    \node[anchor=west] at ([shift={(-1.75cm,1.5cm)}]current page.east) [scale=0.6,align=left] {$N_f = 1$\\$m = 0$};
+    \node[anchor=west] at ([shift={(-1.75cm,.75cm)}]current page.south east) [scale=0.6] {$m$};
+    \node[anchor=west] at ([shift={(-1.75cm,2.5cm)}]current page.south east) [scale=0.6,align=left] {$N_f = 1$\\$\mu = 1$};
+  \end{tikzpicture}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Mass scans @ $\scalemath{1.1}{\mu = 0.2}$}
+
+  \vskip -.1cm
+  {\centering
+    \includegraphics[trim=0 2.2cm 0 1.8cm,clip,width=0.9\textwidth]{plts/mass_scan_mu02_baryon.pdf}\\[2pt]
+    \includegraphics[trim=0 2.1cm 0 1.8cm,clip,width=0.9\textwidth]{plts/mass_scan_mu02_cond.pdf}
+  \par}
+
+  \nointerlineskip
+  \begin{tikzpicture}[overlay,remember picture]
+    \node[anchor=west] at ([shift={(-1.75cm,-.25cm)}]current page.east) [scale=0.6] {$m$};
+    \node[anchor=west] at ([shift={(-1.75cm,.65cm)}]current page.south east) [scale=0.6] {$m$};
+  \end{tikzpicture}
+  
+\end{frame}
+
+\begin{frame}
+  \frametitle{Mass scans @ $\scalemath{1.1}{\mu = 1.0}$}
+
+  \vskip -.1cm
+  {\centering
+    \includegraphics[trim=0 2.1cm 0 1.8cm,clip,width=0.9\textwidth]{plts/mass_scan_mu1_baryon.pdf}\\[2pt]
+    \includegraphics[trim=0 2.1cm 0 1.8cm,clip,width=0.9\textwidth]{plts/mass_scan_mu1_cond.pdf}
+  \par}
+
+  \nointerlineskip
+  \begin{tikzpicture}[overlay,remember picture]
+    \node[anchor=west] at ([shift={(-1.75cm,-.25cm)}]current page.east) [scale=0.6] {$m$};
+    \node[anchor=west] at ([shift={(-1.75cm,.65cm)}]current page.south east) [scale=0.6] {$m$};
+  \end{tikzpicture}
+  
+\end{frame}
+
+\begin{frame}
+  \frametitle{Chemical potential scans @ $\scalemath{1.1}{m = 0.0}$}
+
+  \vskip -.1cm
+  {\centering
+    \includegraphics[trim=0 2.1cm 0 1.8cm,clip,width=0.9\textwidth]{plts/mu_scan_mf0_baryon.pdf}\\[2pt]
+    \includegraphics[trim=0 2.1cm 0 1.8cm,clip,width=0.9\textwidth]{plts/mu_scan_mf0_cond.pdf}
+  \par}
+
+  \nointerlineskip
+  \begin{tikzpicture}[overlay,remember picture]
+    \node[anchor=west] at ([shift={(-1.75cm,-.4cm)}]current page.east) [scale=0.6] {$\mu$};
+    \node[anchor=west] at ([shift={(-1.75cm,.6cm)}]current page.south east) [scale=0.6] {$\mu$};
+  \end{tikzpicture}
+  
+\end{frame}
+
+\begin{frame}
+  \frametitle{Chemical potential scans @ $\scalemath{1.1}{m = 0.2}$}
+
+  \vskip -.1cm
+  {\centering
+    \includegraphics[trim=0 2.1cm 0 1.8cm,clip,width=0.9\textwidth]{plts/mu_scan_mf02_baryon.pdf}\\[2pt]
+    \includegraphics[trim=0 2.1cm 0 1.8cm,clip,width=0.9\textwidth]{plts/mu_scan_mf02_cond.pdf}
+  \par}
+
+  \nointerlineskip
+  \begin{tikzpicture}[overlay,remember picture]
+    \node[anchor=west] at ([shift={(-1.75cm,-.4cm)}]current page.east) [scale=0.6] {$\mu$};
+    \node[anchor=west] at ([shift={(-1.75cm,.6cm)}]current page.south east) [scale=0.6] {$\mu$};
+  \end{tikzpicture}
+  
+\end{frame}
+
+\begin{frame}[plain]
+
+  \vskip.75cm
+  {\centering\fontsize{22pt}{22pt}\selectfont
+    Converge to the wrong theory
+
+    \vskip 1.5cm
+    Which theory do we converge to?
+  \par}
+  
+  \addtocounter{framenumber}{-1}
+\end{frame}
+
+\begin{frame}
+  \frametitle{The phase quenched theory}
+
+  \vskip -.5cm
+  \[
+    \mathcal{Z}_{\mathrm{PQ}} = \int [\mathrm{d} U] \, \big| \det\qmat(\mu_B) \big|
+    \exp(\minus S_g)
+  \]
+
+  \vskip .5cm
+  For\: $\scalemath{1.1}{N_f = 2}$\: it corresponds to studying finite\\isospin chemical
+  potential
+
+  \vskip .75cm
+  Has a very different phase diagram than QCD\\
+  
+\end{frame}
+
+\begin{frame}
+  \frametitle{Mass scans @ $\scalemath{1.1}{\mu = 0.2}$}
+
+  \vskip -.1cm
+  {\centering
+    \includegraphics[trim=0 2.2cm 0 1.8cm,clip,width=0.9\textwidth]{plts/mass_scan_mu02_baryon_pq.pdf}\\[2pt]
+    \includegraphics[trim=0 2.1cm 0 1.8cm,clip,width=0.9\textwidth]{plts/mass_scan_mu02_cond_pq.pdf}
+  \par}
+
+  \nointerlineskip
+  \begin{tikzpicture}[overlay,remember picture]
+    \node[anchor=west] at ([shift={(-1.75cm,-.25cm)}]current page.east) [scale=0.6] {$m$};
+    \node[anchor=west] at ([shift={(-1.75cm,.65cm)}]current page.south east) [scale=0.6] {$m$};
+  \end{tikzpicture}
+  
+\end{frame}
+
+\begin{frame}
+  \frametitle{Mass scans @ $\scalemath{1.1}{\mu = 1.0}$}
+
+  \vskip -.1cm
+  {\centering
+    \includegraphics[trim=0 2.1cm 0 1.8cm,clip,width=0.9\textwidth]{plts/mass_scan_mu1_baryon_pq.pdf}\\[2pt]
+    \includegraphics[trim=0 2.1cm 0 1.8cm,clip,width=0.9\textwidth]{plts/mass_scan_mu1_cond_pq.pdf}
+  \par}
+
+  \nointerlineskip
+  \begin{tikzpicture}[overlay,remember picture]
+    \node[anchor=west] at ([shift={(-1.75cm,-.25cm)}]current page.east) [scale=0.6] {$m$};
+    \node[anchor=west] at ([shift={(-1.75cm,.65cm)}]current page.south east) [scale=0.6] {$m$};
+  \end{tikzpicture}
+  
+\end{frame}
+
+\begin{frame}
+  \frametitle{Chemical potential scans @ $\scalemath{1.1}{m = 0.0}$}
+
+  \vskip -.1cm
+  {\centering
+    \includegraphics[trim=0 2.1cm 0 1.8cm,clip,width=0.9\textwidth]{plts/mu_scan_mf0_baryon_pq.pdf}\\[2pt]
+    \includegraphics[trim=0 2.1cm 0 1.8cm,clip,width=0.9\textwidth]{plts/mu_scan_mf0_cond_pq.pdf}
+  \par}
+
+  \nointerlineskip
+  \begin{tikzpicture}[overlay,remember picture]
+    \node[anchor=west] at ([shift={(-1.75cm,-.4cm)}]current page.east) [scale=0.6] {$\mu$};
+    \node[anchor=west] at ([shift={(-1.75cm,.6cm)}]current page.south east) [scale=0.6] {$\mu$};
+  \end{tikzpicture}
+  
+\end{frame}
+
+\begin{frame}
+  \frametitle{Chemical potential scans @ $\scalemath{1.1}{m = 0.2}$}
+
+  \vskip -.1cm
+  {\centering
+    \includegraphics[trim=0 2.1cm 0 1.8cm,clip,width=0.9\textwidth]{plts/mu_scan_mf02_baryon_pq.pdf}\\[2pt]
+    \includegraphics[trim=0 2.1cm 0 1.8cm,clip,width=0.9\textwidth]{plts/mu_scan_mf02_cond_pq.pdf}
+  \par}
+
+  \nointerlineskip
+  \begin{tikzpicture}[overlay,remember picture]
+    \node[anchor=west] at ([shift={(-1.75cm,-.4cm)}]current page.east) [scale=0.6] {$\mu$};
+    \node[anchor=west] at ([shift={(-1.75cm,.6cm)}]current page.south east) [scale=0.6] {$\mu$};
+  \end{tikzpicture}
+  
+\end{frame}

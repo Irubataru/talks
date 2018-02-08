@@ -1,0 +1,47 @@
+\documentclass[12pt]{standalone}
+\usepackage[euler-digits]{eulervm}
+\usepackage{mathspec}
+\usepackage{textcomp,tikz}
+\usepackage{amsmath,amssymb}
+\usepackage{xcolor}
+
+\setmainfont[
+  ItalicFont={Yanone Kaffeesatz Light},
+  Scale=1.3,
+  LetterSpace=2.0
+]{Yanone Kaffeesatz Light}
+
+\setmathrm{Linux Libertine O}
+
+\input{../defs/colour.tex}
+
+\usetikzlibrary{calc,backgrounds}
+\usetikzlibrary{arrows.meta}
+
+\DeclareMathOperator{\real}{Re}
+
+\pagestyle{empty}
+\usepackage[active,tightpage]{preview}
+\PreviewEnvironment{tikzpicture}
+\setlength\PreviewBorder{0mm}
+
+\begin{document}
+\begin{tikzpicture}[
+  domain=-2.5:2.5,
+  samples=1000,
+  text=ICantExpress,
+  every path/.style={line width=1pt},
+  background rectangle/.style={fill=WhiteTrash}, show background rectangle
+]
+  \draw[-{Stealth[round]},ICantExpress!75] (-2.5,0) -- (2.75,0) node [right,ICantExpress,scale=0.6] {$x$};
+  \draw[-{Stealth[round]},ICantExpress!75] (-2,-1.5) -- (-2,1.5)
+    node [above,ICantExpress,scale=0.75,anchor=south west,xshift=-.6cm] {$\real e^{-x^2 + i\mu{}x}$};
+  \draw[samples=4000,Marty,line width=.6pt] plot (\x, { 1.5 * exp(-\x * \x) * cos(40*\x r)});
+  \draw[samples=100,Tropiteal] plot (\x, { 1.5 * exp(-\x*\x) });
+
+  \draw[Tropiteal] (1.8,1.4) -- +(0.4,0) node[right,ICantExpress,scale=0.6] {$\mu = 0$};
+  \draw[Marty]     (1.8,1.1) -- +(0.4,0) node[right,ICantExpress,scale=0.6] {$\mu = 40$};
+
+
+\end{tikzpicture}
+\end{document}

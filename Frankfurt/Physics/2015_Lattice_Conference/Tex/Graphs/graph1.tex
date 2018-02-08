@@ -1,0 +1,23 @@
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{textcomp,tikz}
+
+\input{style.tex}
+
+\pagestyle{empty}
+\usepackage[active,tightpage]{preview}
+\PreviewEnvironment{tikzpicture}
+\setlength\PreviewBorder{0mm}
+
+\usetikzlibrary{decorations,decorations.markings}
+
+\begin{document}
+\begin{tikzpicture}
+  \node[inner=col1] (n1) {};
+  \node[inner=col1] at (0,1) {}
+    edge[linestyle,col1] (n1);
+\end{tikzpicture}
+\end{document}
+
+

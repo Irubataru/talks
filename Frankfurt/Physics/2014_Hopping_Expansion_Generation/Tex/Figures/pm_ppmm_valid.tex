@@ -1,0 +1,39 @@
+\documentclass[11pt]{minimal}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{textcomp,tikz}
+
+\usetikzlibrary{calc}
+\usetikzlibrary{decorations.markings}
+
+\pagestyle{empty}
+\usepackage[active,tightpage]{preview}
+\PreviewEnvironment{tikzpicture}
+\setlength\PreviewBorder{0cm}
+
+\begin{document}
+
+\begin{tikzpicture}
+  \draw[step=.5cm,gray,very thin] (-.4,-.4) grid (.9,.9);
+
+  \draw[blue!50!black, decoration={
+    markings,
+    mark=at position .42cm with {\pgftransformscale{.5}\arrow{stealth}},
+    mark=at position .94cm with {\pgftransformscale{.5}\arrow{stealth}}},
+    postaction={decorate},
+  rounded corners=.5pt] (.52,0.) -- (.52,.5) -- (0.48,.5) -- (0.48,.0) -- cycle;
+  %\fill[blue!50!black] (.5,0.) circle [radius=.03cm];
+
+  \draw[green!50!black, decoration={
+    markings,
+    mark=at position .4cm with {\pgftransformscale{.5}\arrow{stealth}},
+    mark=at position .86cm with {\pgftransformscale{.5}\arrow{stealth}},
+    mark=at position 1.52cm with {\pgftransformscale{.5}\arrow{stealth}},
+    mark=at position 2.06cm with {\pgftransformscale{.5}\arrow{stealth}}},
+    postaction={decorate},
+    rounded corners=.5pt] (0,.02) -- (.44,.02) -- (.44,.52) -- (.56,.52) -- (.56,-.02) -- (0,-.02) -- cycle;
+    %\fill[green!50!black] circle [radius=.05cm];
+
+\end{tikzpicture}
+
+\end{document}
