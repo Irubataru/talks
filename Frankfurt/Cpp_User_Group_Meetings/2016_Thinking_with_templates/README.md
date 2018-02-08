@@ -1,4 +1,9 @@
-# Information about the tex files
+# 2016 - Thinking with templates
+
+ * Title: Thinking with templates
+ * Date: 27-01-2016
+
+## Building
 
 All the tex files must be compiled with xelatex or similar as they make use of TTF fonts.
 
