@@ -1,0 +1,1493 @@
+\documentclass[14pt]{beamer}
+\usepackage[T1]{fontenc}
+\usepackage{url}
+\usepackage{xcolor}
+\usepackage{amsmath,varwidth}
+\usepackage{tikz}
+\usepackage{listings,algpseudocode}
+\usepackage[quiet]{mathspec}
+
+\setmainfont[
+ItalicFont={Yanone Kaffeesatz Light},
+Scale=1.3,
+LetterSpace=2.0
+]{Yanone Kaffeesatz Bold}
+
+\setmonofont{Fira Code}
+
+\input{definitions/style.tex}
+\input{definitions/defs.tex}
+\input{definitions/funcs.tex}
+
+\usefonttheme{serif}
+
+%\setbeameroption{show notes}
+
+% Turn off page numbering
+\setbeamertemplate{footline}{}
+
+\title{Introduction to C++ templates}
+\author{\texorpdfstring{%
+    Jonas Rylund Glesaaen\newline%
+    \fontsize{12pt}{12pt}\selectfont\texttt{jonas@glesaaen.com}%
+  }{%
+    Jonas Rylund Glesaaen}}
+
+\date{\texorpdfstring{%
+    SA{\color{SAACOrange}\textsuperscript{2}}C Seminar Series\newline{}February 9th 2018%
+  }{%
+    February 9th 2018}}
+
+\begin{document}
+
+\nocite{*}
+
+\frame{\titlepage}
+
+\section{Introduction introduction}
+\frame{\sectionpage}
+
+\begin{frame}[fragile]
+  \frametitle{What is a template}
+
+  \begin{minipage}{0.8\textwidth}
+    Exactly what it says on the box.
+
+    \vspace{1cm}
+    A template is a template for constructing the thing it templates
+  \end{minipage}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{What is a template}
+
+  %\fontspec{Yanone Kaffeesatz Regular}
+  \begin{minipage}{0.8\textwidth}
+    Say you asked a colleague to implement a function that checks whether an
+    integer is even or not
+  
+    \vspace{1.5cm}
+  
+    and then you get this...
+  \end{minipage}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{What is a template}
+
+  \begin{lstlisting}[escapeinside={(*}{*)}]
+    bool is_even(unsigned i)
+    {
+      if (i == 0)
+        return true;
+      else if (i == 1)
+        return false;
+      else if (i == 2)
+        return true;
+      else if (i == 3)
+        return false;
+      /* ... */
+      else if (i == 18446744073709551614)
+        return true;
+      else
+        return false;
+    }
+  \end{lstlisting}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{What is a template}
+
+  Similar to how control structures and functions help us not repeat ourselves
+  in code, templates does this on the type level
+
+  \vspace{.75cm}
+
+  You can apply all the same techniques \\
+  {\itshape\changefontsize{10pt}(more on this in the next talk)}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{What is a template}
+
+  \begin{lstlisting}[escapeinside={(*}{*)}]
+    double add(double a, double b)
+    {
+      return a + b;
+    }
+
+    double add(double a, int b)
+    {
+      return a + b;
+    }
+
+    double add(int a, double b)
+    {
+      return a + b;
+    }
+
+    int add(int a, int b)
+    {
+      return a + b;
+    }
+  \end{lstlisting}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{What is a template}
+
+  \begin{lstlisting}[basicstyle=\codefontsize{12pt}]
+template <typename T, typename U>
+auto add(T a, U b)
+{
+  return a + b;
+}
+  \end{lstlisting}
+
+  \vspace{.5cm}
+
+  Usable by any type {\color{sblue}T} and {\color{sblue}U} pair that has a valid \\
+  {\color{sblue}operator+}
+
+\end{frame}
+
+\section{Types of templates}
+\frame{\sectionpage}
+
+\begin{frame}[fragile]
+  \frametitle{Types of templates : functions}
+
+  Function templates are not functions
+
+  \vspace{.5cm}
+
+  \begin{lstlisting}[basicstyle=\codefontsize{12pt}]
+template <typename Type>
+bool not_empty(Type const& x)
+{
+  return ! x.empty();
+}
+  \end{lstlisting}
+
+  \vspace{.5cm}
+
+  If a specific instance isn't used it is not created
+
+  \vspace{1mm}
+
+  {\itshape\changefontsize{10pt}%
+    (can you identify all the requirements on {\color{sblue}Type}?)}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Types of templates : classes}
+
+  Class templates are not classes
+
+  \vspace{.4cm}
+
+  \begin{lstlisting}[basicstyle=\codefontsize{10pt}]
+template <typename Type>
+class Linked_List
+{
+public:
+  class Node
+  {
+  private:
+    Type val;
+    std::unique_ptr<Node> next;
+  };
+
+private:
+  std::unique_ptr<Node> first_node;
+};
+  \end{lstlisting}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Types of templates : aliases}
+
+  \begin{onlyenv}<1>
+      First thought when you see the {\color{sblue}using} keyword
+    
+      \vspace{.5cm}
+    
+      \begin{lstlisting}[basicstyle=\codefontsize{12pt}]
+typedef(*\tikzmark{typedef}*) std::vector<double> Vector;
+      \end{lstlisting}
+    
+      \vspace{.75cm}
+    
+      \begin{lstlisting}[basicstyle=\codefontsize{12pt}]
+using(*\tikzmark{using}*) Vector = std::vector<double>;
+      \end{lstlisting}
+    
+      \nointerlineskip
+      \begin{tikzpicture}[overlay,remember picture, every node/.style={scale=0.8}, every path/.style={line width=1pt}]
+        \draw[<-,>=stealth] ([shift={(-.5cm,-5pt)}] using) %
+          .. controls +(0,-.35cm) and +(-.65cm,0) .. %
+          +(.65cm,-.35cm) node [right] {C++11 Syntax};
+        \draw[<-,>=stealth] ([shift={(-.75cm,-5pt)}] typedef) %
+          .. controls +(0,-.35cm) and +(-.5cm,0) .. %
+          +(.5cm,-.35cm) node [right] {C++03 Syntax};
+      \end{tikzpicture}
+  \end{onlyenv}
+
+  \begin{onlyenv}<2>
+
+    Also introduces alias templates \\
+    {\changefontsize{10pt}...they are actually aliases}
+
+    \vspace{.25cm}
+
+    \begin{lstlisting}[basicstyle=\codefontsize{11pt}]
+template <Typename T>
+using String_Map = std::map<std::string, T>;
+    \end{lstlisting}
+
+    \vfill
+
+    These are the exact same types
+
+    \begin{lstlisting}[basicstyle=\codefontsize{11pt},morekeywords={String_Map}]
+std::is_same<
+  String_Map<double>,
+  std::map<std::string, double>
+>::value(*\tikzmark{is-same-value}*)
+    \end{lstlisting}
+    
+    \nointerlineskip
+    \begin{tikzpicture}[overlay,remember picture]
+      \draw[pointy arrow] ([shift={(1mm,.12em)}] is-same-value) %
+        --
+        +(7cm,0) node [right, scale=0.9] {{\color{sgreen}true}};
+    \end{tikzpicture}
+
+  \end{onlyenv}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Types of templates : variables}
+
+  \begin{onlyenv}<1>
+    Template variables are not variables
+
+    \vspace{.5cm}
+
+    \begin{lstlisting}[basicstyle=\codefontsize{12pt}]
+template <typename T>
+constexpr bool is_double = 
+      std::is_same<T, double>::value;
+    \end{lstlisting}
+
+    \vspace{.5cm}
+
+    \begin{lstlisting}[basicstyle=\codefontsize{12pt}]
+is_double<int>;(*\tikzmark{is-double-int}*)
+is_double<double>;(*\tikzmark{is-double-double}*)
+    \end{lstlisting}
+
+    \nointerlineskip
+    \begin{tikzpicture}[overlay,remember picture]
+      \draw[pointy arrow,thin] ([shift={(1mm,.25ex)}] is-double-int) -- +(5cm,0)
+        coordinate (layer1)
+        node[right,scale=0.8] {{\color{sorange}false}};
+      \draw[transform canvas={yshift=.25ex},pointy arrow,thin] ([xshift=1mm] is-double-double) -- (is-double-double -| layer1)
+        node[right,scale=0.8] {{\color{sgreen}true}};
+    \end{tikzpicture}
+
+    \CPPFourteen
+  \end{onlyenv}
+
+  \begin{onlyenv}<2>
+    We used to do this
+
+    \vspace{.5cm}
+
+    \begin{lstlisting}[basicstyle=\codefontsize{12pt}]
+template <typename T>
+struct is_double
+{
+  static constexpr bool value = 
+        std::is_same<T, double>::value
+};
+    \end{lstlisting}
+
+    \vspace{.5cm}
+
+    \begin{lstlisting}[basicstyle=\codefontsize{12pt}]
+is_double<int>::value;(*\tikzmark{is-double-int}*)
+is_double<double>::value;(*\tikzmark{is-double-double}*)
+    \end{lstlisting}
+
+    \nointerlineskip
+    \begin{tikzpicture}[overlay,remember picture]
+      \draw[pointy arrow,thin] ([shift={(1mm,.25ex)}] is-double-int) -- +(3.25cm,0)
+        coordinate (layer1)
+        node[right,scale=0.8] {{\color{sorange}false}};
+      \draw[transform canvas={yshift=.25ex},pointy arrow,thin] ([xshift=1mm] is-double-double) -- (is-double-double -| layer1)
+        node[right,scale=0.8] {{\color{sgreen}true}};
+    \end{tikzpicture}
+    
+  \end{onlyenv}
+
+\end{frame}
+
+\begin{frame}
+
+  \begin{center}\fontsize{16pt}{16pt}\selectfont\color{Tropiteal}
+    Fundamental theorem of software engineering
+  \end{center}
+
+  \vspace{.25cm}
+  \begin{center}
+    \begin{minipage}{8cm}
+      We can solve any problem by introducing an extra level of indirection.
+    \end{minipage}
+  \end{center}
+
+  \vspace{.25cm}
+  \begin{flushright}\color{ICantExpress!50!WhiteTrash}
+    David J. Wheeler
+  \end{flushright}
+
+\end{frame}
+
+\begin{frame}
+
+  \begin{center}\fontsize{16pt}{16pt}\selectfont\color{Tropiteal}
+    Fundamental theorem of templates
+  \end{center}
+
+  \vspace{.25cm}
+  \begin{center}
+    \begin{minipage}{8cm}
+      Any finite problem can be solved with a finite number of structs.
+    \end{minipage}
+  \end{center}
+
+  \vspace{.25cm}
+  \begin{flushright}\color{ICantExpress!50!WhiteTrash}
+    Jonas R. Glesaaen
+  \end{flushright}
+
+\end{frame}
+
+\section{Template instantation}
+\frame{\sectionpage}
+
+\begin{frame}[fragile]
+  \frametitle{Template instantiation}
+
+  Templates are instantiated when they are used\\
+  {\itshape\changefontsize{10pt}(which is why linking can be counterintuitive)}
+
+  \vspace{.75cm}
+
+  Can also instantiate them explicitly
+
+  \vspace{.25cm}
+
+  \begin{lstlisting}[basicstyle=\codefontsize{10pt}]
+template bool is_empty(std::vector<double>);
+template class Linked_List<int>;
+template bool is_double<char>;
+  \end{lstlisting}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Template instantiation}
+
+  C++ will never instansiate anything it \\ doesn't 100\% need
+  {\itshape\changefontsize{10pt}(more or less true)}
+
+  \vspace{.25cm}
+
+  \begin{lstlisting}[basicstyle=\codefontsize{12pt}]
+template <typename T>
+struct invalid
+{
+  static_assert(sizeof(T) == 0);
+};
+  \end{lstlisting}
+
+  \begin{overlayarea}{\textwidth}{1cm}
+
+    \begin{onlyenv}<1>
+      \begin{lstlisting}[basicstyle=\codefontsize{12pt}]
+invalid<int> *inv_ptr;(*\tikzmark{inv-ptr}*)
+      \end{lstlisting}
+
+      \nointerlineskip
+      \begin{tikzpicture}[overlay,remember picture]
+        \draw[pointy arrow,thin] ([shift={(1mm,.25ex)}] inv-ptr) -- +(1.5cm,0)
+          node[right,scale=0.75] {\color{Tropiteal}Compiles};
+      \end{tikzpicture}
+    \end{onlyenv}
+
+    \begin{onlyenv}<2>
+      \begin{lstlisting}[basicstyle=\codefontsize{12pt}]
+invalid<int> inv_val;(*\tikzmark{inv-val}*)
+      \end{lstlisting}
+
+      \nointerlineskip
+      \begin{tikzpicture}[overlay,remember picture]
+        \draw[pointy arrow,thin] ([shift={(1mm,.25ex)}] inv-val) -- +(1.5cm,0)
+          node[right,scale=0.75] {\color{Marty}Compile error};
+      \end{tikzpicture}
+    \end{onlyenv}
+    
+  \end{overlayarea}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Template instantiation}
+
+    Does it compile?
+
+    \vspace{.25cm}
+
+  \begin{lstlisting}[basicstyle=\codefontsize{12pt}]
+template <typename T>
+struct invalid
+{
+  void foo()
+  {
+    static_assert(sizeof(T) == 0);
+  }
+};
+
+invalid<int> inv_var;(*\tikzmark{does-it-compile}*)
+  \end{lstlisting}
+
+  \begin{onlyenv}<2>
+    \nointerlineskip
+    \begin{tikzpicture}[overlay,remember picture]
+      \node[right] at ([shift={(1.5,.25ex)}] does-it-compile)
+         {\color{Tropiteal}Yes, it does};
+    \end{tikzpicture}
+  \end{onlyenv}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Template instantiation}
+
+    Does it compile?
+
+    \vspace{.25cm}
+
+  \begin{lstlisting}[basicstyle=\codefontsize{12pt}]
+template <typename T>
+struct invalid
+{
+  void foo()
+  {
+    static_assert(sizeof((*\tikzmark{char-begin}*)char) == 0);
+  }
+};
+
+invalid<int> inv_var;(*\tikzmark{does-it-compile}*)
+  \end{lstlisting}
+
+  \begin{onlyenv}<1>
+    \nointerlineskip
+    \begin{tikzpicture}[overlay,remember picture]
+      \draw[FeebleWeek,thick] ([yshift=-3pt] char-begin) -- +(1.05cm,0);
+    \end{tikzpicture}
+  \end{onlyenv}
+
+  \begin{onlyenv}<2>
+    \nointerlineskip
+    \begin{tikzpicture}[overlay,remember picture]
+      \draw[Marty,thick] ([yshift=-3pt] char-begin) -- +(1.05cm,0);
+      \node[right] at ([shift={(1.5,.25ex)}] does-it-compile)
+         {\color{Marty}No, it does not};
+    \end{tikzpicture}
+  \end{onlyenv}
+
+\end{frame}
+
+\section{Dependent types}
+\frame{\sectionpage}
+
+\begin{frame}[fragile]
+  \frametitle{Dependent types : typename}
+
+  A dependent name is a name that depends on an unknown template type
+
+  \vspace{.25cm}
+
+  \begin{overlayarea}{\textwidth}{3cm}
+    \begin{onlyenv}<1>
+      \begin{lstlisting}[basicstyle=\codefontsize{12pt}]
+template <typename T>
+void foo(int x)
+{
+  auto v = T::U(x);(*\tikzmark{dependent-1}*)
+}
+      \end{lstlisting}
+    \end{onlyenv}
+
+    \begin{onlyenv}<2>
+      \begin{lstlisting}[basicstyle=\codefontsize{12pt}]
+template <typename T>
+void foo(int x)
+{
+  auto v = typename T::U(x);(*\tikzmark{dependent-2}*)
+}
+      \end{lstlisting}
+    \end{onlyenv}
+  \end{overlayarea}
+  
+  \nointerlineskip
+  \begin{tikzpicture}[overlay,remember picture]
+    \only<1>{
+      \draw[pointy arrow,thin] ([shift={(1mm,.25ex)}] dependent-1) -- +(2cm,0)
+        node[right,scale=0.75] (correct) {Is it a function call?};
+      \draw[thin] ([shift={(5mm,.25ex)}] dependent-1) %
+        .. controls +(1cm,0) and +(-1cm,0) %
+        .. +(2cm-4mm,-1cm) node[right,scale=0.75] {Is it a variable declaration?};
+      \draw[thin, transform canvas={yshift=2pt}] (correct.south west) -- ([xshift=-1pt]correct.south east);
+    }
+    \only<2>{
+      \draw[pointy arrow,thin] ([shift={(1mm,.25ex)}] dependent-2) %
+        .. controls +(1.5cm,0) and +(0,.75cm) %
+        .. +(1.5cm,-.75cm) node[below,scale=0.75] {Ok, it is a declaration};
+      }
+  \end{tikzpicture}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Dependent types : template}
+
+  Can also have dependent names that are templates
+
+  \vspace{.25cm}
+
+  \begin{overlayarea}{\textwidth}{3cm}
+    \begin{onlyenv}<1>
+      \begin{lstlisting}[basicstyle=\codefontsize{12pt}]
+template <typename T, int N>
+void foo(int x)
+{
+  auto v = T::U<N>(x);(*\tikzmark{dependent-1}*)
+}
+      \end{lstlisting}
+    \end{onlyenv}
+
+    \begin{onlyenv}<2>
+      \begin{lstlisting}[basicstyle=\codefontsize{12pt}]
+template <typename T, int N>
+void foo(int x)
+{
+  auto v = T::template U<N>(x);(*\tikzmark{dependent-2}*)
+}
+      \end{lstlisting}
+    \end{onlyenv}
+
+    \begin{onlyenv}<3>
+      \begin{lstlisting}[basicstyle=\codefontsize{12pt}]
+template <typename T, int N>
+void foo(int x)
+{
+  auto v = typename T::template U<N>(x);(*\tikzmark{dependent-3}*)
+}
+      \end{lstlisting}
+    \end{onlyenv}
+
+  \end{overlayarea}
+  
+  \nointerlineskip
+  \begin{tikzpicture}[overlay,remember picture]
+    \only<1>{
+      \draw[pointy arrow,thin] ([shift={(1mm,.25ex)}] dependent-1) -- +(2cm,0)
+        node[right,scale=0.75] (correct) {Value comparison?};
+      \draw[thin] ([shift={(3mm,.25ex)}] dependent-1) %
+        .. controls +(1cm,0) and +(-1cm,0) %
+        .. +(2cm-2mm,-1cm) node[right,scale=0.75] {Function call?};
+      \draw[thin] ([shift={(3mm,.25ex)}] dependent-1) %
+        .. controls +(1cm,0) and +(-1cm,0) %
+        .. +(2cm-2mm,-2cm) node[right,scale=0.75] {Constructor call?};
+
+      \draw[thin, transform canvas={yshift=2pt}] (correct.south west) -- ([xshift=-1pt]correct.south east);
+    }
+    \only<2>{
+      \draw[pointy arrow,thin] ([shift={(-.6cm,-5pt)}] dependent-2) -- +(0,-1cm)
+        node[below,scale=0.75] (correct) {Ok, function call};
+    }
+    \only<3>{
+      \draw[pointy arrow,thin] ([shift={(-.6cm,-5pt)}] dependent-3) %
+        .. controls +(0,-.75cm) and +(0,.75cm) %
+        .. +(-2cm+.5mm,-1cm) node[below,scale=0.75] (correct) {Ok, type constructor};
+    }
+
+  \end{tikzpicture}
+\end{frame}
+
+\section{Template deduction}
+\frame{\sectionpage}
+
+\begin{frame}[fragile]
+  \frametitle{Template deduction : by value}
+
+  Most straight forward is to explicitly specify the template types
+
+  \begin{overlayarea}{\textwidth}{4cm}
+    \begin{onlyenv}<1-2>
+    \begin{lstlisting}[basicstyle=\codefontsize{12pt}]
+template <typename T, typename U>
+auto(*\tmark{return-type}*) max(T a, U b);
+
+max<int(*\tmark{type-1}*),int(*\tmark{type-2}*)>(1(*\tmark{arg-1}*), 5.(*\tmark{arg-2}*));
+    \end{lstlisting}
+    \end{onlyenv}
+
+    \nointerlineskip
+    \begin{tikzpicture}[overlay,remember picture]
+      \only<1>{
+        \draw[pointy arrow, thin] ([shift={(-4mm,-2pt)}] type-1) %
+          -- +(0,-1cm) node[below, scale=0.8] {{\color{sblue}T} = {\color{sgreen}int}};
+        \draw[pointy arrow, thin] ([shift={(-4mm,-2pt)}] type-2) %
+          .. controls +(0,-.75cm) and +(-.25cm,0) %
+          .. +(.25cm,-.75cm) node[right, scale=0.8] {{\color{sblue}U} = {\color{sgreen}int}};
+      }
+      \only<2>{
+        \coordinate (mid-arg) at ([xshift=-1.5mm] $(arg-1)!0.5!(arg-2)$);
+        \draw[pointy arrow, thin] ([shift={(-1mm,-2pt)}] arg-1) %
+          .. controls +(0,-.5cm) and +(0,.5cm) %
+          .. ([yshift=-1cm] mid-arg);
+        \draw[pointy arrow, thin] ([shift={(-2.5mm,-2pt)}] arg-2) %
+          .. controls +(0,-.5cm) and +(0,.5cm) %
+          .. ([yshift=-1cm] mid-arg) %
+          node[below, scale=0.8] {Irrelevant for type deduction};
+        \draw[pointy arrow, thin] ([shift={(-2.5mm,-2pt)}] return-type) %
+          .. controls +(.1cm,-.5cm) and +(-5cm,0) %
+          .. +(6cm,-.25cm) %
+          node[right,align=center, scale=0.8,yshift=-6.5mm] %
+            {Return type\\doesn't contribute\\to type deduction};
+      }
+    \end{tikzpicture}
+
+    \only<3>{%
+      \vspace{.5cm}
+
+      If a template is explicitly declared it does not enter into argument type
+      deduction
+    }
+    \end{overlayarea}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Template deduction : by value}
+
+  Every type that is not explicitly defined must be deduced from the function
+  arguments
+
+  \hspace{.25cm}
+
+  Deduction flow
+
+  \begin{enumerate} \changefontsize{12pt}\itshape
+    \item Explicit types are set
+    \item Each argument factors into type dediction separately
+    \begin{itemize} \changefontsize{10pt}\itshape
+      \item This happens "in parallel"
+      \item Resulting deduction is either full or partial
+    \end{itemize}
+    \item The deduced types are checked for consistency
+    \item Template checks that all types are fully deduced
+  \end{enumerate}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Template deduction : by value}
+
+  \begin{overlayarea}{\textwidth}{3cm}
+    \begin{onlyenv}<1-2>
+      \begin{lstlisting}[basicstyle=\codefontsize{12pt}]
+template <typename T>
+T max(T a, T b);
+
+max(4(*\tmark{arg-1}*), 5.(*\tmark{arg-2}*));
+      \end{lstlisting}
+    \end{onlyenv}
+    \begin{onlyenv}<3>
+      \begin{lstlisting}[basicstyle=\codefontsize{12pt}]
+template <typename T>
+T max(T a, T b);
+
+max<double(*\tikzmark{type-arg}*)>(4(*\tmark{arg-3}*), 5.(*\tmark{arg-4}*));
+        \end{lstlisting}
+    \end{onlyenv}
+  \end{overlayarea}
+
+  \vspace{2cm}
+
+  \nointerlineskip
+  \begin{tikzpicture}[overlay,remember picture]
+    \only<2>{
+      \draw[pointy arrow, thin] ([shift={(-1mm,-2pt)}] arg-1) %
+        .. controls +(0,-2cm) and +(-2cm,0) %
+        .. +(2cm, -2cm) %
+        node[right, scale=0.8] (node-1) {{\color{sblue}T} = {\color{sgreen}int}};
+      \draw[pointy arrow, thin] ([shift={(-2.5mm,-2pt)}] arg-2) %
+        .. controls +(0,-1cm) and +(-1cm,0) %
+        .. ([yshift=1cm] node-1.west) %
+        node[right, scale=0.8] (node-2) {{\color{sblue}T} = {\color{sgreen}double}};
+
+      \draw[%
+        thick,
+        decorate,
+        decoration={brace,amplitude=5pt}
+      ] (node-2.north east) -- (node-1.south east -| node-2.east) %
+        node[midway, right, scale=0.8, xshift=2mm, font=\color{Marty}] {Incompatible};
+    }
+
+      \draw[pointy arrow, thin] ([shift={(-4mm,-2pt)}] type-1) %
+        -- +(0,-1cm) node[below, scale=0.8] {{\color{sblue}T} = {\color{sgreen}int}};
+      \draw[pointy arrow, thin] ([shift={(-4mm,-2pt)}] type-2) %
+        .. controls +(0,-.75cm) and +(-.25cm,0) %
+        .. +(.25cm,-.75cm) node[right, scale=0.8] {{\color{sblue}U} = {\color{sgreen}int}};
+
+    \only<3>{
+      \draw[pointy arrow, thin] ([shift={(-7.5mm,-2pt)}] type-arg) %
+        -- +(0,-2cm) node[below, scale=0.8] {{\color{sblue}T} = {\color{sgreen}double}};
+      \draw[pointy arrow, thin] ([shift={(-1mm,-2pt)}] arg-3) %
+        .. controls +(0,-1cm) and +(-2cm,0) %
+        .. +(2cm, -1cm) %
+        node[right, scale=0.8] (irrelevant) {Irrelevant};
+      \draw[pointy arrow, thin] ([shift={(-2.5mm,-2pt)}] arg-4) %
+        .. controls +(0,-1cm) and +(-1cm,0) %
+        .. (irrelevant.west);
+    }
+  \end{tikzpicture}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Template deduction : by value}
+
+  Puzzle \#1
+
+  \begin{lstlisting}[basicstyle=\codefontsize{10pt}]
+template <typename T, bool B>
+struct My_Type{};
+
+template <typename T, typename U>
+void foo(
+  My_Type<T, !std::is_same_v<T, U>>,
+  My_Type<U, sizeof(U) == sizeof(T)>);
+  \end{lstlisting}
+
+  \begin{onlyenv}<1>
+    \begin{lstlisting}[basicstyle=\codefontsize{10pt}]
+int main()
+{
+  foo(My_Type<int,true>{}, 
+      My_Type<double,true>{});
+}
+      
+    \end{lstlisting}
+  \end{onlyenv}
+
+  \begin{onlyenv}<2>
+    \begin{lstlisting}[basicstyle=\codefontsize{10pt}]
+int main()
+{
+  foo(My_Type<int,true>{}, 
+      My_Type<unsigned,true>{});
+}
+      
+    \end{lstlisting}
+  \end{onlyenv}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Template deduction : by value}
+
+    Puzzle \#2
+
+  \begin{lstlisting}[basicstyle=\codefontsize{10pt}]
+template <typename T, typename U>
+void foo(
+  std::array<T, sizeof(U)>,
+  std::array<U, sizeof(T)>);
+  \end{lstlisting}
+
+  \begin{onlyenv}<1>
+  \begin{lstlisting}[basicstyle=\codefontsize{10pt}]
+int main()
+{
+  foo(std::array<int, 4>,
+      std::array<double, 4>);
+}
+    
+  \end{lstlisting}
+  \end{onlyenv}
+
+  \begin{onlyenv}<2>
+    \begin{lstlisting}[basicstyle=\codefontsize{10pt}]
+int main()
+{
+  foo(std::array<int, 8>,
+      std::array<double, 4>);
+}
+      
+    \end{lstlisting}
+  \end{onlyenv}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Template deduction : references}
+
+  \begin{columns}
+    \column{.6\textwidth}
+    {\changefontsize{16pt}{\color{Tropiteal}lvalues} (\&)}\\
+    \hspace{5mm}anything with a tag\\
+    \hspace{5mm}anything that will be missed
+
+    \vspace{.5cm}
+
+    {\changefontsize{16pt}{\color{Tropiteal}rvalues} (\&\&)\tmark{rval-ref}}\\
+    \hspace{5mm}intermediate values\\
+    \hspace{5mm}things no one will miss
+
+    \column{.4\textwidth}
+
+    \begin{tikzpicture}[remember picture]
+      \node[draw=Tropiteal] (col-2) {%
+        \begin{minipage}{0.86\textwidth}
+          Reference collapse
+
+          \vspace{.5cm}
+
+          \& + \& = \&\\
+          \&\& + \& = \&\\
+          \& + \&\& = \&\\
+          \&\& + \&\& = \&\&
+        \end{minipage}};
+    \end{tikzpicture}
+  \end{columns}
+
+  \vspace{1cm}
+
+  \nointerlineskip
+  \begin{tikzpicture}[overlay,remember picture]
+    \draw[pointy arrow, rounded corners=10pt] %
+    ([shift={(1mm, 2mm)}] rval-ref) %
+    -| +(3cm, -2cm) %
+    node[below, scale=0.8,align=center] (ref-desc) {Also called\\universal refrences};
+
+    \draw[pointy arrow,rounded corners] ([yshift=-1mm] col-2.south) |- (ref-desc.east);
+  \end{tikzpicture}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Template deduction : references}
+
+  Template deduction uses reference collapse so that the function signature
+  matches the call
+
+  \begin{overlayarea}{\textwidth}{5cm}
+    \begin{onlyenv}<1>
+      \begin{lstlisting}[basicstyle=\codefontsize{12pt}]
+template <typename T>
+auto foo(T &);
+      \end{lstlisting}
+    \end{onlyenv}
+
+    \begin{onlyenv}<2>
+      \begin{lstlisting}[basicstyle=\codefontsize{12pt}]
+template <typename T>
+auto foo(T const &);
+      \end{lstlisting}
+    \end{onlyenv}
+
+    \begin{onlyenv}<3>
+      \begin{lstlisting}[basicstyle=\codefontsize{12pt}]
+template <typename T>
+auto foo(T &&);
+      \end{lstlisting}
+    \end{onlyenv}
+
+
+    \begin{lstlisting}[basicstyle=\codefontsize{12pt}]
+int i;
+
+foo(i);(*\tmark{ex-1}*)
+foo(std::move(i));(*\tmark{ex-2}*)
+foo(5);(*\tmark{ex-3}*)
+    \end{lstlisting}
+  \end{overlayarea}
+
+  \nointerlineskip
+  \begin{tikzpicture}[overlay,remember picture]
+    \only<1-2>{
+      \draw[pointy arrow] ([shift={(1mm,1mm)}] ex-1) -- +(5cm,0) %
+      node[right, scale=0.8] (node-1) {Ok! {\color{sblue}T} = {\color{sgreen}int}};
+    }
+    \only<1>{
+      \draw[pointy arrow, transform canvas={yshift=1mm}] ([xshift=1mm] ex-2) -- (ex-2 -| node-1.west) %
+      node[right, scale=0.8, font=\color{Marty}] {Compile error};
+      \draw[pointy arrow, transform canvas={yshift=1mm}] ([xshift=1mm] ex-3) -- (ex-3 -| node-1.west) %
+      node[right, scale=0.8, font=\color{Marty}] {Compile error};
+    }
+    \only<2>{
+      \draw[pointy arrow, transform canvas={yshift=1mm}] ([xshift=1mm] ex-2) -- (ex-2 -| node-1.west) %
+      node[right, scale=0.8] {Ok! {\color{sblue}T} = {\color{sgreen}int}};
+      \draw[pointy arrow, transform canvas={yshift=1mm}] ([xshift=1mm] ex-3) -- (ex-3 -| node-1.west) %
+      node[right, scale=0.8] {Ok! {\color{sblue}T} = {\color{sgreen}int}};
+    }
+    \only<3>{
+      \draw[pointy arrow] ([shift={(1mm,1mm)}] ex-1) -- +(5cm,0) %
+      node[right, scale=0.8] (node-1) {Ok! {\color{sblue}T} = {\color{sgreen}int}\&};
+      \draw[pointy arrow, transform canvas={yshift=1mm}] ([xshift=1mm] ex-2) -- (ex-2 -| node-1.west) %
+      node[right, scale=0.8] {Ok! {\color{sblue}T} = {\color{sgreen}int}};
+      \draw[pointy arrow, transform canvas={yshift=1mm}] ([xshift=1mm] ex-3) -- (ex-3 -| node-1.west) %
+      node[right, scale=0.8] {Ok! {\color{sblue}T} = {\color{sgreen}int}};
+    }
+  \end{tikzpicture}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Template deduction : variadic}
+
+  Variadic template packs can hold any number of types
+
+  \vspace{.25cm}
+  
+  \begin{lstlisting}[basicstyle=\codefontsize{12pt}]
+template <typename... Tp>
+auto foo(Tp...);
+
+foo();(*\tmark{ex-0}*)
+foo(3, 1l, 'a');(*\tmark{ex-1}*)
+foo<double>(3, 1l, 'a');(*\tmark{ex-2}*)
+foo<int,int,int>(2,4);(*\tmark{ex-3}*)
+  \end{lstlisting}
+
+  \nointerlineskip
+  \begin{tikzpicture}[overlay,remember picture]
+    \draw[pointy arrow] ([shift={(1mm,1mm)}] ex-1) -- +(2.7cm,0) %
+      node[right, scale=0.8] (node-1) {%
+        {\color{sblue}Tp} = <{\color{sgreen}int}, {\color{sgreen}long}, {\color{sgreen}char}>};
+    \draw[pointy arrow, transform canvas={yshift=1mm}] ([xshift=1mm] ex-2) -- (ex-2 -| node-1.west) %
+      node[right, scale=0.8] {
+        {\color{sblue}Tp} = <{\color{sgreen}double}, {\color{sgreen}long}, {\color{sgreen}char}>};
+    \draw[pointy arrow, transform canvas={yshift=1mm}] ([xshift=1mm] ex-3) -- (ex-3 -| node-1.west) %
+      node[right, scale=0.8, font=\color{Marty}] (node-3) {Compile error};
+    \draw[pointy arrow, transform canvas={yshift=1mm}] ([xshift=1mm] ex-0) -- (ex-0 -| node-1.west) %
+      node[right, scale=0.8] {
+        {\color{sblue}Tp} = <>};
+
+    \coordinate (node-3-west) at (node-3.west);
+    \node[
+      scale=0.6,
+      font=\color{Marty},
+      below of=node-3-west,
+      anchor=west,
+      transform canvas={yshift=2mm,xshift=.5mm}
+    ] {Expected 3 arguments...};
+  \end{tikzpicture}
+
+  \vspace{.25cm}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Template deduction : variadic}
+
+  Template packs gobble up everything to the right
+
+  \vspace{.5cm}
+  
+  \begin{lstlisting}[basicstyle=\codefontsize{12pt}]
+template <typename T, typename... Tp>
+auto foo(Tp..., T);
+
+foo(3, 1l, 'a');(*\tmark{ex-1}*)
+  \end{lstlisting}
+
+  \vspace{1cm}
+
+  \begin{lstlisting}[basicstyle=\codefontsize{12pt}]
+foo<char, int, long>(
+  3, 1l, 'a');(*\tmark{ex-2}*)
+  \end{lstlisting}
+
+  \nointerlineskip
+  \begin{tikzpicture}[overlay,remember picture]
+    \draw[pointy arrow] ([shift={(1mm,1mm)}] ex-1) -- +(2.7cm,0) %
+      node[right, scale=0.8, align=left, yshift=-6mm] (node-1) {%
+        {\color{Marty} Compile error}\\
+        {\changefontsize{10}\color{Marty}Cannot determine T}\\
+        {\changefontsize{10}{\color{sblue}Tp} = <{\color{sgreen}int}, {\color{sgreen}long}, {\color{sgreen}char}>}};
+    \draw[pointy arrow, transform canvas={yshift=1mm}] ([xshift=1mm] ex-2) -- (ex-2 -| node-1.west) %
+      node[right, scale=0.8, align=left,yshift=-3mm] {
+        {\color{sblue}T} = {\color{sgreen}double}\\
+        {\color{sblue}Tp} = <{\color{sgreen}int}, {\color{sgreen}long}>};
+  \end{tikzpicture}
+
+  \vspace{.25cm}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Template deduction : classes}
+
+  Introduced in C++17, can now write
+
+  \vspace{.25cm}
+
+  \begin{overlayarea}{\textwidth}{5cm}
+  \begin{lstlisting}[basicstyle=\codefontsize{12pt}]
+template <typename T>
+class My_Class
+{
+public:
+  My_Class(T val);
+};
+  \end{lstlisting}
+  \begin{onlyenv}<2>
+  \begin{lstlisting}[basicstyle=\codefontsize{12pt},morekeywords={My_Class}]
+My_Class(double) -> My_Class<int>;(*\tmark{deduct-guide}*)
+  \end{lstlisting}
+  \end{onlyenv}
+  \end{overlayarea}
+
+  \begin{lstlisting}[basicstyle=\codefontsize{12pt},morekeywords={My_Class}]
+My_Class inst {5.0};(*\tmark{inst-1}*)
+  \end{lstlisting}
+
+  \nointerlineskip
+  \begin{tikzpicture}[overlay,remember picture]
+    \only<1>{
+      \draw[pointy arrow] ([shift={(1mm,1.5mm)}] inst-1) -- +(1cm,0) %
+        node[right,scale=0.8] {{\color{sgreen}My\_Class}<{\color{sgreen}double}>};
+    }
+    \only<2>{
+      \draw[pointy arrow] ([shift={(1mm,1.5mm)}] inst-1) -- +(1cm,0) %
+        node[right,scale=0.8] {{\color{sgreen}My\_Class}<{\color{sgreen}int}>};
+
+      \draw[pointy arrow] ([shift={(-2cm, 5mm)}] deduct-guide) -- +(0,1cm)
+        node[above,scale=0.8,xshift=1cm] {Deduction guide};
+    }
+  \end{tikzpicture}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Template deduction : classes}
+
+  More or less syntactic sugar for this
+
+  \vspace{.25cm}
+
+  \begin{lstlisting}[basicstyle=\codefontsize{12pt}]
+template <typename T>
+class My_Class
+{ ... };
+  \end{lstlisting}
+
+  \begin{lstlisting}[basicstyle=\codefontsize{12pt}, morekeywords={My_Class}]
+template <typename T>
+auto make_cls(T t)
+{
+  return My_Class<T>{t};
+}
+
+auto inst = make_cls(5.0);
+  \end{lstlisting}
+
+\end{frame}
+
+\section{Template specialisation}
+\frame{\sectionpage}
+
+\begin{frame}[fragile]
+  \frametitle{Template specialisation : full}
+
+  Can specialise templates
+
+  \begin{overlayarea}{\textwidth}{6.5cm}
+  \begin{lstlisting}[basicstyle=\codefontsize{12pt}]
+template <typename T>
+T null()
+{
+  return T{0};
+}
+  \end{lstlisting}
+
+  \begin{onlyenv}<1>
+  \begin{lstlisting}[basicstyle=\codefontsize{12pt}]
+template <>
+std::string null<std::string>()
+{
+  return "";
+}
+  \end{lstlisting}
+  \end{onlyenv}
+
+  \begin{onlyenv}<2>
+  \begin{lstlisting}[basicstyle=\codefontsize{12pt}]
+template <>
+std::string null<>()
+{
+  return "";
+}
+  \end{lstlisting}
+  \end{onlyenv}
+
+  \begin{onlyenv}<3>
+  \begin{lstlisting}[basicstyle=\codefontsize{12pt}]
+template <>
+std::string null()
+{
+  return "";
+}
+  \end{lstlisting}
+  \end{onlyenv}
+
+  \begin{onlyenv}<4-5>
+  \begin{lstlisting}[basicstyle=\codefontsize{12pt}]
+template <>
+std::string null() = delete;
+  \end{lstlisting}
+
+  \end{onlyenv}
+  \only<5>{
+    \vspace{.25cm}
+
+    These are all examples of full specialisations\\
+    {\itshape\changefontsize{10pt}(not all that interesting)}
+  }
+
+  \end{overlayarea}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Template specialisation : partial}
+
+  {\changefontsize{12pt}
+  Partial template specialisations: pattern matching \textbackslash{}o/}
+
+  \begin{overlayarea}{\textwidth}{5cm}
+  \begin{lstlisting}[basicstyle=\codefontsize{10pt}]
+template <typename T>
+struct is_pointer_type(*\tikzmark{template-1}*)
+{
+  static constexpr bool value = false;
+};
+  \end{lstlisting}
+
+  \begin{onlyenv}<1-5>
+  \begin{lstlisting}[basicstyle=\codefontsize{10pt}]
+template <typename T>
+struct is_pointer_type<T*>(*\tikzmark{template-2}*)
+{
+  static constexpr bool value = true;
+};
+  \end{lstlisting}
+  \end{onlyenv}
+
+  \begin{onlyenv}<6>
+  \begin{lstlisting}[basicstyle=\codefontsize{10pt}]
+template <typename T>
+struct is_pointer_type<std::shared_ptr<T>>(*\tikzmark{template-3}*)
+{
+  static constexpr bool value = true;
+};
+  \end{lstlisting}
+  \end{onlyenv}
+  \end{overlayarea}
+
+  \begin{overlayarea}{\textwidth}{2cm}
+    \begin{onlyenv}<1-2>
+      \begin{lstlisting}[basicstyle=\codefontsize{10pt}]
+is_pointer_type<int>::value;(*\tmark{ex-1}*)
+      \end{lstlisting}
+    \end{onlyenv}
+    \begin{onlyenv}<3>
+      \begin{lstlisting}[basicstyle=\codefontsize{10pt}]
+is_pointer_type<int*>::value;(*\tmark{ex-2}*)
+      \end{lstlisting}
+    \end{onlyenv}
+    \begin{onlyenv}<4>
+      \begin{lstlisting}[basicstyle=\codefontsize{10pt}]
+is_pointer_type<int**>::value;(*\tmark{ex-3}*)
+      \end{lstlisting}
+    \end{onlyenv}
+    \begin{onlyenv}<5-6>
+      \begin{lstlisting}[basicstyle=\codefontsize{10pt}]
+is_pointer_type<
+  std::shared_ptr<int>>::value;(*\tmark{ex-4}*)
+      \end{lstlisting}
+    \end{onlyenv}
+  \end{overlayarea}
+
+  \nointerlineskip
+  \begin{tikzpicture}[overlay,remember picture]
+    \coordinate (margin) at ([xshift=-2cm] current page.south east);
+    \only<2>{
+      \draw[pointy arrow,transform canvas={yshift=1mm}] ([xshift=1mm] ex-1) -- (ex-1 -| margin)
+        node[right,scale=0.8,font=\color{sorange}] (value) {false};
+      \draw[pointy arrow, rounded corners] ([shift={(1mm,1mm)}] template-1) -| (value);
+      \path[transform canvas={yshift=1mm}] (template-1) -- (template-1 -| value)
+        node[midway, above, scale=0.8] {{\color{sblue}T} = {\color{sgreen}int}};
+    }
+    \only<3>{
+      \draw[pointy arrow,transform canvas={yshift=1mm}] ([xshift=1mm] ex-2) -- (ex-2 -| margin)
+        node[right,scale=0.8,font=\color{sgreen}] (value) {true};
+      \draw[pointy arrow, rounded corners] ([shift={(1mm,1mm)}] template-2) -| (value);
+      \path[transform canvas={yshift=1mm}] (template-2) -- (template-2 -| value)
+        node[midway, above, scale=0.8] {{\color{sblue}T} = {\color{sgreen}int}};
+    }
+    \only<4>{
+      \draw[pointy arrow,transform canvas={yshift=1mm}] ([xshift=1mm] ex-3) -- (ex-3 -| margin)
+        node[right,scale=0.8,font=\color{sgreen}] (value) {true};
+      \draw[pointy arrow, rounded corners] ([shift={(1mm,1mm)}] template-2) -| (value);
+      \path[transform canvas={yshift=1mm}] (template-2) -- (template-2 -| value)
+        node[midway, above, scale=0.8] {{\color{sblue}T} = {\color{sgreen}int}*};
+    }
+    \only<5>{
+      \draw[pointy arrow,transform canvas={yshift=1mm}] ([xshift=1mm] ex-4) -- (ex-4 -| margin)
+        node[right,scale=0.8,font=\color{sorange}] (value) {false};
+      \draw[pointy arrow, rounded corners] ([shift={(1mm,1mm)}] template-1) -| (value);
+      \path[transform canvas={yshift=1mm}] (template-1) -- (template-1 -| value)
+        node[midway, above, scale=0.8] {{\color{sblue}T} = %
+            {\color{sblue}std}::{\color{sgreen}shared\_ptr}<{\color{sgreen}int}>};
+    }
+    \only<6>{
+      \draw[pointy arrow,transform canvas={yshift=1mm}] ([xshift=1mm] ex-4) -- (ex-4 -| margin)
+        node[right,scale=0.8,font=\color{sgreen}] (value) {true};
+      \draw[pointy arrow, rounded corners] ([shift={(1mm,1mm)}] template-3) -| (value);
+      \path[transform canvas={yshift=1mm}] (template-3) -- (template-3 -| value)
+        node[midway, above, scale=0.8] {{\color{sblue}T} = {\color{sgreen}int}};
+    }
+
+  \end{tikzpicture}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Template specialisation : partial}
+
+    {\changefontsize{12pt}
+    Template deduction picks out the most specialised template}
+
+    \vspace*{-.25cm}
+  
+    \begin{overlayarea}{\textwidth}{5cm}
+    \begin{lstlisting}[basicstyle=\codefontsize{10pt}]
+template <typename T>
+struct num_ptr
+{ static constexpr std::size_t value = 0; };
+  \end{lstlisting}
+
+  \begin{onlyenv}<1-3>
+    \begin{lstlisting}[basicstyle=\codefontsize{10pt}]
+template <typename T>
+struct num_ptr<T*>(*\tmark{template-1}*)
+{ ... value = 1; };
+
+template <typename T>
+struct num_ptr<T**>(*\tmark{template-2}*)
+{ ... value = 2; };
+    \end{lstlisting}
+  \end{onlyenv}
+
+  \begin{onlyenv}<4->
+    \begin{lstlisting}[basicstyle=\codefontsize{10pt}]
+template <typename T>
+struct num_ptr<T*>
+{ ... value = 1 + num_ptr<T>::value; };
+    \end{lstlisting}
+  \end{onlyenv}
+
+  \begin{onlyenv}<5->
+    \begin{lstlisting}[basicstyle=\codefontsize{10pt}]
+template <typename T>
+struct num_ptr<std::shared_ptr<T>>
+{ ... value = 1 + num_ptr<T>::value; };
+    \end{lstlisting}
+  \end{onlyenv}
+
+  \end{overlayarea}
+
+  \begin{overlayarea}{\textwidth}{2cm}
+    \begin{onlyenv}<1-3>
+      \begin{lstlisting}[basicstyle=\codefontsize{10pt}]
+num_ptr<int*>::value;(*\tmark{ex-1}*)
+num_ptr<int**>::value;(*\tmark{ex-2}*)
+      \end{lstlisting}
+    \end{onlyenv}
+
+    \begin{onlyenv}<6->
+      \begin{lstlisting}[basicstyle=\codefontsize{10pt}]
+num_ptr<std::shared_ptr<int**>***>::value;(*\tmark{ex-3}*)
+      \end{lstlisting}
+    \end{onlyenv}
+  \end{overlayarea}
+    
+  \nointerlineskip
+  \begin{tikzpicture}[overlay,remember picture]
+    \coordinate (margin) at ([xshift=-5cm] current page.south east);
+    \only<2>{
+      \draw[pointy arrow,transform canvas={yshift=1mm}] ([xshift=1mm] ex-1) -- (ex-1 -| margin)
+        node[right,scale=0.8] (value) {{\color{sblue}value} = 1};
+      \draw[pointy arrow, rounded corners] ([shift={(1mm,1mm)}] template-1) -| (value);
+      \path[transform canvas={yshift=1mm}] (template-1) -- (template-1 -| value)
+        node[midway, above, scale=0.8] {{\color{sblue}T} = {\color{sgreen}int}};
+    }
+    \only<3>{
+      \draw[pointy arrow,transform canvas={yshift=1mm}] ([xshift=1mm] ex-2) -- (ex-2 -| margin)
+        node[right,scale=0.8] (value) {{\color{sblue}value} = 2};
+      \draw[pointy arrow, rounded corners] ([shift={(1mm,1mm)}] template-2) -| (value);
+      \path[transform canvas={yshift=1mm}] (template-2) -- (template-2 -| value)
+        node[midway, above, scale=0.8] {{\color{sblue}T} = {\color{sgreen}int}};
+    }
+    \only<7>{
+      \draw[pointy arrow,transform canvas={yshift=1mm}] ([xshift=1mm] ex-3) -- +(.5cm,0)
+        node[right,scale=0.8] (value) {{\color{sblue}value} = 6};
+
+      \node[anchor=south] at ([yshift=.25cm] current page.south) %
+        [font=\itshape\changefontsize{10pt}] {I am getting ahead of myself};
+    }
+  \end{tikzpicture}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Template specialisation : partial}
+
+  Only class templates have partial specialisation
+
+  \vspace{1cm}
+
+  Cannot have it for function templates due to overloading
+
+\end{frame}
+
+\begin{frame}
+
+  \begin{center}\fontsize{16pt}{16pt}\selectfont\color{Tropiteal}
+    Fundamental theorem of templates
+  \end{center}
+
+  \vspace{.25cm}
+  \begin{center}
+    \begin{minipage}{8cm}
+      Any finite problem can be solved with a finite number of structs.
+    \end{minipage}
+  \end{center}
+
+  \vspace{.25cm}
+  \begin{flushright}\color{ICantExpress!50!WhiteTrash}
+    Jonas R. Glesaaen
+  \end{flushright}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Template specialisation : partial}
+
+  \begin{lstlisting}[basicstyle=\codefontsize{10pt}]
+template <typename T>
+struct function_impl
+{ 
+  static auto _(T t) { ... };
+};
+
+template <typename T>
+struct function_impl<T[]>
+{
+  static auto _(T[] t) { ... };
+};
+
+template <typename T>
+auto foo(T t)
+{
+  return function_impl<T>::_(t);
+}
+  \end{lstlisting}
+
+\end{frame}
+
+\section{Summary and wrap up}
+\frame{\sectionpage}
+
+\begin{frame}[fragile]
+  \frametitle{Template feature table}
+
+  \vspace*{-.5cm}
+
+  \begin{tikzpicture}[remember picture,
+    yes/.style={
+      draw, scale=0.75, fill=AtomicBikini,
+      text width=1.75cm,align=center
+    },
+    no/.style={
+      draw, scale=0.75, fill=Marty,
+      text width=1.75cm,align=center
+    }]
+    \matrix [
+    nodes={font=\itshape\changefontsize{12pt}},
+    column sep=.75cm,
+    ] (complexity)
+    {
+      & \node[align=center] {Type\\deduction}; & \node[align=center] {Full\\spec.}; & \node[align=center] {Partial\\spec.}; \\
+      \node {Function}; & \node[yes] {Yes}; & \node[yes] {Yes}; & \node[no] {No}; \\
+      \node {Class}; & \node[yes] {C++17}; & \node[yes] {Yes}; & \node[yes] {Yes}; \\
+      \node {Alias}; & \node[no] {No}; & \node[no] {No}; & \node[no] {No}; \\
+      \node {Variable}; & \node[no] {No}; & \node[yes] {Yes}; & \node[yes] {Yes}; \\
+    };
+  \end{tikzpicture}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{References}
+
+  \frametitle{Resources}
+  \bibliographystyle{plain}
+  {\footnotesize
+    \bibliography{ref}}
+
+\end{frame}
+
+\begin{frame}
+
+  \begin{center}
+
+    {\changefontsize{28pt}\color{Tropiteal}Thanks!}
+
+    \vspace{1cm}
+
+    \begin{tikzpicture}
+      \node[scale=0.075] (cat) {\includegraphics{figures/Octocat.png}};
+      \node[right of=cat, anchor=west, font=\changefontsize{18pt}] {Irubataru/talks};
+    \end{tikzpicture}
+  \end{center}
+  
+\end{frame}
+
+\end{document}
