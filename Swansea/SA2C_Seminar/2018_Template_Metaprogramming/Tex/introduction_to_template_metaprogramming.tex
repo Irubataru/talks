@@ -1,0 +1,1084 @@
+\documentclass[14pt]{beamer}
+\usepackage[T1]{fontenc}
+\usepackage{url}
+\usepackage{xcolor}
+\usepackage{amsmath,varwidth}
+\usepackage{tikz}
+\usepackage{listings,algpseudocode}
+\usepackage[quiet]{mathspec}
+\usepackage{forest}
+
+\setmainfont[
+ItalicFont={Yanone Kaffeesatz Light},
+Scale=1.3,
+LetterSpace=2.0
+]{Yanone Kaffeesatz Bold}
+
+\setmonofont{Fira Code}
+
+\input{definitions/functions.tex}
+\input{definitions/style.tex}
+\input{definitions/definitions.tex}
+
+\usefonttheme{serif}
+
+% Turn off page numbering
+\setbeamertemplate{footline}{}
+
+\title{Introduction to template metaprogramming}
+\author{\texorpdfstring{%
+    Jonas Rylund Glesaaen\newline%
+    \fontsize{12pt}{12pt}\selectfont\texttt{jonas@glesaaen.com}%
+  }{%
+    Jonas Rylund Glesaaen}}
+
+\date{\texorpdfstring{%
+    SA{\color{SA2COrange}\textsuperscript{2}}C Seminar Series\newline{}February 23rd 2018%
+  }{%
+    February 23rd 2018}}
+
+\begin{document}
+
+\nocite{*}
+
+\frame{\titlepage}
+
+\begin{frame}{Talk outline}
+
+  \begin{enumerate} \setlength\itemsep{.5em}
+    \item The basics, metaprogramming vocabulary
+    \item Tools and libraries
+    \item Expression templates
+  \end{enumerate}
+  
+\end{frame}
+
+\section{The basics}
+\frame{\sectionpage}
+
+\begin{frame}[fragile]
+  \frametitle{Vocabulary: metadata}
+
+  A constant "value" accessible by calling \code{::\namespace{value}}
+
+  \begin{overlayarea}{\textwidth}{4cm}
+  \begin{onlyenv}<1>
+  \begin{lstlisting}[basicstyle=\codefontsize{12pt}]
+struct a_value
+{
+  constexpr int value = ...;
+};
+  \end{lstlisting}
+  \end{onlyenv}
+
+  \begin{onlyenv}<2>
+  \begin{lstlisting}[basicstyle=\codefontsize{12pt}]
+struct a_value
+{
+  using type = a_value;(*\tmark{self-ref}*)
+  constexpr int value = ...;
+};
+  \end{lstlisting}
+  \end{onlyenv}
+
+  \begin{lstlisting}[basicstyle=\codefontsize{12pt}]
+a_value::value;
+  \end{lstlisting}
+
+  \only<1>{
+    \vspace{.5cm}
+
+    Made easier with C++14 template variables\\
+    {\itshape\changefontsize{10pt}(we will not use these here though, for a reason)}
+  }
+  \end{overlayarea}
+
+  \begin{onlyenv}<2>
+    \nointerlineskip
+    \begin{tikzpicture}[overlay,remember picture]
+      \draw[{Stealth}-] ([shift={(1mm,1mm)}] self-ref) -- +(2cm,0)
+        node[right,scale=0.8,align=left,yshift=-3mm] {Usually self\\referential};
+    \end{tikzpicture}
+  \end{onlyenv}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Vocabulary: metafunction}
+
+  A "function" that takes its arguments through templates and stores the result
+  in \code{::\namespace{type}}
+
+  \vspace{.5cm}
+
+  \begin{lstlisting}[basicstyle=\codefontsize{12pt}]
+struct a_function
+{
+  template <int x, int y>
+  using type = ...;
+};
+
+a_function<5, 6>::type;
+  \end{lstlisting}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Vocabulary: metafunction class}
+
+  A function object that can itself be treated as a type. Function call accessed
+  by a nested metafunction named \code{::\namespace{apply}}
+
+  \vspace{.25cm}
+
+  \begin{lstlisting}[basicstyle=\codefontsize{12pt}]
+struct a_metafunction_class
+{
+  template <typename Arg1, typename Arg2>
+  struct apply
+  {
+    ...
+  };
+};
+  \end{lstlisting}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Example: Simple algebra}
+
+  \begin{lstlisting}[basicstyle=\codefontsize{9pt}]
+template <int N>
+struct integer
+{
+  using type = integer<N>;
+  static constexpr int value = N;(*\tmark{metadata}*)
+};
+  \end{lstlisting}
+
+  \begin{lstlisting}[
+    basicstyle=\codefontsize{9pt},
+    morekeywords={integer}]
+template <typename Arg1, typename Arg2>
+struct multiply
+{
+  using type =(*\tmark{metafunction}*)
+    integer<Arg1::value * Arg2::value>;
+};
+  \end{lstlisting}
+
+  \begin{lstlisting}[
+    basicstyle=\codefontsize{9pt},
+    morekeywords={integer,multiply}]
+using five = integer<5>;
+using m_nine = integer<-9>;
+
+constexpr auto result = 
+  multiply<five, m_nine>::type::value;
+  \end{lstlisting}
+
+  \begin{onlyenv}<2>
+    \nointerlineskip
+    \begin{tikzpicture}[overlay,remember picture]
+      \draw[pointy arrow]
+        ([shift={(1mm,1mm)}] metadata) -- +(1.75cm,0)
+        node[right,scale=0.8] (label-1) {metadata};
+      \draw[pointy arrow,transform canvas={yshift=1mm}] 
+        ([xshift=3mm] metafunction) -- (metafunction -| label-1.west)
+        node[right,scale=0.8] {metafunction};
+    \end{tikzpicture}
+  \end{onlyenv}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Example: Simple algebra}
+
+  \begin{lstlisting}[basicstyle=\codefontsize{9pt}]
+template <int N>
+struct integer {...};
+  \end{lstlisting}
+
+  \begin{lstlisting}[basicstyle=\codefontsize{9pt}, morekeywords={integer}]
+template <typename Arg1, typename Arg2>
+struct multiply
+  : integer< Arg1::value * Arg2::value > {};(*\tmark{forwarding}*)
+  \end{lstlisting}
+
+  \begin{lstlisting}[basicstyle=\codefontsize{9pt}, morekeywords={multiply}]
+struct square_f
+{
+  template <typename Arg>
+  struct apply(*\tmark{metafunction-class}*)
+    : multiply<Arg, Arg>
+  {};
+};
+  \end{lstlisting}
+
+  \begin{lstlisting}[basicstyle=\codefontsize{9pt}, morekeywords={square_f}]
+square_f::apply<five>::value;
+  \end{lstlisting}
+
+  \begin{onlyenv}<2>
+    \nointerlineskip
+    \begin{tikzpicture}[overlay,remember picture]
+      \draw[pointy arrow]
+        ([shift={(-1cm,4mm)}] forwarding) 
+        .. controls +(2mm,2mm) and +(0,-2mm) ..
+        +(7mm,1cm)
+        node[above,scale=0.8] (label-1) {metafunction forwarding};
+      \draw[pointy arrow, transform canvas={yshift=1mm}]
+        ([xshift=5mm] metafunction-class) -- (metafunction-class -| label-1.west)
+        node[right,scale=0.8] {metafunction class};
+    \end{tikzpicture}
+  \end{onlyenv}
+  
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Example: Functors}
+
+  Template metaprogramming has no variables and is thus inherently a functional
+  programming language.
+
+  \vspace{.5cm}
+  
+  Let us implement something functional, like nest:
+
+  \vspace{.5cm}
+
+  \begin{center}
+    \code{%
+      \function{nest}(\function{f}, x, 5) %
+        = \function{f}(\function{f}(\function{f}(\function{f}(\function{f}(x)))))%
+    }
+  \end{center}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Example: Nest function}
+  
+  \begin{lstlisting}[basicstyle=\codefontsize{10pt}]
+template <typename F, typename X, unsigned N>
+struct nest
+    : (*\tmark{nest-nest}*)nest<F,
+           (*\tmark{u-begin}*)typename F::template apply<X>::type(*\tmark{u-end}*),
+           N - 1> {};
+  \end{lstlisting}
+
+  \vspace{.25cm}
+
+  \begin{lstlisting}[basicstyle=\codefontsize{10pt}]
+template <typename F, typename X>
+struct nest<F, X, 0>(*\tmark{nest-end}*)
+  : X {};
+  \end{lstlisting}
+
+  \vspace{.25cm}
+
+  \begin{lstlisting}[
+    basicstyle=\codefontsize{10pt},
+    morekeywords={nest,squared_f}]
+using five = integer<5>;
+nest<squared_f, five, 3>::type::value;(*\tmark{result}*)
+  \end{lstlisting}
+
+  \begin{onlyenv}<2>
+    \nointerlineskip
+    \begin{tikzpicture}[overlay,remember picture]
+      \underlinemark[sorange,opacity=0.5]{u-begin}{u-end}
+
+      \draw[{Stealth}-,rounded corners]
+        ([shift={(5mm,-1mm)}] nest-nest) |- +(5.5cm,-1.2cm)
+        node[right,scale=0.7] (recursion) {recursion};
+
+      \draw[{Stealth}-,transform canvas={yshift=1mm}]
+        ([xshift=1mm] nest-end) -- (nest-end -| recursion.west)
+        node[right,scale=0.7] {end of recursion};
+
+      \node at ([shift={(.5cm,1mm)}] result) [right, scale=0.8]
+        {$ = ((5^2)^2)^2$};
+
+    \end{tikzpicture}
+  \end{onlyenv}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Example: Nest function}
+
+  \begin{lstlisting}[
+    basicstyle=\codefontsize{11pt},
+    morekeywords={nest,square_f}]
+int main()
+{
+  using five = integer<5>;
+  using result
+    = nest<square_f, five, 3>::type;
+
+  return result::value;
+(*\tmark{begin-code}*)}
+  \end{lstlisting}
+
+  \vspace{4cm}
+  
+  \lstset{language=[x86masm]Assembler}
+  \nointerlineskip
+  \begin{tikzpicture}[overlay,remember picture]
+
+    \coordinate (code-left-edge) at (current page.west |- begin-code);
+    \coordinate (code-right-edge) at (current page.east |- begin-code);
+
+    \draw<2->[-{Stealth}, transform canvas={xshift=2cm}]
+      ([yshift=-2mm] code-left-edge) -- +(0,-1cm)
+      node[midway, right, scale=0.8]
+      {Compile, -O0};
+
+    \draw<3>[-{Stealth}, transform canvas={xshift=7.1cm}]
+      ([yshift=-2mm] code-left-edge) -- +(0,-1cm)
+      node[midway, right, scale=0.8]
+      {Compile, -O1};
+    
+    \begin{scope}[transform canvas={yshift=-1.5cm}]
+      \fill<2-> [FeebleWeek,opacity=0.2] 
+        (code-left-edge) rectangle (current page.south east);
+    
+      \begin{onlyenv}<2->
+      \node[anchor=north west] at ([shift={(-2mm,-.5mm)}] begin-code) (comp-1) {%
+      \begin{lstlisting}[basicstyle=\codefontsize{10pt}]
+main:
+  push rbp
+  mov rbp, rsp
+  mov eax, 390625
+  pop rbp
+  ret
+      \end{lstlisting}};
+      \end{onlyenv}
+
+      \begin{onlyenv}<3>
+      \node[anchor=north west] at ([xshift=1cm] comp-1.north east) {%
+      \begin{lstlisting}[basicstyle=\codefontsize{10pt}]
+main:
+  mov eax, 390625
+  ret
+      \end{lstlisting}};
+      \end{onlyenv}
+    \end{scope}
+  \end{tikzpicture}
+  \lstset{language=[11]C++}
+
+  
+\end{frame}
+
+\section{Tools and libraries}
+\frame{\sectionpage}
+
+\begin{frame}
+  \frametitle{\namespace{brigand}}
+
+  \namespace{brigand} is a light-weight C++11 reimagining of
+  \boost{\namespace{mpl}}, a metaprogramming library
+
+  \vspace{.5cm}
+
+  \uncover<2>{
+  Features:
+
+  \begin{itemize}
+    \item Functional programming utilities
+    \item Sequence storage
+    \item Sequence algorithms
+    \item Arithmetic operations
+    \item ...and more
+  \end{itemize}
+  }
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Simplifying nest with \namespace{brigand}}
+  
+  \begin{lstlisting}[basicstyle=\codefontsize{10pt}]
+#include <brigand/brigand.hpp>
+using brigand::_1;
+
+template <typename F, typename X, unsigned N>
+struct nest
+    : nest<F,
+           (*\tmark{u-1-begin}*)typename brigand::apply<F, X>::type(*\tmark{u-1-end}*),
+           N - 1>
+{};
+  \end{lstlisting}
+
+  \begin{lstlisting}[
+    basicstyle=\codefontsize{10pt},
+    morekeywords={integer,nest,multiply}]
+int main()
+{
+  using five = integer<5>;
+  return nest<(*\tmark{u-2-begin}*)multiply<_1, _1>(*\tmark{u-2-end}*), five, 3>::value;
+}
+  \end{lstlisting}
+
+  \begin{onlyenv}<2>
+    \nointerlineskip
+    \begin{tikzpicture}[overlay,remember picture]
+      \underlinemark[sorange,opacity=0.5,transform canvas={yshift=.5pt}]{u-1-begin}{u-1-end}
+      \underlinemark[sorange,opacity=0.5]{u-2-begin}{u-2-end}
+    \end{tikzpicture}
+  \end{onlyenv}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Sequences at compile time}
+
+  \begin{lstlisting}[
+    basicstyle=\codefontsize{10pt},
+    morekeywords={sort,less,sizeof_}
+    ]
+#include <brigand/brigand.hpp>
+using brigand::_1;
+using brigand::_2;
+
+using type_list =
+    brigand::list<double, short, char, int>;
+
+using sorted_list = brigand::sort<
+    type_list,
+    brigand::less<brigand::sizeof_<_1>,
+                  brigand::sizeof_<_2>>>;
+  \end{lstlisting}
+  
+\end{frame}
+
+\begin{frame}
+  \frametitle{\namespace{metal}}
+
+  Provides much the same functionality as \namespace{brigand}
+
+  \vspace{.5cm}
+
+  \uncover<2>{
+  Features:
+
+  \begin{itemize}
+    \item Lambda calculus
+    \item Sequence storage
+    \item Sequence transformations
+    \item Typemaps
+    \item ...and more
+  \end{itemize}
+  }
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Simplifying nest with \namespace{metal}}
+  
+  \begin{lstlisting}[
+    basicstyle=\codefontsize{10pt},
+    morekeywords={invoke}
+    ]
+#include <metal/metal.hpp>
+using metal::_1;
+
+template <typename F, typename X, unsigned N>
+struct nest
+    : nest<F,
+           typename metal::invoke<F, X>::type,
+           N - 1>
+{};
+  \end{lstlisting}
+
+  \begin{lstlisting}[
+    basicstyle=\codefontsize{10pt},
+    morekeywords={bind,lazy,nest,integer}
+    ]
+int main()
+{
+  using five = integer<5>;
+  return nest<
+      metal::bind<metal::lazy<multiply>, _1, _1>,
+      five, 3>::value;
+}
+  \end{lstlisting}
+  
+\end{frame}
+
+\begin{frame}
+  \frametitle{\object{constexpr}}
+
+  A directive for telling the compiler that the expression is computable at
+  compile time
+
+  \vspace{.5cm}
+  C++11/C++14:
+  
+  \begin{itemize}
+    \item \object{constexpr} values
+    \item \object{constexpr} functions
+  \end{itemize}
+
+  \vspace{.5cm}
+  C++17:
+  
+  \begin{itemize}
+    \item \object{constexpr} ifs
+    \item \object{constexpr} lambdas
+  \end{itemize}
+
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{nest with \object{constexpr} C++14}
+
+  \begin{lstlisting}[
+    basicstyle=\codefontsize{10pt},
+    morekeywords={forward}]
+constexpr long square(long x) { return x * x; }
+
+template <typename Function>
+constexpr auto nest(Function &&f, long val,
+                    long N)
+{
+  if (N == 0)
+    return val;
+  else
+    return nest(std::forward<Function>(f),
+                f(val),
+                N - 1);
+}
+
+static_assert(nest(square, 5, 3) == 390625, "");
+  \end{lstlisting}
+  
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{nest with \object{constexpr} C++17}
+
+  \begin{lstlisting}[
+    basicstyle=\codefontsize{10pt},
+    morekeywords={forward}]
+template <typename Function>
+constexpr auto nest(Function &&f, long val,
+                    long N)
+{
+  if (N == 0)
+    return val;
+  else
+    return nest(std::forward<Function>(f),
+                f(val),
+                N - 1);
+}
+
+static_assert(
+  nest([](auto x) { return x * x; }, 5, 3)
+    == 390625);
+  \end{lstlisting}
+  
+\end{frame}
+
+\begin{frame}
+  \frametitle{What is \object{constexpr}}
+
+  \begin{itemize} \setlength\itemsep{.5em}
+    \item Can only call other \object{constexpr} values
+    \item ... or \object{constexpr} functions
+    \item ... or \object{constexpr} classes
+    \begin{itemize}
+      \item these need a \object{constexpr} constructor
+    \end{itemize}
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{\object{constexpr} if}
+  
+  \begin{onlyenv}<1>
+  \begin{lstlisting}[basicstyle=\codefontsize{12pt}]
+void only_int(int) {}
+
+template <typename T>
+void will_fail(T x)
+{
+  if (std::is_same_v<T, int>)
+    only_int(x);
+}
+
+int main()
+{
+  will_fail(std::string{});(*\tmark{f-call}*)
+}
+  \end{lstlisting}
+
+  \end{onlyenv}
+
+  \begin{onlyenv}<2->
+  \begin{lstlisting}[basicstyle=\codefontsize{12pt}]
+void only_int(int) {}
+
+template <typename T>
+void wont_fail(T x)
+{
+  if constexpr(std::is_same_v<T, int>)
+    only_int(x);(*\tmark{faulty-branch}*)
+}
+
+int main()
+{
+  wont_fail(std::string{});(*\tmark{f-call-2}*)
+}
+  \end{lstlisting}
+  \end{onlyenv}
+
+  \nointerlineskip
+  \begin{tikzpicture}[overlay,remember picture]
+    \draw<1>[{Stealth}-] ([shift={(1mm,1mm)}] f-call) -- +(1.5cm,0)
+      node[right, scale=0.8, font=\color{sred}] {Compile error};
+    \draw<2->[{Stealth}-] ([shift={(1mm,1mm)}] f-call-2) -- +(1.5cm,0)
+      node[right, scale=0.8, font=\color{sgreen}] (compiles) {Compiles};
+
+    \node<3> at (faulty-branch -| compiles.east)
+      [right, scale=0.8, anchor=east, yshift=-10mm] (falsey-node)
+      {falsey branch not compiled};
+    \draw<3>[{Stealth}-] ([shift={(-4mm,-2mm)}] faulty-branch)
+      .. controls +(2mm, -4mm) and +(-5mm,0) ..
+      (falsey-node.west);
+  \end{tikzpicture}
+
+\end{frame}
+
+\section{Expression templates: a first look}
+
+% Custom sectionframe so that I can break the section name
+\begin{frame}
+  \usebeamercolor{section page background canvas}
+  \begin{tikzpicture}[overlay,remember picture]
+    \fill[bg] (current page.south west) rectangle (current page.north east);
+  \end{tikzpicture}
+  \centering
+  \vskip1cm\par
+  \begin{beamercolorbox}[sep=12pt,center]{section title}
+    \usebeamerfont{section title}Expression templates:\\a first look\par
+  \end{beamercolorbox}
+\end{frame}
+
+\begin{frame}
+  \frametitle{The AST (Abstract Syntax Tree)}
+
+  Similar to creating lazy evaluation expressions we want to create an AST, then
+  hook into it and determine what it does when evaluated
+  
+\end{frame}
+
+\begin{frame}[fragile,plain]
+
+  \lstset{literate={+}{ + }1 {-}{ - }1 {*}{ * }1 {/}{ / }1}
+  \begin{center}
+  \begin{tikzpicture}[
+    level distance=3cm,
+    scale=0.8,every node/.style={scale=0.8},
+    every node/.append style={
+      text height=1.5ex,
+      text depth=.5ex,
+      minimum width=2em, align=center},
+  ]
+    \input{input/expr_tree.tex}
+  \end{tikzpicture}
+  \end{center}
+  \lstset{literate=}
+
+\end{frame}
+
+\begin{frame}[fragile,plain]
+
+  \lstset{literate={+}{ + }1 {-}{ - }1 {*}{ * }1 {/}{ / }1,linewidth=100cm}
+  \begin{center}
+  \begin{tikzpicture}[
+    level distance=4cm,
+    scale=0.28,every node/.style={scale=0.28},
+    every node/.append style={
+      text height=1.5ex,
+      text depth=.5ex,
+      minimum width=2em, align=center},
+  ]
+    \input{input/expr_tree_large.tex}
+  \end{tikzpicture}
+  \end{center}
+  \lstset{literate=,linewidth=\linewidth}
+  
+\end{frame}
+
+\begin{frame}[fragile,plain]
+
+  \nointerlineskip
+  \begin{tikzpicture}[overlay,remember picture]
+    \node at (current page.center) {
+      \begin{lstlisting}[basicstyle=\codefontsize{11pt}]
+ofs << "\\"
+    << (3_v + "x"_v / ("y"_v - 8_v) -
+        (3_v * (1_v + "z"_v) / "w"_v) /
+            (2_v - 6_v * "x"_v))
+           .to_tex()
+    << ";\n";
+      \end{lstlisting}};
+  \end{tikzpicture}
+  
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{First attempt}
+
+  \begin{lstlisting}[
+    basicstyle=\codefontsize{10pt},
+    morekeywords={integer}]
+template <typename Arg1, typename Arg2>
+struct plus_expr
+  : integer<Arg1::value + Arg2::value>
+{};
+  \end{lstlisting}
+
+  \begin{lstlisting}[
+    basicstyle=\codefontsize{10pt},
+    morekeywords={integer,plus_expr}]
+template <long N, long M>
+auto operator+(integer<N>, integer<M>)
+{
+  return plus_expr<integer<N>, integer<M>>{};
+}
+
+int main()
+{
+  auto expr = five{}+eight{};
+
+  std::cout << expr.value << std::endl;
+}
+  \end{lstlisting}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Some obstacles}
+  
+  It doesn't do complicated expressions:
+  \begin{lstlisting}[basicstyle=\codefontsize{14pt}]
+  five{} + eight{} + five{};
+  \end{lstlisting}
+
+  \vspace{.2cm}
+
+  \begin{overlayarea}{\textwidth}{5cm}
+  \begin{onlyenv}<2-3>
+  Possible solution:
+  \begin{lstlisting}[
+    basicstyle=\codefontsize{8pt},
+    morekeywords={integer,plus_expr}]
+template <long N, typename Arg1, typename Arg2>
+auto operator+(integer<N>, plus_expr<Arg1, Arg2>)
+{
+  return plus_expr<integer<N>, plus_expr<Arg1, Arg2>>{};
+}
+
+template <long N, typename Arg1, typename Arg2>
+auto operator+(plus_expr<Arg1, Arg2>, integer<N>)
+{
+  return plus_expr<plus_expr<Arg1, Arg2>, integer<N>>{};
+}
+  \end{lstlisting}
+  \end{onlyenv}
+
+  \begin{onlyenv}<4->
+  Possible solution:
+  \begin{lstlisting}[
+    basicstyle=\codefontsize{10pt},
+    morekeywords={plus_expr}]
+template <typename Arg1, typename Arg2>
+auto operator+(Arg1, Arg2)
+{
+  return plus_expr<Arg1, Arg2>{};
+}
+  \end{lstlisting}
+  \end{onlyenv}
+
+  \end{overlayarea}
+
+  \nointerlineskip
+  \begin{tikzpicture}[overlay,remember picture]
+    \fill<3,5>[WhiteTrash, opacity=0.75] (current page.north west) rectangle (current page.south east);
+    \node<3>[font=\color{Marty},scale=5, rotate=30] at (current page.center) {Tedious};
+    \node<5>[font=\color{Marty},scale=3, rotate=30] at (current page.center) {Matches everything};
+  \end{tikzpicture}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Some obstacles}
+
+  No obvious way to extend to new operators and types
+
+  \begin{lstlisting}[basicstyle=\codefontsize{14pt}]
+eight{} - five{} / eight{};
+  \end{lstlisting}
+
+  \vspace{.2cm}
+
+  "Possible solution":
+  \begin{lstlisting}[
+    basicstyle=\codefontsize{7pt},
+    morekeywords={plus_expr,minus_expr,times_expr,divides_expr}]
+template <typename Arg1, typename Arg2, typename Arg3, typename Arg4>
+auto operator+(plus_expr<Arg1, Arg2>, minus_expr<Arg3, Arg4>);
+
+template <typename Arg1, typename Arg2, typename Arg3, typename Arg4>
+auto operator/(minus_expr<Arg1, Arg2>, times_expr<Arg3, Arg4>);
+
+template <typename Arg1, typename Arg2, typename Arg3, typename Arg4>
+auto operator*(divide_expr<Arg1, Arg2>, plus_expr<Arg3, Arg4>);
+  \end{lstlisting}
+
+  \vspace{.2cm}
+
+  Number of combinations $\sim$ (number of operations)\textsuperscript{3}
+
+\end{frame}
+
+\section{The Curiously Recurring Template Pattern}
+\EmphFrame[Marty]{The time has finally come}
+\frame{\sectionpage}
+
+\begin{frame}[fragile]
+  \frametitle{The CRTP}
+
+  \begin{overlayarea}{\textwidth}{4.5cm}
+
+  \begin{onlyenv}<1>
+  \begin{lstlisting}[basicstyle=\codefontsize{11pt}]
+template <typename T>
+class Base
+{};
+  \end{lstlisting}
+  \end{onlyenv}
+
+  \begin{onlyenv}<2->
+  \begin{lstlisting}[
+    basicstyle=\codefontsize{11pt},
+    escapeinside={[*}{*]}]
+template <typename T>
+class Base
+{
+  void base_call()
+  {
+    static_cast[*\tmark{static-cast}*]<T&>(*this).derived_call();
+  }
+};
+  \end{lstlisting}
+  \end{onlyenv}
+
+  \end{overlayarea}
+
+  \begin{overlayarea}{\textwidth}{4cm}
+
+  \begin{onlyenv}<1>
+  \begin{lstlisting}[
+    basicstyle=\codefontsize{11pt},
+    morekeywords={Base}]
+class Derived : public Base<Derived>
+{};
+  \end{lstlisting}
+  \end{onlyenv}
+
+  \begin{onlyenv}<2->
+  \begin{lstlisting}[
+    basicstyle=\codefontsize{11pt},
+    morekeywords={Base}]
+class Derived : public Base<Derived>
+{
+  void derived_call();
+};
+  \end{lstlisting}
+  \end{onlyenv}
+
+  \end{overlayarea}
+
+  \nointerlineskip
+  \begin{tikzpicture}[overlay,remember picture]
+    \draw<3> [{Stealth}-]
+      ([shift={(-1cm, -2mm)}] static-cast)
+      .. controls +(0,-.4cm) and +(-.8cm,0) ..
+      +(1cm, -.7cm) node[right, scale=0.8] {\object{static\_cast}: no vtable lookup};
+  \end{tikzpicture}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Second attempt, pure types}
+
+  \begin{lstlisting}[basicstyle=\codefontsize{10pt}]
+template <typename T>
+struct base_expr
+{ };
+  \end{lstlisting}
+
+  \begin{lstlisting}[
+    basicstyle=\codefontsize{10pt},
+    morekeywords={base_expr}]
+template <long N>
+struct integer : base_expr<integer<N>>
+{ ... };
+
+template <typename Arg1, typename Arg2>
+struct plus_expr
+    : base_expr<plus_expr<Arg1, Arg2>>
+{
+  using type = 
+    integer<Arg1::value + Arg2::value>;
+
+  static constexpr long value = type::value;
+};
+  \end{lstlisting}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Second attempt, pure types}
+
+  \begin{lstlisting}[
+    basicstyle=\codefontsize{10pt},
+    morekeywords={base_expr,plus_expr}]
+template <typename Arg1, typename Arg2>
+constexpr auto operator+(base_expr<Arg1>,
+                         base_expr<Arg2>(*\tmark{plus-args}*))
+    -> plus_expr<Arg1, Arg2>
+{
+  return {};
+}
+
+static_assert(decltype(five{} + eight{} +
+                       five{})::value == 18);
+  \end{lstlisting}
+
+  \uncover<3> {
+    \vspace{.3cm}
+    Doesn't actually use any of the CRTP functionality\\
+    \object{base\_expr} is just a tag
+  }
+
+  \nointerlineskip
+  \begin{tikzpicture}[overlay,remember picture]
+    \draw<2->[{Stealth}-]
+      ([shift={(-1.5cm,-2mm)}] plus-args)
+      .. controls +(0,-.3cm) and +(-.8cm,0) ..
+      +(1cm,-.5cm)
+      node[right,scale=0.8,align=left,yshift=-3mm] {limits pattern\\matching};
+  \end{tikzpicture}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Second attempt, using the CRTP}
+
+  \begin{lstlisting}[
+    basicstyle=\codefontsize{10pt},
+    escapeinside={[*}{*]}]
+template <typename T>
+struct base_expr
+{
+  constexpr auto value() const
+  {
+    return static_cast<T const&>(*this).value();
+  }
+};
+  \end{lstlisting}
+
+  \begin{lstlisting}[
+    basicstyle=\codefontsize{10pt},
+    morekeywords={base_expr}]
+template <long N>
+struct integer : base_expr<integer<N>>
+{
+  static constexpr long value()
+  {
+    return N;
+  }
+};
+  \end{lstlisting}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Second attempt, using the CRTP}
+
+  \begin{lstlisting}[
+    basicstyle=\codefontsize{9pt},
+    morekeywords={base_expr}]
+template <typename Arg1, typename Arg2>
+struct plus_expr
+    : base_expr<plus_expr<Arg1, Arg2>>
+{
+  constexpr plus_expr(base_expr<Arg1> const &le,
+                      base_expr<Arg2> const &re)
+      : le_{le}, re_{re} {};
+
+  constexpr auto value() const
+  {
+    return le_.value() + re_.value();
+  }
+
+private:
+  base_expr<Arg1> const &le_;
+  base_expr<Arg2> const &re_;
+};
+  \end{lstlisting}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Second attempt, using the CRTP}
+
+  \begin{lstlisting}[
+    basicstyle=\codefontsize{10pt},
+    morekeywords={base_expr,plus_expr}]
+template <typename Arg1, typename Arg2>
+constexpr auto
+operator+(base_expr<Arg1> const &le,
+          base_expr<Arg2> const &re)
+{
+  return plus_expr<Arg1, Arg2>(le, re);
+}
+
+static_assert(
+    (five{} + eight{} + five{}).value() == 18);
+  \end{lstlisting}
+
+  \uncover<2>{
+    \vspace{.5cm}
+    Simple :)
+  }
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Resources}
+
+  \bibliographystyle{plain}
+  {\footnotesize
+    \bibliography{ref}}
+\end{frame}
+
+\begin{frame}
+  \begin{center}
+    {\changefontsize{28pt}\color{Tropiteal}Thanks!}
+    \vspace{1cm}
+
+    \begin{tikzpicture}
+      \node[scale=0.075] (cat) {\includegraphics{figures/Octocat.png}};
+      \node[right of=cat, anchor=west, font=\changefontsize{18pt}] {Irubataru/talks};
+    \end{tikzpicture}
+  \end{center}
+\end{frame}
+
+\end{document}

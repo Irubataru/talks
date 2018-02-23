@@ -1,0 +1,42 @@
+% --------------------------- %
+% The styles I use for coding %
+% --------------------------- %
+
+\lstset{%
+  language=[11]C++,
+  basicstyle=\ttfamily\lst@ifdisplaystyle\fontsize{9pt}{9pt}\selectfont\fi,
+  keywordstyle=\color{sgreen}, identifierstyle=\color{sblue}, 
+  commentstyle=\color{sbase1}, stringstyle=\color{sorange},
+  numberstyle=\color{sviolet}, showstringspaces=false,  
+  breaklines=true, prebreak=\mbox{{\color{sbase1}\tiny\ $\hookleftarrow$}}, 
+  postbreak=\mbox{{\color{sbase1}\tiny$\to$\ }}, tabsize=5,
+  escapeinside={(*}{*)},
+  morekeywords={%
+    unique_ptr,shared_ptr,weak_ptr,
+    make_unique, make_shared,
+    list,vector,map,stack,queue,array,
+    Widget,constexpr,decltype,variant,optional,string,
+    is_same,value,is_same_v,type,value
+  }
+}
+
+\lstalias[]{gnumake}[gnu]{make}
+
+\def\inline{\lstinline[basicstyle=\ttfamily\normalsize]}
+
+% ---------------------------------------------------------------------------------------------------- %
+% Various command for inline code instead of lstinline so that I don't have to update the keyword list %
+% ---------------------------------------------------------------------------------------------------- %
+
+\newcommand{\code}[1]{\color{black}#1}
+\newcommand{\object}[1]{{\color{sgreen}#1}}
+\newcommand{\function}[1]{{\color{sblue}#1}}
+\newcommand{\namespace}[1]{{\color{sblue}#1}}
+
+\newcommand{\std}[1]{{\code{\namespace{std}::#1}}}
+\newcommand{\boost}[1]{{\code{\namespace{boost}::#1}}}
+
+\newcommand{\uniqueptr}{\std{unique\_ptr}}
+\newcommand{\sharedptr}{\std{shared\_ptr}}
+\newcommand{\weakptr}{\std{weak\_ptr}}
+\newcommand{\autoptr}{\std{auto\_ptr}}

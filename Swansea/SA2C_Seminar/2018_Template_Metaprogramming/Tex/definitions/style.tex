@@ -1,0 +1,37 @@
+% --------------------- %
+% Beamer theme settings %
+% --------------------- %
+
+\usetheme{CodeCourse}
+\setbeamertemplate{navigation symbols}{} %Remove beamer navigation symbols
+\setbeamertemplate{bibliography item}{\insertbiblabel}
+
+\setbeamerfont{bibliography item}{size=\changefontsize{10pt}}
+\setbeamerfont{bibliography entry author}{size=\changefontsize{10pt}}
+\setbeamerfont{bibliography entry title}{size=\changefontsize{8pt}}
+\setbeamerfont{bibliography entry location}{size=\changefontsize{9pt}}
+\setbeamerfont{bibliography entry note}{size=\changefontsize{9pt}}
+
+\input{definitions/colours.tex}
+
+% -------------------------------------------------- %
+% Beamer notes to be itemized rather than enumerated %
+% -------------------------------------------------- %
+
+\makeatletter
+\def\beamer@setupnote{%
+  \gdef\beamer@notesactions{%
+    \beamer@outsideframenote{%
+      \beamer@atbeginnote%
+      \beamer@notes%
+      \ifx\beamer@noteitems\@empty\else
+      \begin{itemize}\itemsep=0pt\parskip=0pt%
+        \beamer@noteitems%
+      \end{itemize}%
+      \fi%
+      \beamer@atendnote%
+    }%
+    \gdef\beamer@notesactions{}%
+  }
+}
+\makeatother

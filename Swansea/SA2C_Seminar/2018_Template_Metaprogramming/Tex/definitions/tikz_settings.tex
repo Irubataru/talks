@@ -1,0 +1,30 @@
+% ------------------------ %
+% Libraries I tend to need %
+% ------------------------ %
+
+\usetikzlibrary{calc,intersections,positioning,matrix,chains,scopes}
+\usetikzlibrary{decorations.pathmorphing,decorations.pathreplacing,shapes}
+\usetikzlibrary{decorations.text,backgrounds}
+\usetikzlibrary{arrows.meta,bending}
+
+\tikzset{
+  pointy arrow/.style={
+    {Stealth[flex]}-
+  },
+  tree-node/.style={
+    draw=#1,
+    fill=#1,
+    text opacity=1,
+    fill opacity=0.2,
+    rounded corners=1
+  },
+  expression/.style={
+    tree-node = FeebleWeek
+  },
+  operator/.style={
+    tree-node = Marty
+  },
+  expr-leaf/.style={
+    tree-node = UnrealFoodPills,
+  }
+}
