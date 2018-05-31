@@ -1,4 +1,4 @@
-# 2018 - Template Metaprogramming
+# 2018.02.23 - Template Metaprogramming
 
  * Title: Introduction to Template Metaprogramming
  * Date: 23-02-2018

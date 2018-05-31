@@ -1,4 +1,4 @@
-# 2018 - C++ Templates
+# 2018.02.09 - C++ Templates
 
  * Title: Introduction to C++ templates
  * Date: 09-02-2018
