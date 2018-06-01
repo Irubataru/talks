@@ -1,0 +1,257 @@
+\documentclass[11pt]{beamer}
+
+\input{inputs/packages.tex}
+\input{inputs/style.tex}
+\input{inputs/functions.tex}
+
+\author{Jonas Rylund Glesaaen}
+\title[%
+Why are there no good build systems? An introduction to Bazel]{%
+Why are there no good build systems? \\ An introduction to Bazel}
+\date{June 1st 2018}
+\institute{SA2C Tech Chat}
+
+\begin{document}
+
+\maketitle
+
+\begin{frame}{Why do we need build systems?}
+
+  \begin{itemize} \setlength\itemsep{1em}
+    \item Essential for big projects
+    \item Lowers build times
+    \item Incentivises building often
+    \begin{itemize}
+      \item Makes finding bugs easier
+      \item Lowers barrier to testing everything always
+    \end{itemize}
+  \item Allows for automation (CI/CD etc)
+  \item A good system allows you to get on with what you are actually there for
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}{What do I want from a build system?}
+
+  \begin{itemize}
+    \item Modular
+      \begin{itemize}
+        \item Encourages reuse
+        \item Simplifies dependencies
+        \item I just really like folders
+      \end{itemize}
+    \item Easy to use
+    \item Easy to maintain
+    \item Easy to configure
+    \item Portable
+    \item Extendible to new programming languages
+    \item Handles external dependencies cleanly
+    \item Lends itself to CI/CD
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Let us talk about make}
+
+  It is \alert{\textbf{the}} standard for *NIX based development.
+
+  \vspace{3mm}
+
+  Basically shell + dependencies, the rest you have to make yourself;
+  I have too many copies of this snippet:
+
+  \vspace{5mm}
+
+  \begin{lstlisting}[language={[gnu]make}]
+SRCS := $(wildcard src/*.cpp)
+DEPS := $(SRCS:src/%.cpp=.deps/%.d)
+
+$(DEPS): .deps/%.d: src/%.cpp | .deps
+  @$(CXX) $(CXXFLAGS) -MM -MP -MT \
+    bin/$(patsubst src/%.cpp,%,$<) -MF $@ $<
+
+-include $(DEPS)
+  \end{lstlisting}
+
+
+\end{frame}
+
+\begin{frame}{Make and recursion}
+
+  \begin{center}
+    {\Large\textit{Recursive Make Considered Harmful}} \\
+    Miller, P.A. (1998), AUUGN Journal
+    % Australian Unix systems User Group
+  \end{center}
+
+\end{frame}
+
+\begin{frame}{Make and recursion}
+
+  \begin{itemize}
+    \item Hard to get build order right \\
+      \emph{Requires a lot of tweaking}
+    \item Inter-directory dependencies very difficult \\
+      \emph{Builds too much or too little}
+    \item Dependencies dropped to decrease build times \\
+      \emph{Users need to run clean periodically}
+  \end{itemize}
+
+  The \emph{RMCH} paper claims that make does \textbf{\alert{not}} have a design
+  flaw, I disagree.
+
+\end{frame}
+
+\begin{frame}{Makefile generators}
+
+  Quite a few "solutions" are simply makefile generators
+
+  \begin{itemize}
+    \item autoconf
+    \item non-recursive make
+    \item CMake
+    \item ninja
+    \item ...
+  \end{itemize}
+
+  We can do better than that!
+
+\end{frame}
+
+\begin{frame}[plain]
+  \begin{center}
+    {\Large Introducing {\bfseries\color{bazelGreen}Bazel}} \\[1cm]
+    \includegraphics[width=0.5\textwidth]{images/bazel-icon.pdf}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Bazel design principles}
+
+  \begin{itemize} \setlength\itemsep{1em}
+    \item Config files are easy to read
+    \item \alert{Bazel} is fast and reliable
+    \item \alert{Bazel} scales
+    \item \alert{Bazel} is extensible
+  \end{itemize}
+
+  \BazelNavIcon{}
+\end{frame}
+
+\begin{frame}{Bazel concepts}
+
+  \begin{alertblock}{Workspace} \\[5pt]
+    The folder that contains your project.\\
+    May or may not reference external projects.
+  \end{alertblock}
+
+  \vspace{2mm}
+
+  \begin{alertblock}{Packages} \\[5pt]
+    Any directory in your workspace that has a {\ttfamily BUILD} file in it.\\
+    Contains related files and dependence specifications.
+  \end{alertblock}
+
+  \vspace{2mm}
+
+  \begin{alertblock}{Targets} \\[5pt]
+    Files and rules the package provides.\\
+    Every target has a label.
+  \end{alertblock}
+
+  \BazelNavIcon{}
+\end{frame}
+
+\begin{frame}{Internal dependencies}
+
+  \alert{Bazel} sandboxes its builds by default.
+
+  \vspace{5mm}
+
+  You therefore have complete control over what is external and what is internal
+  for your package.
+
+  \vspace{5mm}
+
+  Also means you need to be in control over package dependencies.
+
+  \vspace{5mm}
+
+  Let us look at Example 01
+
+  \BazelNavIcon{}
+\end{frame}
+
+\begin{frame}{External dependencies}
+
+  External as in external to the {\ttfamily WORKSPACE}.
+
+  \vspace{5mm}
+
+  For example {\color{bazelGreen}\ttfamily local\_repository} and
+  {\color{bazelGreen}\ttfamily new\_http\_archive}.
+
+  \vspace{5mm}
+
+  Interfaces well with other \alert{bazel} repos, well enough with non-\alert{bazel} ones.
+
+  \vspace{5mm}
+
+  Let us look at Examples 02, 03, \& 04
+
+  \BazelNavIcon{}
+\end{frame}
+
+\begin{frame}{The toolchain}
+
+  {
+    \only<2->{\color{black!50}}
+    So, I wanted to compile an MPI project...
+  }
+
+  \vspace{0.5cm}
+
+  \uncover<2->{
+    \begin{center}
+      \textit{\large This is a fabulously difficult project that causes hardened
+      engineers to stare blankly at screens in defeat.}
+    \end{center}
+  }
+
+  \vspace{0.5cm}
+
+  \uncover<3->{
+    Basically to change any one aspect of the compilation process of \alert{bazel}
+    you have to replace the entire thing. Let's see an example...
+  }
+
+  \BazelNavIcon{}
+\end{frame}
+
+\begin{frame}{To sum it up}
+
+  \begin{itemize}
+    \item Modular ({\color{bazelGreen}Yes})
+    \item Easy to use ({\color{bazelGreen}Yes})
+    \item Easy to maintain ({\color{bazelGreen}Yes})
+    \item Easy to configure ({\color{mLightBrown}No})
+    \item Portable (sort of)
+    \item Extendible to new programming languages ({\color{mLightBrown}Not easily})
+    \item Handles external dependencies cleanly ({\color{bazelGreen}Yes})
+    \item Lends itself to CI/CD ({\color{bazelGreen}Yes})
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}{To sum it up}
+
+  I am not necessarily sold, but as an article by\\
+  Windmill Engineering puts it:
+
+  \hfill
+
+  {\large Bazel is the worst build system, except for all the others}
+
+\end{frame}
+
+\end{document}

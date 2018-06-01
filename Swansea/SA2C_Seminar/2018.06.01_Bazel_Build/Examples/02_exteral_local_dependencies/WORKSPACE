@@ -1,0 +1,4 @@
+local_repository(
+    name = "ex1",
+    path = "../01_simple_program"
+)

@@ -1,0 +1,12 @@
+new_http_archive(
+    name = "tinyxml2",
+    url = "https://github.com/leethomason/tinyxml2/archive/6.2.0.tar.gz",
+    strip_prefix = "tinyxml2-6.2.0",
+    build_file = "tinyxml2.BUILD",
+)
+
+new_http_archive(
+    name = "json",
+    url = "https://github.com/nlohmann/json/releases/download/v3.1.2/include.zip",
+    build_file = "json.BUILD",
+)

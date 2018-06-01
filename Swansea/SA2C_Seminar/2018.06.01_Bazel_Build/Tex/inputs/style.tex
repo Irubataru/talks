@@ -1,0 +1,28 @@
+\input{inputs/colour.tex}
+
+\usetheme{metropolis}
+
+\setbeamercolor{alerted text}{%
+  fg=bazelGreen
+}
+
+\setbeamercolor{example text}{%
+  fg=mLightBrown
+}
+
+\setbeamercolor{frametitle}{%
+  use=normal text,
+  fg=normal text.bg,
+  bg=bazelGreen
+}
+
+\lstset{%
+  basicstyle=\ttfamily\lst@ifdisplaystyle\fontsize{9pt}{9pt}\selectfont\fi,
+  keywordstyle=\color{sgreen}, identifierstyle=\color{sblue}, 
+  commentstyle=\color{sbase1}, stringstyle=\color{sorange},
+  numberstyle=\color{sviolet}, showstringspaces=false,  
+  breaklines=true, prebreak=\mbox{{\color{sbase1}\tiny\ $\hookleftarrow$}}, 
+  postbreak=\mbox{{\color{sbase1}\tiny$\to$\ }}, tabsize=5,
+}
+
+\lstalias[]{gnumake}[gnu]{make}
