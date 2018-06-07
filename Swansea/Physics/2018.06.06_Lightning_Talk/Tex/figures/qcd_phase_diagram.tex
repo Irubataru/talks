@@ -1,0 +1,94 @@
+\documentclass[11pt,tikz]{standalone}
+\usepackage[quiet]{mathspec}
+
+\input{../inputs/colour.tex}
+
+\setmainfont[
+  ItalicFont={Yanone Kaffeesatz Light},
+  Scale=1.3,
+  LetterSpace=2.0
+]{Yanone Kaffeesatz Bold}
+
+% Replaces every explicit \mathrm call to use this font
+\setmathrm{Yanone Kaffeesatz Light}
+
+%\usetikzlibrary{decorations}
+%\usetikzlibrary{decorations.markings,decorations.pathmorphing,decorations.pathreplacing}
+\usetikzlibrary{decorations.text}
+\usetikzlibrary{arrows.meta}
+
+\begin{document}
+\begin{tikzpicture}
+
+  \fill[ColourHl1, opacity=0.10] (0,0) rectangle (10cm,5cm);
+
+  \draw[very thin, ColourDark] (0,0) rectangle (10cm,5cm);
+
+  \fill[white, postaction={fill=ColourHl2, opacity=.25}]
+    (5.5cm,0) ..controls +(0,1cm) and +(190:.5cm) .. (10cm,1.5cm)
+    --(10cm,0) --cycle;
+
+  \draw[ColourHl2!50, line width=1.2pt]
+    (5.5cm,0) ..controls +(0,1cm) and +(190:.5cm) .. (10cm,1.5cm);
+
+  \fill[white, line width=1.8pt, postaction={fill=ColourBase,opacity=0.25,}]
+    (6.5cm, 0cm) .. controls +(0,3cm) and +(2cm,-.1cm) .. (0cm, 3.5cm)
+    -- (0,0) -- cycle;
+
+  \draw[ColourHl1, line width=1.8pt, shorten >=2cm]
+    (6.5cm, 0cm) .. controls +(0,3cm) and +(2cm,-.2cm) .. (0cm, 3.5cm)
+    node[shift={(2cm,-.19cm)},fill=ColourHl1, circle, inner sep=0pt, minimum size=.2cm] {};
+
+  \draw[ColourBase, line width=1.8pt]
+    (3cm, 0cm) .. controls +(0,.45cm) and +(320:0.1cm) .. (2.75cm,0.5cm)
+    node[fill=ColourBase, circle, inner sep=0pt, minimum size=.2cm] {};
+
+  \draw[thick,ColourDark,-{Stealth[round]}] (0,0) -- (10.0cm,0)
+    node[midway, below,scale=1.2] {$\mu$};
+  \draw[thick,ColourDark,-{Stealth[round]}] (0,0) -- (0, 5cm)
+    node[midway, left,scale=1.2] {$T$};
+
+  \node[scale=1.2] at (1.75cm,1.25cm) [align=center] {Hadron\\gas};
+  \node[scale=1.2] at (7.25cm, 4.25cm)  {Quark-Gluon-Plasma};
+  \node[scale=1.2] at (8.5cm,0.55cm)  {CS};
+
+  \draw[
+    thick,ColourDark,-{Stealth[round]},
+    postaction={decorate,decoration={text along path, text align=center, text={|\footnotesize|Early universe}, raise=.3ex}},
+  ] (0.2cm, 4.8cm) to [bend right=7.5] (0.3cm,2.5cm);
+
+  \draw[
+    thick,ColourDark,-{Stealth[round]},
+    postaction={decorate,decoration={text along path, text align=center, text={|\footnotesize|LHC/RHIC}, raise=.3ex}},
+  ] (1.75cm, 4.8cm) to [bend right=15] (1cm,2.5cm);
+
+  \draw[
+    thick,ColourDark,-{Stealth[round]},
+    postaction={
+      decorate,
+      decoration={
+        text along path,
+        text align={right, right indent=0.35cm},
+        text={|\footnotesize|FAIR},
+        raise=.3ex,
+        reverse path
+      }},
+  ] (5cm, 3.75cm) to [bend left=15] +(250:2.5cm);
+
+
+  \draw[
+    thick,ColourDark,-{Stealth[round]},
+    postaction={
+      decorate,
+      decoration={
+        text along path,
+        text align={right, right indent=0.35cm},
+        text={|\footnotesize|NICA},
+        raise=.3ex,
+        reverse path
+      }},
+  ] (6.5cm, 3.25cm) to [bend left=10] +(230:2.75cm);
+
+  
+\end{tikzpicture}
+\end{document}

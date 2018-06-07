@@ -1,0 +1,270 @@
+\documentclass[14pt]{beamer}
+
+\input{inputs/packages.tex}
+
+% Tells beamer that math mode should use serif fonts
+\usefonttheme[onlymath]{serif}
+
+% Sets the serif font (which is the main font)
+\setmainfont{Linux Libertine O}
+
+% Sets the font beamer uses, which is sans-serif by default
+\setsansfont[
+ItalicFont={Yanone Kaffeesatz Light},
+Scale=1.3,
+LetterSpace=2.0
+]{Yanone Kaffeesatz Bold}
+
+% Replaces every explicit \mathrm call to use this font
+\setmathrm{Linux Libertine O}
+
+\input{inputs/style.tex}
+\input{inputs/functions.tex}
+\input{inputs/gradient_path.tex}
+
+\usefonttheme{serif}
+\setbeamertemplate{footline}{}
+
+\title{Studying baryons at high temperature using supercomputers}
+\author{\texorpdfstring{%
+    Jonas Rylund Glesaaen\newline%
+    \fontsize{12pt}{12pt}\selectfont\texttt{jonas@glesaaen.com}%
+    }{%
+Jonas Rylund Glesaaen}}
+
+\date{June 6th 2018}
+
+\begin{document}
+
+\maketitle
+
+\begin{frame}[fragile]
+  \frametitle{Quantum Chromo Dynamics}
+
+  \only<1>{
+    Theoretical description of the {\color{FeebleWeek}strong nuclear force}
+
+    \vspace{1cm}
+
+    \begin{center}
+      \begin{tikzpicture}
+        \node[circle,draw,thick,minimum size=1.5cm,fill=Tropiteal, fill opacity=0.5, text opacity=1.0] (q) {\strut{}q};
+        \node[circle,draw,thick,minimum size=1.5cm,fill=Marty, fill opacity=0.5, text opacity=1.0] (qbar) at (5,0) {\strut{}q};
+        
+        \path[
+          draw=transparent!0, very thick,
+          shade path={left color=Tropiteal, right color=Marty},
+          decoration={coil, amplitude=7pt, segment length=7pt, pre length=2pt, post length=2pt},
+          decorate,
+        ] (q) -- (qbar);
+        
+        \draw[thick, transform canvas={yshift=-7pt}] ([xshift=11pt] qbar.north west) -- ([xshift=-11pt] qbar.north east);
+      \end{tikzpicture}
+    \end{center}
+  }
+
+  \only<2>{
+    \begin{center}
+      \includegraphics[width=\textwidth]{figures/qcd_phase_diagram_notext.pdf}
+    \end{center}
+  }
+
+  \only<3>{
+    \begin{center}
+      \includegraphics[width=\textwidth]{figures/qcd_phase_diagram.pdf}
+    \end{center}
+  }
+
+\end{frame}
+
+\begin{frame}{Lattice QCD}
+
+  Basically we just put on a {\large{}({\color{Marty}HUGE})} lattice
+
+  \tikzset{
+    lattice-gluon/.style={
+      draw=ICantExpress, thick,
+      decoration={coil, amplitude=4pt, segment length=4pt},
+      decorate,
+    },
+  }
+
+  \begin{center}
+    \begin{tikzpicture}
+      \draw (.5,.5) grid (10.5,5.5);
+      \node[
+        circle,draw,thick,minimum size=1cm,
+        fill=Tropiteal!50!WhiteTrash,scale=0.75
+      ] at (2,2) (q) {\strut{}q};
+
+      \node[
+        circle,draw,thick,minimum size=1cm,
+        fill=Marty!50!WhiteTrash, scale=0.75
+      ] (qbar) at (5,4) {\strut{}q};
+
+      \path[lattice-gluon] (q) -- (4, 2);
+
+      \path[lattice-gluon] (4, 2) -- (4,4);
+
+      \path[lattice-gluon] (4, 4) -- (qbar);
+
+      \node[
+        circle,draw,thick,minimum size=1cm,
+        fill=Tropiteal!50!WhiteTrash,scale=0.75
+      ] at (9,1) (q2) {\strut{}q};
+
+      \node[
+        circle,draw,thick,minimum size=1cm,
+        fill=Marty!50!WhiteTrash, scale=0.75
+      ] (qbar2) at (7,5) {\strut{}q};
+
+      \path[lattice-gluon] (qbar2) -- (7,4);
+      \path[lattice-gluon] (7,4) -- (10,4);
+      \path[lattice-gluon] (10,4) -- (10,2);
+      \path[lattice-gluon] (10,2) -- (9,2);
+      \path[lattice-gluon] (9,2) -- (q2);
+
+      \path[lattice-gluon] (6,1) -- (7,1);
+      \path[lattice-gluon] (7,1) -- (7,3);
+      \path[lattice-gluon] (7,3) -- (6,3);
+      \path[lattice-gluon] (6,3) -- (6,1);
+
+      \path[lattice-gluon] (1,4) -- (1,5);
+      \path[lattice-gluon] (1,5) -- (2,5);
+      \path[lattice-gluon] (2,5) -- (2,4);
+      \path[lattice-gluon] (2,4) -- (1,4);
+      
+      \draw[thick, transform canvas={yshift=-3pt}] ([xshift=7pt] qbar.north west) -- ([xshift=-7pt] qbar.north east);
+      \draw[thick, transform canvas={yshift=-3pt}] ([xshift=7pt] qbar2.north west) -- ([xshift=-7pt] qbar2.north east);
+
+    \end{tikzpicture}
+  \end{center}
+
+\end{frame}
+
+\newcommand{\minipos}[4]{\scalebox{0.5}{$\{#1, #2, #3, #4\}$}}
+
+\begin{frame}[fragile]
+
+  \begin{tikzpicture}[]
+    \matrix (dirac) [matrix of math nodes, nodes={scale=0.3}, left delimiter=(, right delimiter=)]
+    {
+      D(0|0) & D(0|\hat{0}) & 0 & 0 & 0 & \dots \\
+      D(\hat{0}|0) & D(\hat{0}|\hat{0}) & D(\hat{0}|2\hat{0}) & 0 & 0 & \dots \\
+      0 & D(2\hat{0}|\hat{0}) & D(2\hat{0}|2\hat{0}) & D(2\hat{0}|3\hat{0}) & 0 & \hdots \\
+      0 & 0 & D(3\hat{0}|2\hat{0}) & D(3\hat{0}|3\hat{0}) & D(3\hat{0}|4\hat{0}) & \hdots \\
+      0 & 0 & 0 & D(4\hat{0}|3\hat{0}) & D(4\hat{0}|4\hat{0}) & \dots \\
+      \vdots & \vdots & \vdots & \vdots & \vdots & \ddots \\
+      D(\hat{1}|0) & D(\hat{1}|\hat{0}) & 0 & 0 & 0 & \dots \\
+      D(\hat{1}|0) & D(\hat{0}\hat{1}|\hat{0}) & D(\hat{0}\hat{1}|2\hat{0}) & 0 & 0 & \dots \\
+      0 & D(2\hat{0}\hat{1}|\hat{0}) & D(2\hat{0}\hat{1}|2\hat{0}) & D(2\hat{0}\hat{1}|3\hat{0}) & 0 & \hdots \\
+      0 & 0 & D(3\hat{0}\hat{1}|2\hat{0}) & D(3\hat{0}\hat{1}|3\hat{0}) & D(3\hat{0}\hat{1}|4\hat{0}) & \hdots \\
+      0 & 0 & 0 & D(4\hat{0}\hat{1}|3\hat{0}) & D(4\hat{0}\hat{1}|4\hat{0}) & \dots \\
+      \vdots & \vdots & \vdots & \vdots & \vdots & \ddots \\
+      D(2\hat{1}|0) & D(2\hat{1}|\hat{0}) & 0 & 0 & 0 & \dots \\
+      D(2\hat{1}|0) & D(\hat{0}2\hat{1}|\hat{0}) & D(\hat{0}2\hat{1}|2\hat{0}) & 0 & 0 & \dots \\
+      0 & D(2\hat{0}2\hat{1}|\hat{0}) & D(2\hat{0}2\hat{1}|2\hat{0}) & D(2\hat{0}2\hat{1}|3\hat{0}) & 0 & \hdots \\
+      0 & 0 & D(3\hat{0}2\hat{1}|2\hat{0}) & D(3\hat{0}2\hat{1}|3\hat{0}) & D(3\hat{0}2\hat{1}|4\hat{0}) & \hdots \\
+      0 & 0 & 0 & D(4\hat{0}2\hat{1}|3\hat{0}) & D(4\hat{0}2\hat{1}|4\hat{0}) & \dots \\
+      \vdots & \vdots & \vdots & \vdots & \vdots & \ddots \\
+      D(3\hat{1}|0) & D(3\hat{1}|\hat{0}) & 0 & 0 & 0 & \dots \\
+      D(3\hat{1}|0) & D(\hat{0}3\hat{1}|\hat{0}) & D(\hat{0}3\hat{1}|2\hat{0}) & 0 & 0 & \dots \\
+      0 & D(2\hat{0}3\hat{1}|\hat{0}) & D(2\hat{0}3\hat{1}|2\hat{0}) & D(2\hat{0}3\hat{1}|3\hat{0}) & 0 & \hdots \\
+      0 & 0 & D(3\hat{0}3\hat{1}|2\hat{0}) & D(3\hat{0}3\hat{1}|3\hat{0}) & D(3\hat{0}3\hat{1}|4\hat{0}) & \hdots \\
+      0 & 0 & 0 & D(4\hat{0}3\hat{1}|3\hat{0}) & D(4\hat{0}3\hat{1}|4\hat{0}) & \dots \\
+      \vdots & \vdots & \vdots & \vdots & \vdots & \ddots \\
+    };
+
+    \matrix (lhs) [right=of dirac, matrix of math nodes, nodes={scale=0.3}, left delimiter=(, right delimiter=)]
+    {
+      \psi(0) \\
+      \psi(\hat{0}) \\
+      \psi(2\hat{0}) \\
+      \psi(3\hat{0}) \\
+      \psi(4\hat{0}) \\
+      \vdots \\
+      \psi(\hat{1}) \\
+      \psi(\hat{0}\hat{1}) \\
+      \psi(2\hat{0}\hat{1}) \\
+      \psi(3\hat{0}\hat{1}) \\
+      \psi(4\hat{0}\hat{1}) \\
+      \vdots \\
+      \psi(2\hat{1}) \\
+      \psi(\hat{0}2\hat{1}) \\
+      \psi(2\hat{0}2\hat{1}) \\
+      \psi(3\hat{0}2\hat{1}) \\
+      \psi(4\hat{0}2\hat{1}) \\
+      \vdots \\
+      \psi(3\hat{1}) \\
+      \psi(\hat{0}3\hat{1}) \\
+      \psi(2\hat{0}3\hat{1}) \\
+      \psi(3\hat{0}3\hat{1}) \\
+      \psi(4\hat{0}3\hat{1}) \\
+      \vdots \\
+    };
+    \node (eq) [inner sep=0pt,anchor=west,right=5mm of lhs.east] {$=$};
+    \matrix (rhs) [right=5mm of eq, matrix of math nodes, nodes={scale=0.3}, left delimiter=(, right delimiter=)]
+    {
+      \xi(0) \\
+      \xi(\hat{0}) \\
+      \xi(2\hat{0}) \\
+      \xi(3\hat{0}) \\
+      \xi(4\hat{0}) \\
+      \vdots \\
+      \xi(\hat{1}) \\
+      \xi(\hat{0}\hat{1}) \\
+      \xi(2\hat{0}\hat{1}) \\
+      \xi(3\hat{0}\hat{1}) \\
+      \xi(4\hat{0}\hat{1}) \\
+      \vdots \\
+      \xi(2\hat{1}) \\
+      \xi(\hat{0}2\hat{1}) \\
+      \xi(2\hat{0}2\hat{1}) \\
+      \xi(3\hat{0}2\hat{1}) \\
+      \xi(4\hat{0}2\hat{1}) \\
+      \vdots \\
+      \xi(3\hat{1}) \\
+      \xi(\hat{0}3\hat{1}) \\
+      \xi(2\hat{0}3\hat{1}) \\
+      \xi(3\hat{0}3\hat{1}) \\
+      \xi(4\hat{0}3\hat{1}) \\
+      \vdots \\
+    };
+
+    \draw[thick, transform canvas={xshift=-6mm}, {Stealth}-{Stealth}]
+    (dirac.north west) -- (dirac.south west)
+    node[midway,rotate=90,yshift=3mm] {$VOL \times N_d \times N_c$};
+
+    \draw[thick, transform canvas={yshift=-3mm}, {Stealth}-{Stealth}]
+    (dirac.south west) -- (dirac.south east)
+    node[midway,yshift=-4mm] {$VOL \times N_d \times N_c$};
+  \end{tikzpicture}
+
+  \nointerlineskip
+  \begin{tikzpicture}[overlay,remember picture]
+    \fill<2>[WhiteTrash, opacity=0.85] (current page.north west) rectangle (current page.south east);
+    \node<2>[align=center,scale=1.5] (compl) at ([yshift=1.5cm]current page.center) {%
+      We need to solve this matrix equation\\many many many times};
+    \node<2>[align=center,scale=1.5, below=0.5cm of compl] {%
+        Our low temperature lattices are:\\
+        $256\times32{}^3\times{}4\times{}3 \sim 10^8$
+      };
+  \end{tikzpicture}
+\end{frame}
+
+\begin{frame}{So what do we do with this?}
+
+  \begin{center}
+    \hspace*{-2em}
+    \includegraphics[width=0.83\textwidth]{figures/baryon_plot.pdf}
+  \end{center}
+
+\end{frame}
+
+\begin{frame}[plain]
+  \begin{center}
+    {\changefontsize{36pt}\color{Tropiteal}Thanks!}
+  \end{center}
+\end{frame}
+
+\end{document}
