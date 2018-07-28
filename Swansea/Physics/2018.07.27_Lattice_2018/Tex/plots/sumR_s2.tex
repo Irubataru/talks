@@ -1,0 +1,79 @@
+\documentclass[11pt,tikz]{standalone}
+\usepackage{amsmath}
+\usepackage{mathspec}
+\usepackage{pgfplots}
+
+\DeclareMathOperator{\real}{Re}
+
+\input{../inputs/colours.tex}
+\input{../inputs/plot_settings.tex}
+
+\usepgfplotslibrary{groupplots}
+
+\pgfplotsset{
+  compat=1.16,
+  every axis plot/.append style={
+    only marks,
+    error bars/y dir=both, error bars/y explicit,
+    legend image post style={sharp plot,|-|},
+    error bars/error bar style={
+      line width=0.6pt,
+    },
+    error bars/error mark options={
+      rotate=90,
+      mark size=2pt,
+      line width=0.6pt,
+    },
+    every mark/.append style={line width=1pt},
+  }
+}
+
+\begin{document}
+\begin{tikzpicture}
+  \begin{axis}[
+    xlabel={$T / T_c$},
+    ylabel={$R$},
+    width=10cm,
+    xmin=0, xmax=2,
+    ymin=-0.1, ymax=.99,
+    scaled ticks=false,
+    minor tick num=3,
+    clip mode=individual,
+    legend style={
+      at={(0.95,0.95)},
+      anchor=north east,
+      cells={anchor=west, font=\fontsize{10pt}{10pt}\selectfont},
+      scale=1,
+      nodraw legend,
+      row sep=0.2pt,
+    },
+    y post scale=0.75
+  ]
+
+  \draw[ultra thin,ColourDark2] (axis cs: 0,0) -- (axis cs: 2,0);
+
+    \addplot[
+      ColourBase,
+      mark=o,
+    ] table [
+      x index=1,
+      y index=2,
+      y error index=3,
+    ] {data/Gen2l.doublet.2fl.ssu.sumR.dat};
+    \addlegendentry{$\Xi$}
+
+    \addplot[
+      ColourHl1,
+      mark=square,
+    ] table [
+      x index=1,
+      y index=2,
+      y error index=3,
+    ] {data/Gen2l.quadruplet.2fl.ssu.sumR.dat};
+    \addlegendentry{$\Xi^*$}
+
+    \node[anchor=south west] at (rel axis cs: 0.05,0.12) {$S = -2$};
+
+  \end{axis}
+\end{tikzpicture}%
+\end{document} 

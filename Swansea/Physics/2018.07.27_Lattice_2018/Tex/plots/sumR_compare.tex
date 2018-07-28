@@ -1,0 +1,109 @@
+\documentclass[11pt,tikz]{standalone}
+\usepackage{amsmath}
+\usepackage{mathspec}
+\usepackage{pgfplots}
+
+\DeclareMathOperator{\real}{Re}
+
+\input{../inputs/colours.tex}
+\input{../inputs/plot_settings.tex}
+
+\usepgfplotslibrary{groupplots}
+
+\pgfplotsset{
+  compat=1.16,
+  every axis plot/.append style={
+    only marks,
+    error bars/y dir=both, error bars/y explicit,
+    legend image post style={sharp plot,|-|},
+    error bars/error bar style={
+      line width=0.6pt,
+    },
+    error bars/error mark options={
+      rotate=90,
+      mark size=2pt,
+      line width=0.6pt,
+    },
+    every mark/.append style={line width=1pt},
+  }
+}
+
+\begin{document}
+\begin{tikzpicture}
+  \begin{axis}[
+    xlabel={$N_t$},
+    ylabel={$R$},
+    width=10cm,
+    xmin=0, xmax=2,
+    ymin=-0.1, ymax=.9,
+    scaled ticks=false,
+    minor tick num=3,
+    clip mode=individual,
+    legend style={
+      at={(0.95,0.95)},
+      anchor=north east,
+      cells={anchor=west, font=\fontsize{8pt}{8pt}\selectfont},
+      scale=1,
+      nodraw legend,
+      row sep=0.2pt,
+    },
+    xtick={0.12, 0.24, 0.63, 0.76, 0.84, 0.95, 1.09, 1.27, 1.52, 1.90},
+    xticklabels={$256$,$128$,$48$,$40$,$36$,$32$,$28$,$24$,$20$,$16$},
+    x tick label style={
+      font=\small,
+      rotate=70,
+      anchor=north east,
+      align=center,
+      yshift=2mm,
+    },
+    xlabel shift=-3mm,
+    y post scale=0.75
+  ]
+
+  \draw[ultra thin,ColourDark2] (axis cs: 0,0) -- (axis cs: 2,0);
+
+    \addplot[
+      ColourBase,
+      mark=o,
+    ] table [
+      x index=1,
+      y index=2,
+      y error index=3,
+    ] {data/Gen2l.doublet.2fl.uud.sumR.dat};
+    \addlegendentry{{\color{ColourHl1}Gen2l} - nucleon}
+
+    \addplot[
+      ColourHl1,
+      mark=square,
+    ] table [
+      x index=1,
+      y index=2,
+      y error index=3,
+    ] {data/Gen2l.quadruplet.1fl.uuu.sumR.dat};
+    \addlegendentry{{\color{ColourHl1}Gen2l} - $\Delta$}
+
+    \addplot[
+      ColourHl2,
+      mark=triangle,
+    ] table [
+      x index=1,
+      y index=2,
+      y error index=3,
+    ] {data/old/sumR_nucleon.dat};
+    \addlegendentry{Gen2\phantom{l} - nucleon}
+
+    \addplot[
+      ColourHl3,
+      mark=pentagon,
+    ] table [
+      x index=1,
+      y index=2,
+      y error index=3,
+    ] {data/old/sumR_delta.dat};
+    \addlegendentry{Gen2\phantom{l} - $\Delta$}
+
+    \node[anchor=south west] at (rel axis cs: 0.05,0.12) {$S = 0$};
+
+  \end{axis}
+\end{tikzpicture}%
+\end{document} 

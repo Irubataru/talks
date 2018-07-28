@@ -1,0 +1,168 @@
+% ----- %
+% fonts %
+% ----- %
+
+\setsansfont[ItalicFont={Fira Sans Light Italic},%
+             BoldFont={Fira Sans},%
+             BoldItalicFont={Fira Sans Italic}]%
+            {Fira Sans Light}
+
+\setmonofont[BoldFont={Fira Mono Medium}]{Fira Mono}
+
+\setmainfont{Fira Sans Light}
+\setmathrm{Fira Sans Light}
+
+% ------ %
+% styles %
+% ------ %
+
+\usetikzlibrary{plotmarks,positioning}
+
+\pgfplotsset{
+  nodraw legend/.style={
+    draw=none,
+    fill=none,
+    font=\scriptsize,
+    row sep=-.1cm,
+    name=thelegend,
+  },
+  data w error/.style={
+    only marks,
+    error bars/y dir=both, error bars/y explicit,
+    legend image post style={sharp plot,|-|},
+    error bars/error bar style={
+      line width=1pt,
+    },
+    error bars/error mark options={
+      rotate=90,
+      mark size=2pt,
+      line width=1pt,
+    },
+  },
+}
+
+% ----------- %
+% Line styles %
+% ----------- %
+
+\pgfplotsset{
+  default line style/.style={
+      smooth,
+      line width=1.6pt,
+  },
+  line style 1/.style={
+    ColourHl2,
+    default line style,
+  },
+  line style 2/.style={
+    ColourHl1,
+    default line style,
+  },
+  line style 3/.style={
+    ColourBase,
+    default line style,
+  },
+  line style 4/.style={
+    ColourDark2,
+    default line style,
+  },
+  line style 5/.style={
+    ColourHl3,
+    default line style,
+  },
+  line style data/.style={
+    ColourDark,
+    default line style,
+  },
+}
+
+% ----------- %
+% Node styles %
+% ----------- %
+
+\pgfplotsset{
+  default plot style/.style={
+      %smooth,
+      mark size=1.5,
+      %line width=1pt,
+  },
+  node style 1/.style={
+    ColourBase,
+    mark=*,
+    mark options={
+      fill=ColourBase,
+    },
+    default plot style,
+  },
+  error 1/.style={
+    data w error,
+    ColourBase,
+    mark size=2,
+    line width=1pt,
+    mark=o,
+  },
+  node style 2/.style={
+    ColourHl1,
+    mark=square*,
+    mark options={
+      fill=ColourHl1,
+    },
+    default plot style,
+  },
+  error 2/.style={
+    data w error,
+    ColourHl1,
+    mark size=2,
+    line width=1pt,
+    mark=square,
+  },
+  node style 3/.style={
+    ColourHl2,
+    mark=triangle*,
+    mark options={
+      fill=ColourHl2,
+      scale=1.5,
+    },
+    default plot style,
+  },
+  error 3/.style={
+    data w error,
+    ColourHl2,
+    mark size=2,
+    line width=1pt,
+    mark=triangle,
+  },
+  node style 4/.style={
+    ColourDark2,
+    mark=diamond*,
+    mark options={
+      fill=ColourHl3,
+      scale=1.5,
+    },
+    default plot style,
+  },
+  error 4/.style={
+    data w error,
+    ColourDark2,
+    mark size=3,
+    line width=1pt,
+    mark=diamond,
+  },
+  node style 5/.style={
+    ColourBase,
+    mark=*,
+    mark options={
+      fill=ColourBase,
+      scale=0.2,
+    },
+    default plot style,
+  },
+  node style data/.style={
+    ColourDark,
+    mark=*,
+    mark options={
+      fill=ColourDark,
+    },
+    default plot style,
+  },
+}

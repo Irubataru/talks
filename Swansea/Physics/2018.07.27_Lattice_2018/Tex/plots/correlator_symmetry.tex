@@ -1,0 +1,194 @@
+\documentclass[11pt,tikz]{standalone}
+\usepackage{amsmath}
+\usepackage{mathspec}
+\usepackage{pgfplots}
+
+\DeclareMathOperator{\real}{Re}
+
+\input{../inputs/colours.tex}
+\input{../inputs/plot_settings.tex}
+
+\usetikzlibrary{arrows.meta,bending}
+
+\pgfplotsset{
+  compat=1.16,
+  width=8cm,
+  every axis plot/.append style={
+    only marks,
+    error bars/y dir=both, error bars/y explicit,
+    legend image post style={sharp plot,|-|},
+    error bars/error bar style={
+      line width=0.6pt,
+    },
+    error bars/error mark options={
+      rotate=90,
+      mark size=2pt,
+      line width=0.6pt,
+    },
+    every mark/.append style={line width=1pt},
+  }
+}
+
+\begin{document}
+\begin{tikzpicture}
+  \begin{axis}[
+    xlabel={$\tau T$},
+    ylabel={$\overline{G}+$},
+    xmin=0, xmax=1,
+    ymin=2e-3, ymax=1.2,
+    ymode=log,
+    scaled ticks=false,
+    ticklabel style={
+      scale=0.9,
+    },
+    xticklabel style={
+      /pgf/number format/precision=1,
+      /pgf/number format/fixed,
+      /pgf/number format/fixed zerofill,
+    },
+    minor tick num=3,
+    label shift=-.1cm,
+    legend style={
+      at={(1.02,0.5)},
+      anchor=west,
+      cells={anchor=west, font=\fontsize{6pt}{6pt}\selectfont},
+      scale=1,
+      nodraw legend,
+      row sep=2mm,
+    },
+    legend image post style={
+      scale=0.7
+    },
+    clip mode=individual,
+  ]
+    % --- 48
+    \addplot[
+      ColourBase,
+      mark=*,
+      mark options={
+        fill=ColourBase,
+        scale=0.5,
+      },
+    ] table [
+      x expr=\thisrowno{0} / 48,
+      y expr=\thisrowno{1},
+      y error expr=\thisrowno{2},
+    ] {data/Gen2l_48x32.doublet.2fl.uud_two_ascii.dat};
+    \addlegendentry{$T / T_c = 0.63$}
+
+    % --- 40
+    \addplot[
+      ColourHl1,
+      mark=square,
+      mark size=1.5,
+      mark options={
+        thin,
+      },
+    ] table [
+      x expr=\thisrowno{0} / 40,
+      y expr=\thisrowno{1},
+      y error expr=\thisrowno{2},
+    ] {data/Gen2l_40x32.doublet.2fl.uud_two_ascii.dat};
+    \addlegendentry{$T / T_c = 0.76$}
+
+    % --- 36
+    \addplot[
+      ColourHl2,
+      mark size=2,
+      mark options={
+        thin,
+      },
+      mark=triangle
+    ] table [
+      x expr=\thisrowno{0} / 36,
+      y expr=\thisrowno{1},
+      y error expr=\thisrowno{2},
+    ] {data/Gen2l_36x32.doublet.2fl.uud_two_ascii.dat};
+    \addlegendentry{$T / T_c = 0.84$}
+
+    % --- 32
+    \addplot[
+      ColourHl3,
+      mark size=2,
+      mark options={
+        thin,
+      },
+      mark=diamond,
+    ] table [
+      x expr=\thisrowno{0} / 32,
+      y expr=\thisrowno{1},
+      y error expr=\thisrowno{2},
+    ] {data/Gen2l_32x32.doublet.2fl.uud_two_ascii.dat};
+    \addlegendentry{$T / T_c = 0.95$}
+
+    % --- 28
+    \addplot[
+      ColourDark2,
+      mark size=2,
+      mark options={
+        thin,
+        rotate=180,
+      },
+      mark=triangle,
+    ] table [
+      x expr=\thisrowno{0} / 28,
+      y expr=\thisrowno{1},
+      y error expr=\thisrowno{2},
+    ] {data/28/proton.D-859.DG8_4.DG8_4.SS_two_ascii.dat};
+    \addlegendentry{$T / T_c = 1.09$}
+
+    % --- 24
+    \addplot[
+      ColourBase,
+      mark size=2,
+      mark options={
+        thin,
+      },
+      mark=pentagon,
+    ] table [
+      x expr=\thisrowno{0} / 24,
+      y expr=\thisrowno{1},
+      y error expr=\thisrowno{2},
+    ] {data/Gen2l_24x32.doublet.2fl.uud_two_ascii.dat};
+    \addlegendentry{$T / T_c = 1.27$}
+
+    % --- 20
+    \addplot[
+      ColourHl1,
+      mark size=1.5,
+      mark options={
+        thin,
+        rotate=45,
+      },
+      mark=square,
+    ] table [
+      x expr=\thisrowno{0} / 20,
+      y expr=\thisrowno{1},
+      y error expr=\thisrowno{2},
+    ] {data/Gen2l_20x32.doublet.2fl.uud_two_ascii.dat};
+    \addlegendentry{$T / T_c = 1.52$}
+
+    % --- 16
+    \addplot[
+      ColourHl2,
+      mark=*,
+      mark options={
+        fill=ColourHl2,
+        scale=0.5,
+      },
+    ] table [
+      x expr=\thisrowno{0} / 16,
+      y expr=\thisrowno{1},
+      y error expr=\thisrowno{2},
+    ] {data/Gen2l_16x32.doublet.2fl.uud_two_ascii.dat};
+    \addlegendentry{$T / T_c = 1.90$}
+
+    \draw[-{Stealth}] (rel axis cs: 0.05, 1.05) -- (rel axis cs: 0.3, 1.05) %
+      node[above,midway,scale=0.75] {$\text{parity}^+$};
+    \draw[-{Stealth}] (rel axis cs: 0.95, 1.05) -- (rel axis cs: 0.7, 1.05) %
+      node[above,midway,scale=0.75] {$\text{parity}^-$};
+
+  \end{axis}
+
+\end{tikzpicture}%
+\end{document} 

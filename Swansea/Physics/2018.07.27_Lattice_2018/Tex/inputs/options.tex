@@ -1,0 +1,20 @@
+% --------------------------- %
+% tikz settings and libraries %
+% --------------------------- %
+
+\usetikzlibrary{calc,intersections,positioning,matrix,chains,scopes}
+\usetikzlibrary{decorations.pathmorphing,decorations.pathreplacing,shapes}
+\usetikzlibrary{decorations.text,backgrounds}
+\usetikzlibrary{arrows.meta,bending}
+
+% -------------------- %
+% Additional functions %
+% -------------------- %
+
+\DeclareMathOperator{\real}{Re}
+\DeclareMathOperator{\tr}{Tr}
+\newcommand{\tikzmark}[1]{\tikz[overlay,remember picture] \coordinate (#1);}
+
+% To get "eqnarray" centred alignment
+% See: http://tex.stackexchange.com/a/102845/39313
+\newcommand*\centermathcell[1]{\omit\hfil$\displaystyle#1$\hfil\ignorespaces}
