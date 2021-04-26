@@ -1,0 +1,80 @@
+\documentclass[11pt,tikz]{standalone}
+\usepackage[quiet]{mathspec}
+
+\input{../inputs/colour.tex}
+
+% Sets the font beamer uses, which is sans-serif by default
+\setmainfont[
+ItalicFont={YanoneKaffeesatz-Light},
+Scale=1.3,
+LetterSpace=2.0
+]{YanoneKaffeesatz-Bold}
+
+\usetikzlibrary{decorations.text,decorations.pathmorphing,decorations.markings}
+\usetikzlibrary{arrows.meta}
+
+\tikzset{
+  lattice-gluon/.style={
+    draw=ICantExpress, thick,
+    decoration={coil, amplitude=4pt, segment length=4pt},
+    decorate,
+  },
+}
+
+\begin{document}
+  \begin{tikzpicture}
+    \draw (.5,.5) grid (10.5,5.5);
+    \node[
+      circle,draw,thick,minimum size=1cm,
+      fill=Tropiteal!50!WhiteTrash,scale=0.75
+    ] at (2,2) (q) {$\strut{}\psi$};
+
+
+    \node[
+      circle,draw,thick,minimum size=1cm,
+      fill=Marty!50!WhiteTrash, scale=0.75
+    ] (qbar) at (5,4) {$\strut{}\psi$};
+
+    \path[lattice-gluon] (q) -- (4, 2);
+
+    \path[lattice-gluon] (4, 2) -- (4,4);
+
+    \path[lattice-gluon] (4, 4) -- (qbar);
+
+    \node[
+      circle,draw,thick,minimum size=1cm,
+      fill=Tropiteal!50!WhiteTrash,scale=0.75
+    ] at (9,1) (q2) {$\strut{}\psi$};
+
+    \node[
+      circle,draw,thick,minimum size=1cm,
+      fill=Marty!50!WhiteTrash, scale=0.75
+    ] (qbar2) at (7,5) {$\strut{}\psi$};
+
+    \path[lattice-gluon] (qbar2) -- (7,4);
+    \path[lattice-gluon] (7,4) -- (10,4);
+    \path[lattice-gluon] (10,4) -- (10,2);
+    \path[lattice-gluon] (10,2) -- (9,2);
+    \path[lattice-gluon] (9,2) -- (q2);
+
+    \path[lattice-gluon] (6,1) -- (7,1);
+    \path[lattice-gluon] (7,1) -- (7,3);
+    \path[lattice-gluon] (7,3) -- (6,3);
+    \path[lattice-gluon] (6,3) -- (6,1);
+
+    \path[lattice-gluon] (1,4) -- (1,5);
+    \path[lattice-gluon] (1,5) -- (2,5);
+    \path[lattice-gluon] (2,5) -- (2,4);
+    \path[lattice-gluon] (2,4) -- (1,4);
+    
+    \draw[thick, transform canvas={yshift=-3pt}] ([xshift=5.5pt] qbar.north west) -- ([xshift=-5.5pt] qbar.north east);
+    \draw[thick, transform canvas={yshift=-3pt}] ([xshift=5.5pt] qbar2.north west) -- ([xshift=-5.5pt] qbar2.north east);
+
+    \draw[line width=2pt, WhiteTrash] ([shift={(5pt,0)}]q.south) -- ++(0,-0.3) -- ++(1, 0);
+    \draw[{Stealth}-] ([shift={(5pt,0)}]q.south) -- ++(0,-0.3) -- ++(1, 0) node[right,fill=WhiteTrash,inner sep=1pt] {Quark};
+
+    \draw[line width=2pt, WhiteTrash] (7.3, 2.5) -- ++(0.72,0);
+    \draw[{Stealth}-] (7.3, 2.5) -- ++(0.72,0) node[right,fill=WhiteTrash,inner sep=1pt] {Gluon};
+
+  \end{tikzpicture}
+\end{document}

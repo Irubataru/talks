@@ -1,0 +1,15 @@
+% Tells beamer that math mode should use serif fonts
+\usefonttheme[onlymath]{serif}
+
+% Sets the serif font (which is the main font)
+\setmainfont{Linux Libertine O}
+
+% Sets the font beamer uses, which is sans-serif by default
+\setsansfont[
+ItalicFont={YanoneKaffeesatz-Light},
+Scale=1.3,
+LetterSpace=2.0
+]{YanoneKaffeesatz-Bold}
+
+% Replaces every explicit \mathrm call to use this font
+\setmathrm{Linux Libertine O}

@@ -1,0 +1,36 @@
+\documentclass[11pt,tikz]{standalone}
+\usepackage[quiet]{mathspec}
+\usepackage{ifthen}
+
+\input{../inputs/colour.tex}
+
+\begin{document}
+  \begin{tikzpicture}
+
+      \newcounter{incircle}
+
+      \foreach \i in {1,...,2000} {
+
+        \pgfmathsetmacro{\x}{2*rnd-1}
+        \pgfmathsetmacro{\y}{2*rnd-1}
+
+        \pgfmathsetmacro{\inside}{(\x*\x+\y*\y) < 1 ? 1 : 0}
+
+        \ifthenelse{\equal{\inside}{1}}{
+          \addtocounter{incircle}{1}
+          \node[circle, minimum size=1pt, inner sep=0, fill=Marty] at (\x,\y) {};
+        }{
+          \node[circle, minimum size=1pt, inner sep=0, fill=Tropiteal] at (\x,\y) {};
+        }
+      }
+
+      \draw (-1,-1) rectangle (1,1);
+      \draw (0,0) circle[radius=1];
+
+      \pgfmathsetmacro{\piapprox}{4*\theincircle / 2000}
+
+      \node[scale=0.7, anchor=west] at (1.2,0.2) {$\pi \approx 4 \cdot \frac{\theincircle}{2000}$};
+      \node[scale=0.7, anchor=west] at (1.2,-0.2) {$\phantom{\pi }= \piapprox$};
+
+  \end{tikzpicture}
+\end{document}

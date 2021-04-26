@@ -1,0 +1,127 @@
+\usetikzlibrary{fadings,decorations.pathmorphing,decorations.markings}
+% Code courtesy of https://tex.stackexchange.com/a/137438/39313
+
+\tikzset{gradient/.style n args={3}{
+    postaction={
+    decorate,
+    decoration={
+    markings,
+    mark=between positions 0 and \pgfdecoratedpathlength step 2pt with {
+    \pgfmathsetmacro\myval{multiply(
+        divide(
+        \pgfkeysvalueof{/pgf/decoration/mark info/distance from start}, \pgfdecoratedpathlength
+        ),
+        100
+    )};
+    \pgfsetfillcolor{#3!\myval!#2};
+    \pgfpathcircle{\pgfpointorigin}{#1};
+    \pgfusepath{fill};}
+}}}}
+
+\makeatletter
+\newif\iftikz@shading@path
+
+\tikzset{
+    % There are three circumstances in which the fading sep is needed:
+    % 1. Arrows which do not update the bounding box (which is most of them).
+    % 2. Line caps/joins and mitres that extend outside the natural bounding 
+    %    box of the path (these are not calculated by PGF).
+    % 3. Other reasons that haven't been anticipated.
+    shading xsep/.store in=\tikz@pathshadingxsep,
+    shading ysep/.store in=\tikz@pathshadingysep,
+    shading sep/.style={shading xsep=#1, shading ysep=#1},
+    shading sep=0.0cm,
+}
+
+\def\tikz@shadepath#1{% 
+    % \tikz@addmode installs the `modes' (e.g., fill, draw, shade) 
+    % to be applied to the path. It isn't usualy for doing more
+    % changes to the path's construction.
+    \iftikz@shading@path%
+    \else%
+        \tikz@shading@pathtrue%
+        % Get the current path.
+        \pgfgetpath\tikz@currentshadingpath%
+        % Get the shading sep without setting any other keys.
+        \begingroup%
+            \pgfsys@beginscope% <- may not be necessary
+            \tikzset{#1}%
+            \xdef\tikz@tmp{\noexpand\def\noexpand\tikz@pathshadingxsep{\tikz@pathshadingxsep}%
+                \noexpand\def\noexpand\tikz@pathshadingysep{\tikz@pathshadingysep}}%
+            \pgfsys@endscope%
+        \endgroup
+        \tikz@tmp%
+        % Get the boudning box of the current path size including the shading sep
+        \pgfextract@process\pgf@shadingpath@southwest{\pgfpointadd{\pgfqpoint{\pgf@pathminx}{\pgf@pathminy}}%
+            {\pgfpoint{-\tikz@pathshadingxsep}{-\tikz@pathshadingysep}}}%%
+        \pgfextract@process\pgf@shadingpath@northeast{\pgfpointadd{\pgfqpoint{\pgf@pathmaxx}{\pgf@pathmaxy}}%
+            {\pgfpoint{\tikz@pathshadingxsep}{\tikz@pathshadingysep}}}%
+        % Clear the path
+        \pgfsetpath\pgfutil@empty%                          
+        % Save the current drawing mode and options.
+        \let\tikz@options@saved=\tikz@options%
+        \let\tikz@mode@saved=\tikz@mode%
+        \let\tikz@options=\pgfutil@empty%
+        \let\tikz@mode=\pgfutil@empty%
+        % \tikz@options are processed later on.
+        \tikz@addoption{%
+            \pgfinterruptpath%
+            \pgfinterruptpicture%
+                \begin{tikzfadingfrompicture}[name=.]
+                \pgfscope%
+                    \tikzset{shade path/.style=}% Make absolutely sure shade path is not inherited.
+                    \path \pgfextra{%
+                        % Set the softpath. Any transformations,draw=none} in #1 will have no effect.
+                        % This will *not* update the bounding box...
+                        \pgfsetpath\tikz@currentshadingpath%
+                        % ...so it is done manually.
+                        \pgf@shadingpath@southwest
+                        \expandafter\pgf@protocolsizes{\the\pgf@x}{\the\pgf@y}%
+                        \pgf@shadingpath@northeast%
+                        \expandafter\pgf@protocolsizes{\the\pgf@x}{\the\pgf@y}%
+                        % Install the drawing modes and options.
+                        \let\tikz@options=\tikz@options@saved%
+                        \let\tikz@mode=\tikz@mode@saved%
+                    };
+                    % Now get the bounding box of the picture.
+                    \xdef\pgf@shadingboundingbox@southwest{\noexpand\pgfqpoint{\the\pgf@picminx}{\the\pgf@picminy}}%
+                    \xdef\pgf@shadingboundingbox@northeast{\noexpand\pgfqpoint{\the\pgf@picmaxx}{\the\pgf@picmaxy}}%
+                    \endpgfscope
+                \end{tikzfadingfrompicture}%
+            \endpgfinterruptpicture%
+            \endpgfinterruptpath%
+            % Install a rectangle that covers the shaded/faded path picture.
+            \pgftransformreset%
+            \pgfpathrectanglecorners{\pgf@shadingboundingbox@southwest}{\pgf@shadingboundingbox@northeast}%
+            %
+            % Reset all modes.
+            \let\tikz@path@picture=\pgfutil@empty%
+            \tikz@mode@fillfalse%
+            \tikz@mode@drawfalse%
+            \tikz@mode@doublefalse%
+            \tikz@mode@clipfalse%
+            \tikz@mode@boundaryfalse%
+            \tikz@mode@fade@pathfalse%
+            \tikz@mode@fade@scopefalse%
+            % Now install shading options.
+            \tikzset{#1}%
+            \tikz@mode%
+            % Make the fading happen.
+            \def\tikz@path@fading{.}%
+            \tikz@mode@fade@pathtrue%
+            \tikz@fade@adjustfalse%
+            % Shift the fading to the mid point of the rectangle
+            \pgfpointscale{0.5}{\pgfpointadd{\pgf@shadingboundingbox@southwest}{\pgf@shadingboundingbox@northeast}}%
+            \edef\tikz@fade@transform{shift={(\the\pgf@x,\the\pgf@y)}}%
+            \pgfsetfading{\tikz@path@fading}{\tikz@do@fade@transform}%
+            \tikz@mode@fade@pathfalse%              
+        }%
+    \fi%
+}
+\tikzset{
+    shade path/.code={%
+        \tikz@addmode{\tikz@shadepath{#1}}%
+    }
+}
+
+\makeatother

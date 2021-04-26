@@ -1,0 +1,42 @@
+\documentclass[11pt,tikz]{standalone}
+\usepackage{calc}
+\usepackage[quiet]{mathspec}
+\usepackage{tikz-3dplot}
+
+\input{../inputs/colour.tex}
+\pgfdeclarelayer{background}
+\pgfsetlayers{background,main}
+\usetikzlibrary{arrows.meta}
+
+\newcommand{\peak}[4]{%
+\foreach \z in {0.01,0.02,...,1}{
+  \pgfmathparse{sqrt(-ln(\z)/#4)}
+  \let\r=\pgfmathresult
+  \pgfmathparse{100*\z*#3*0.25}
+  \let\col=\pgfmathresult
+  \tdplotdrawarc[color=ICantExpress,line width=(1pt*#3*0.25),opacity=0.5]{(#1,#2,#3*\z)}{\r}{0}{360}{}{}
+  \tdplotdrawarc[color=Marty!\col!Tropiteal, line width=0.8pt*#3*0.25,opacity=0.5]{(#1,#2,#3*\z)}{\r}{0}{360}{}{}
+}}
+
+\begin{document}
+\tdplotsetmaincoords{70}{110}
+\begin{tikzpicture}[tdplot_main_coords]
+  \tdplotdrawarc[draw=Tropiteal,fill=Tropiteal!50]{(0,0,0)}{4}{0}{360}{}{}
+
+  \draw[ICantExpress,-{Stealth[scale=0.4]}] (0.0,0.0,0) -- (1,2.0,0);
+  \draw[ICantExpress,-{Stealth[scale=0.4]}] (1,2.0,0) -- (-1.0, 3.0,0);
+  \draw[ICantExpress,-{Stealth[scale=0.4]}] (-1.0,3.0,0) -- (-2.0, -2.0,0);
+  \draw[ICantExpress,-{Stealth[scale=0.4]}] (-2,-2,0) -- (-3, 0,0);
+  \draw[ICantExpress,-{Stealth[scale=0.4]}] (-3,0,0) -- (3, -1,0);
+  \draw[ICantExpress,-{Stealth[scale=0.4]}] (3,-1,0) -- (2, -3,0);
+  \draw[ICantExpress,-{Stealth[scale=0.4]}] (2,-3,0) -- (0, -2,0);
+
+  \peak{-2}{-2}{2}{90}
+  \peak{0}{0}{4}{50}
+  \peak{2}{2}{0.5}{50}
+  \peak{0}{3}{3}{50}
+  \peak{3}{0}{2}{150}
+  \peak{-2}{1}{4}{300}
+  \peak{0}{-3}{3.5}{200}
+\end{tikzpicture}
+\end{document}

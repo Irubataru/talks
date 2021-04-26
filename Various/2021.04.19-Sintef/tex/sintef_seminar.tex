@@ -1,0 +1,704 @@
+\documentclass[14pt]{beamer}
+\input{inputs/packages.tex} \input{inputs/font.tex}
+\input{inputs/style.tex}
+\input{inputs/functions.tex}
+\input{inputs/gradient_path.tex}
+
+\newcommand{\minipos}[4]{\scalebox{0.5}{$\{#1, #2, #3, #4\}$}}
+\def\clap#1{\hbox to 0pt{\hss#1\hss}}
+\newcommand{\tikzmark}[1]{\tikz[overlay,remember picture] \coordinate (#1);}
+\def\colours{{"Marty","FeebleWeek","Tropiteal"}}
+
+\usetikzlibrary{decorations}
+\usetikzlibrary{decorations.markings,decorations.pathmorphing,decorations.pathreplacing}
+
+\tikzset{
+  lattice-gluon/.style={
+    draw=ICantExpress, thick,
+    decoration={coil, amplitude=4pt, segment length=4pt},
+    decorate,
+  },
+}
+
+\usefonttheme{serif}
+\setbeamertemplate{footline}{}
+
+\title{Squeezing water from a stone}
+\subtitle{A brief overview of lattice QCD}
+\author{\texorpdfstring{%
+    Jonas Rylund Glesaaen\newline%
+    \fontsize{12pt}{12pt}\selectfont\texttt{jonas@glesaaen.com}%
+    }{%
+Jonas Rylund Glesaaen}}
+
+\date{April 19th 2021}
+
+\begin{document}
+
+\maketitle
+
+\section{A bit about me}
+\frame{\sectionpage}
+
+\begin{frame}{Background}
+
+  \begin{itemize}
+    \setlength{\itemsep}{20pt}
+    \item NTNU: Master's in physics
+    \item Frankfurt: PhD in Lattice QCD
+    \item Swansea: Postdoc Lattice QCD
+    \item Oslo: Software development
+  \end{itemize}
+  
+\end{frame}
+
+\section{Lattice QCD}
+\frame{\sectionpage}
+
+\begin{frame}[fragile]
+  \frametitle{Quantum Chromo Dynamics}
+
+  Theoretical description of the {\color{FeebleWeek}strong nuclear force}
+  \vspace{1cm}
+
+  \begin{center}
+    \begin{tikzpicture}
+      \node[circle,draw,thick,minimum size=1.5cm,fill=Tropiteal, fill opacity=0.5, text opacity=1.0] (q) {\strut{}q};
+      \node[circle,draw,thick,minimum size=1.5cm,fill=Marty, fill opacity=0.5, text opacity=1.0] (qbar) at (5,0) {\strut{}q};
+      
+      \path[
+        draw=transparent!0, very thick,
+        shade path={left color=Tropiteal, right color=Marty},
+        decoration={coil, amplitude=7pt, segment length=7pt, pre length=2pt, post length=2pt},
+        decorate,
+      ] (q) -- (qbar);
+      
+      \draw[thick, transform canvas={yshift=-7pt}] ([xshift=11pt] qbar.north west) -- ([xshift=-11pt] qbar.north east);
+    \end{tikzpicture}
+  \end{center}
+
+  \vspace{1em}
+
+  It binds matter together at the subatomic level
+\end{frame}
+
+\begin{frame}{Lattice QCD}
+
+  Basically we just put on a {\large{}({\color{Marty}HUGE})} lattice
+
+  \begin{center}
+    \includegraphics{figures/lattice_conceptual.pdf}
+  \end{center}
+
+\end{frame}
+
+\begin{frame}{The important equations}
+
+  \begin{equation*}
+    S = \int \mathrm{d}^4 x \, \bar{\psi}(x) Q\, \psi(x) + \mathcal{L}_g[U(x)] \end{equation*}
+
+  \onslide<2->{%
+  \begin{equation*}
+    \mathcal{Z} = \int \mathrm{D} \psi \mathrm{D} U \, e^{-S[\psi,U\,]}
+  \end{equation*}}
+
+  \vspace*{-0.2cm}
+
+  \onslide<3>{%
+  \begin{equation*}
+    \langle \mathcal{O} \rangle = \frac{1}{\mathcal{Z}} \int \mathrm{D} \psi \mathrm{D} U \, \mathcal{O}[\psi,U\,] \, e^{-S[\psi,U\,]}
+  \end{equation*}}
+
+\end{frame}
+
+\begin{frame}{Discretisation}
+
+  \begin{equation*}
+    S \to \sum_{i,j} \bar{\psi}(x_i) Q_{i,j}[U\,]\, \psi(x_j) + \mathcal{L}_g[U(x_i)]
+  \end{equation*}
+
+  \onslide<2->{%
+  \begin{equation*}
+    \mathcal{Z} = \int \mathrm{D} \psi \mathrm{D} U \, e^{-S[\psi,U\,]} =
+    \int\mathrm{D} U\, \mathrm{det}(Q) e^{-\sum \mathcal{L}_g[U(x)]}
+  \end{equation*}}
+
+\end{frame}
+
+\section{Monte Carlo Integration}
+\frame{\sectionpage}
+
+\begin{frame}{Monte Carlo integration}
+
+  \begin{center}
+    \includegraphics[scale=2.2]{figures/monte_carlo_integrals.pdf}
+  \end{center}
+
+\end{frame}
+
+\begin{frame}{The QCD Integrand}
+  \begin{center}
+    \includegraphics{figures/action_multiple_peaks.pdf}
+  \end{center}
+\end{frame}
+
+\begin{frame}{The QCD Integrand}
+  \begin{center}
+    \includegraphics{figures/action_mc_itegral.pdf}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Redefining the problem}
+
+  \vspace*{-1cm}
+
+  \begin{equation*}
+    \langle \mathcal{O} \rangle = \int \mathrm{D} U \, \mathcal{O}[U\,]
+    \begin{tikzpicture}[baseline={(trace.base)}]
+      \node[inner sep=0pt] (trace) {%
+        $\displaystyle\frac{1}{\mathcal{Z}} e^{-S[U\,]}$};
+      \draw [
+        decorate,
+        line width=1.4pt,
+        decoration={
+          brace,
+          mirror,
+          amplitude=5pt
+        },
+      ]
+        ([yshift=-.2cm]trace.south west) -- ([yshift=-.2cm]trace.south east)
+        node[midway,below=5pt] {\clap{Probability density}};
+    \end{tikzpicture}
+    = \int \mathrm{D} U \, \mathcal{O}[U\,] \mathcal{P}[U\,]
+  \end{equation*}
+
+  Integral over U can be stochastically estimated.
+
+  \begin{equation*}
+    \langle\mathcal{O}\,\rangle \approx  \frac{1}{N} \sum_k
+    \mathcal{O}[U_k]\tikzmark{eoq}\hspace{1cm}
+  \end{equation*}
+
+    \nointerlineskip
+    \begin{tikzpicture}[overlay,remember picture]
+      \draw[{Stealth}-] ([shift={(-3.1mm,-2mm)}] eoq) -- ++(0,-5mm) -- +(0.5cm,0)
+        node[right,scale=0.8,align=left,font=\fontspec{YanoneKaffeesatz-Light}] {Distributed $\propto \mathcal{P}$};
+    \end{tikzpicture}
+
+\end{frame}
+
+\begin{frame}{Markov Chains}
+
+  \begin{center}
+  \begin{tikzpicture}
+
+    \node (U1) {$U_1$};
+    \node (U2) [right=of U1] {$U_2$};
+    \node (U3) [right=of U2] {$U_3$};
+    \node (U4) [right=of U3] {$U_4$};
+    \node (dots) [right=of U4] {$\cdots$};
+
+    \draw[-{Stealth}] (U1.east) -- (U2.west) node[midway,above,scale=0.8] {$\propto\mathcal{P}$};
+    \draw[-{Stealth}] (U2.east) -- (U3.west) node[midway,above,scale=0.8] {$\propto\mathcal{P}$};
+    \draw[-{Stealth}] (U3.east) -- (U4.west) node[midway,above,scale=0.8] {$\propto\mathcal{P}$};
+    \draw[-{Stealth}] (U4.east) -- (dots.west) node[midway,above,scale=0.8] {$\propto\mathcal{P}$};
+    
+  \end{tikzpicture}
+  \end{center}
+
+  \vspace{0.4cm}
+
+  \begin{uncoverenv}<2->
+  The distribution can be achieved with a Metropolis accept-reject step
+
+  \begin{equation*}
+  p = \mathrm{min}\big\{1, \mathcal{P}[U_k\,']/\mathcal{P}[U_k]\big\}
+  \end{equation*}
+  \end{uncoverenv}
+
+  \begin{uncoverenv}<3>
+    But the evaluation if this is very expensive...
+  \end{uncoverenv}
+  
+\end{frame}
+
+\begin{frame}[fragile]
+
+  \begin{tikzpicture}[]
+    \matrix (dirac) [matrix of math nodes, nodes={scale=0.3}, left delimiter=(, right delimiter=)]
+    {
+      D(0|0) & D(0|\hat{0}) & 0 & 0 & 0 & \dots \\
+      D(\hat{0}|0) & D(\hat{0}|\hat{0}) & D(\hat{0}|2\hat{0}) & 0 & 0 & \dots \\
+      0 & D(2\hat{0}|\hat{0}) & D(2\hat{0}|2\hat{0}) & D(2\hat{0}|3\hat{0}) & 0 & \hdots \\
+      0 & 0 & D(3\hat{0}|2\hat{0}) & D(3\hat{0}|3\hat{0}) & D(3\hat{0}|4\hat{0}) & \hdots \\
+      0 & 0 & 0 & D(4\hat{0}|3\hat{0}) & D(4\hat{0}|4\hat{0}) & \dots \\
+      \vdots & \vdots & \vdots & \vdots & \vdots & \ddots \\
+      D(\hat{1}|0) & D(\hat{1}|\hat{0}) & 0 & 0 & 0 & \dots \\
+      D(\hat{1}|0) & D(\hat{0}\hat{1}|\hat{0}) & D(\hat{0}\hat{1}|2\hat{0}) & 0 & 0 & \dots \\
+      0 & D(2\hat{0}\hat{1}|\hat{0}) & D(2\hat{0}\hat{1}|2\hat{0}) & D(2\hat{0}\hat{1}|3\hat{0}) & 0 & \hdots \\
+      0 & 0 & D(3\hat{0}\hat{1}|2\hat{0}) & D(3\hat{0}\hat{1}|3\hat{0}) & D(3\hat{0}\hat{1}|4\hat{0}) & \hdots \\
+      0 & 0 & 0 & D(4\hat{0}\hat{1}|3\hat{0}) & D(4\hat{0}\hat{1}|4\hat{0}) & \dots \\
+      \vdots & \vdots & \vdots & \vdots & \vdots & \ddots \\
+      D(2\hat{1}|0) & D(2\hat{1}|\hat{0}) & 0 & 0 & 0 & \dots \\
+      D(2\hat{1}|0) & D(\hat{0}2\hat{1}|\hat{0}) & D(\hat{0}2\hat{1}|2\hat{0}) & 0 & 0 & \dots \\
+      0 & D(2\hat{0}2\hat{1}|\hat{0}) & D(2\hat{0}2\hat{1}|2\hat{0}) & D(2\hat{0}2\hat{1}|3\hat{0}) & 0 & \hdots \\
+      0 & 0 & D(3\hat{0}2\hat{1}|2\hat{0}) & D(3\hat{0}2\hat{1}|3\hat{0}) & D(3\hat{0}2\hat{1}|4\hat{0}) & \hdots \\
+      0 & 0 & 0 & D(4\hat{0}2\hat{1}|3\hat{0}) & D(4\hat{0}2\hat{1}|4\hat{0}) & \dots \\
+      \vdots & \vdots & \vdots & \vdots & \vdots & \ddots \\
+      D(3\hat{1}|0) & D(3\hat{1}|\hat{0}) & 0 & 0 & 0 & \dots \\
+      D(3\hat{1}|0) & D(\hat{0}3\hat{1}|\hat{0}) & D(\hat{0}3\hat{1}|2\hat{0}) & 0 & 0 & \dots \\
+      0 & D(2\hat{0}3\hat{1}|\hat{0}) & D(2\hat{0}3\hat{1}|2\hat{0}) & D(2\hat{0}3\hat{1}|3\hat{0}) & 0 & \hdots \\
+      0 & 0 & D(3\hat{0}3\hat{1}|2\hat{0}) & D(3\hat{0}3\hat{1}|3\hat{0}) & D(3\hat{0}3\hat{1}|4\hat{0}) & \hdots \\
+      0 & 0 & 0 & D(4\hat{0}3\hat{1}|3\hat{0}) & D(4\hat{0}3\hat{1}|4\hat{0}) & \dots \\
+      \vdots & \vdots & \vdots & \vdots & \vdots & \ddots \\
+    };
+
+    \matrix (lhs) [right=of dirac, matrix of math nodes, nodes={scale=0.3}, left delimiter=(, right delimiter=)]
+    {
+      \psi(0) \\
+      \psi(\hat{0}) \\
+      \psi(2\hat{0}) \\
+      \psi(3\hat{0}) \\
+      \psi(4\hat{0}) \\
+      \vdots \\
+      \psi(\hat{1}) \\
+      \psi(\hat{0}\hat{1}) \\
+      \psi(2\hat{0}\hat{1}) \\
+      \psi(3\hat{0}\hat{1}) \\
+      \psi(4\hat{0}\hat{1}) \\
+      \vdots \\
+      \psi(2\hat{1}) \\
+      \psi(\hat{0}2\hat{1}) \\
+      \psi(2\hat{0}2\hat{1}) \\
+      \psi(3\hat{0}2\hat{1}) \\
+      \psi(4\hat{0}2\hat{1}) \\
+      \vdots \\
+      \psi(3\hat{1}) \\
+      \psi(\hat{0}3\hat{1}) \\
+      \psi(2\hat{0}3\hat{1}) \\
+      \psi(3\hat{0}3\hat{1}) \\
+      \psi(4\hat{0}3\hat{1}) \\
+      \vdots \\
+    };
+    \node (eq) [inner sep=0pt,anchor=west,right=5mm of lhs.east] {$=$};
+    \matrix (rhs) [right=5mm of eq, matrix of math nodes, nodes={scale=0.3}, left delimiter=(, right delimiter=)]
+    {
+      \xi(0) \\
+      \xi(\hat{0}) \\
+      \xi(2\hat{0}) \\
+      \xi(3\hat{0}) \\
+      \xi(4\hat{0}) \\
+      \vdots \\
+      \xi(\hat{1}) \\
+      \xi(\hat{0}\hat{1}) \\
+      \xi(2\hat{0}\hat{1}) \\
+      \xi(3\hat{0}\hat{1}) \\
+      \xi(4\hat{0}\hat{1}) \\
+      \vdots \\
+      \xi(2\hat{1}) \\
+      \xi(\hat{0}2\hat{1}) \\
+      \xi(2\hat{0}2\hat{1}) \\
+      \xi(3\hat{0}2\hat{1}) \\
+      \xi(4\hat{0}2\hat{1}) \\
+      \vdots \\
+      \xi(3\hat{1}) \\
+      \xi(\hat{0}3\hat{1}) \\
+      \xi(2\hat{0}3\hat{1}) \\
+      \xi(3\hat{0}3\hat{1}) \\
+      \xi(4\hat{0}3\hat{1}) \\
+      \vdots \\
+    };
+
+    \draw[thick, transform canvas={xshift=-6mm}, {Stealth}-{Stealth}]
+    (dirac.north west) -- (dirac.south west)
+    node[midway,rotate=90,yshift=3mm] {$VOL \times N_d \times N_c$};
+
+    \draw[thick, transform canvas={yshift=-3mm}, {Stealth}-{Stealth}]
+    (dirac.south west) -- (dirac.south east)
+    node[midway,yshift=-4mm] {$VOL \times N_d \times N_c$};
+  \end{tikzpicture}
+
+  \nointerlineskip
+  \begin{tikzpicture}[overlay,remember picture]
+    \fill<2>[WhiteTrash, opacity=0.85] (current page.north west) rectangle (current page.south east);
+    \node<2>[align=center,scale=1.5] (compl) at ([yshift=1.5cm]current page.center) {%
+      We need to solve this matrix equation\\many many many times};
+    \node<2>[align=center,scale=1.5, below=0.5cm of compl] {%
+        Our low temperature lattices are:\\
+        $256\times32{}^3\times{}4\times{}3 \sim 10^8$
+      };
+  \end{tikzpicture}
+\end{frame}
+
+
+\begin{frame}[fragile]{Single link updates}
+  \pgfmathsetseed{12414214}
+  \def\colours{{"Marty","FeebleWeek","Tropiteal"}}
+  \begin{center}
+  \begin{tikzpicture}
+    \clip (0.5,0.5) rectangle (10.5, 5.5);
+
+    \foreach \x in {0,...,10}{
+      \foreach \y in {1,...,5}{
+        \ifthenelse{\equal{\x\y}{53}}{}{
+          \pgfmathrandominteger{\colid}{0}{2}
+          \pgfmathsetmacro{\colone}{array(\colours,\colid)}
+
+          \pgfmathrandominteger{\colidplus}{1}{2}
+          \pgfmathsetmacro{\coltwo}{array(\colours,Mod(\colid+\colidplus,3)}
+
+          \pgfmathrandominteger{\dir}{0}{1}
+
+          \ifthenelse{\equal{\dir}{0}}{
+            \draw[color=\colone,thick] (\x,\y) -- (\x+0.5,\y);
+            \draw[color=\coltwo,thick,-{Stealth}] (\x+0.5,\y) -- (\x+1,\y);
+          }{
+            \draw[color=\colone,thick] (\x+1,\y) -- (\x+0.5,\y);
+            \draw[color=\coltwo,thick,-{Stealth}] (\x+0.5,\y) -- (\x,\y);
+          }}
+      }
+    }
+
+    \draw<1-2>[color=Marty,thick] (5,3) -- (5.5,3);
+    \draw<1-2>[color=FeebleWeek,thick,-{Stealth}] (5.5,3) -- (6,3);
+
+    \draw<3->[color=Tropiteal,thick] (6,3) -- (5.5,3);
+    \draw<3->[color=FeebleWeek,thick,-{Stealth}] (5.5,3) -- (5,3);
+
+    \draw<1-4>[color=Marty,thick] (4,2) -- (4,2.5);
+    \draw<1-4>[color=FeebleWeek,thick,-{Stealth}] (4,2.5) -- (4,3);
+
+    \draw<5>[color=FeebleWeek,thick] (4,2) -- (4,2.5);
+    \draw<5>[color=Tropiteal,thick,-{Stealth}] (4,2.5) -- (4,3);
+
+    \draw<2-3> (4.8,2.8) -- ++(1.4,0) -- ++(0,0.4) -- ++(-1.4,0) -- cycle;
+    \draw<4-5> (3.8,1.8) -- ++(0.4,0) -- ++(0,1.4) -- ++(-0.4,0) -- cycle;
+
+    \foreach \x in {1,...,10}{
+      \foreach \y in {0,...,5}{
+        \ifthenelse{\equal{\x\y}{42}}{}{
+        \pgfmathrandominteger{\colid}{0}{2}
+        \pgfmathsetmacro{\colone}{array(\colours,\colid)}
+
+        \pgfmathrandominteger{\colidplus}{1}{2}
+        \pgfmathsetmacro{\coltwo}{array(\colours,Mod(\colid+\colidplus,3)}
+
+        \pgfmathrandominteger{\dir}{0}{1}
+
+        \ifthenelse{\equal{\dir}{0}}{
+          \draw[color=\colone,thick] (\x,\y) -- (\x,\y+0.5);
+          \draw[color=\coltwo,thick,-{Stealth}] (\x,\y+0.5) -- (\x,\y+1);
+        }{
+          \draw[color=\colone,thick] (\x,\y+1) -- (\x,\y+0.5);
+          \draw[color=\coltwo,thick,-{Stealth}] (\x,\y+0.5) -- (\x,\y);
+        }}
+      }
+    }
+  \end{tikzpicture}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Single link updates}
+
+  \begin{center}
+    \includegraphics{figures/action_single_link_update.pdf}
+  \end{center}
+
+\end{frame}
+
+\begin{frame}[fragile]{Configuration updates}
+  \begin{center}
+  \begin{tikzpicture}
+    \clip (0.5,0.5) rectangle (10.5, 5.5);
+
+    \only<1>{
+    \pgfmathsetseed{12414214}
+    \foreach \x in {0,...,10}{
+      \foreach \y in {1,...,5}{
+        \pgfmathrandominteger{\colid}{0}{2}
+        \pgfmathsetmacro{\colone}{array(\colours,\colid)}
+
+        \pgfmathrandominteger{\colidplus}{1}{2}
+        \pgfmathsetmacro{\coltwo}{array(\colours,Mod(\colid+\colidplus,3)}
+
+        \pgfmathrandominteger{\dir}{0}{1}
+
+        \ifthenelse{\equal{\dir}{0}}{
+          \draw[color=\colone,thick] (\x,\y) -- (\x+0.5,\y);
+          \draw[color=\coltwo,thick,-{Stealth}] (\x+0.5,\y) -- (\x+1,\y);
+        }{
+          \draw[color=\colone,thick] (\x+1,\y) -- (\x+0.5,\y);
+          \draw[color=\coltwo,thick,-{Stealth}] (\x+0.5,\y) -- (\x,\y);
+        }
+      }
+    }
+    \foreach \x in {1,...,10}{
+      \foreach \y in {0,...,5}{
+        \pgfmathrandominteger{\colid}{0}{2}
+        \pgfmathsetmacro{\colone}{array(\colours,\colid)}
+
+        \pgfmathrandominteger{\colidplus}{1}{2}
+        \pgfmathsetmacro{\coltwo}{array(\colours,Mod(\colid+\colidplus,3)}
+
+        \pgfmathrandominteger{\dir}{0}{1}
+
+        \ifthenelse{\equal{\dir}{0}}{
+          \draw[color=\colone,thick] (\x,\y) -- (\x,\y+0.5);
+          \draw[color=\coltwo,thick,-{Stealth}] (\x,\y+0.5) -- (\x,\y+1);
+        }{
+          \draw[color=\colone,thick] (\x,\y+1) -- (\x,\y+0.5);
+          \draw[color=\coltwo,thick,-{Stealth}] (\x,\y+0.5) -- (\x,\y);
+        }
+      }
+    }
+    }
+
+    \only<2>{
+    \pgfmathsetseed{98217350}
+    \foreach \x in {0,...,10}{
+      \foreach \y in {1,...,5}{
+        \pgfmathrandominteger{\colid}{0}{2}
+        \pgfmathsetmacro{\colone}{array(\colours,\colid)}
+
+        \pgfmathrandominteger{\colidplus}{1}{2}
+        \pgfmathsetmacro{\coltwo}{array(\colours,Mod(\colid+\colidplus,3)}
+
+        \pgfmathrandominteger{\dir}{0}{1}
+
+        \ifthenelse{\equal{\dir}{0}}{
+          \draw[color=\colone,thick] (\x,\y) -- (\x+0.5,\y);
+          \draw[color=\coltwo,thick,-{Stealth}] (\x+0.5,\y) -- (\x+1,\y);
+        }{
+          \draw[color=\colone,thick] (\x+1,\y) -- (\x+0.5,\y);
+          \draw[color=\coltwo,thick,-{Stealth}] (\x+0.5,\y) -- (\x,\y);
+        }
+      }
+    }
+    \foreach \x in {1,...,10}{
+      \foreach \y in {0,...,5}{
+        \pgfmathrandominteger{\colid}{0}{2}
+        \pgfmathsetmacro{\colone}{array(\colours,\colid)}
+
+        \pgfmathrandominteger{\colidplus}{1}{2}
+        \pgfmathsetmacro{\coltwo}{array(\colours,Mod(\colid+\colidplus,3)}
+
+        \pgfmathrandominteger{\dir}{0}{1}
+
+        \ifthenelse{\equal{\dir}{0}}{
+          \draw[color=\colone,thick] (\x,\y) -- (\x,\y+0.5);
+          \draw[color=\coltwo,thick,-{Stealth}] (\x,\y+0.5) -- (\x,\y+1);
+        }{
+          \draw[color=\colone,thick] (\x,\y+1) -- (\x,\y+0.5);
+          \draw[color=\coltwo,thick,-{Stealth}] (\x,\y+0.5) -- (\x,\y);
+        }
+      }
+    }
+    }
+  \end{tikzpicture}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Configuration updates (random)}
+
+  \begin{center}
+    \includegraphics{figures/action_config_update_random.pdf}
+  \end{center}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Configuration updates (directed)}
+
+  \begin{center}
+    \includegraphics{figures/action_config_update_directed.pdf}
+  \end{center}
+
+\end{frame}
+
+\begin{frame}{Clever algorithms}
+
+  \begin{itemize}
+    \setlength{\itemsep}{20pt}
+    \item Langevin algorithm (1981) \\
+      {\fontspec{YanoneKaffeesatz-Light} Seepest descent + Gaussian noise}
+    \item Moleculare Dynamics algorithm (1983) \\
+      {\fontspec{YanoneKaffeesatz-Light} Additional stochastic variables + Hamilton's equations}
+    \item Hybrid Monte Carlo (1987) \\
+      {\fontspec{YanoneKaffeesatz-Light} Combine Langevin and MD with Metropolis accept-reject}
+  \end{itemize}
+
+\end{frame}
+
+\section{Measurements}
+\frame{\sectionpage}
+
+\begin{frame}{Configurations}
+  
+  \begin{center}
+  \begin{tikzpicture}
+
+    \node (figure) {\includegraphics[scale=1.6]{figures/markov_chain_configs.pdf}};
+
+    \draw [
+      decorate,
+      line width=1.4pt,
+      decoration={
+        brace,
+        amplitude=5pt
+      },
+      ] (figure.north east) -- (figure.south east);
+
+    \draw [
+      decorate,
+      line width=1.4pt,
+      decoration={
+        brace,
+        mirror,
+        amplitude=5pt
+      },
+      ] (figure.north west) -- (figure.south west);
+    
+  \end{tikzpicture}
+  \end{center}
+
+  \only<1>{
+  Each configuration consists of $(4\cdot{}18\cdot{}\mathrm{VOL})$ numbers.
+  }
+
+  \only<2>{
+    Low temperature configuration is 4.5 GB
+  }
+
+\end{frame}
+
+\begin{frame}{Hadron spectroscopy}
+
+  \begin{center}
+  \begin{tikzpicture}
+    \pgfmathsetseed{12312312}
+    \clip (0.5,0.5) rectangle (10.5, 5.5);
+    \foreach \x in {0,...,10}{
+      \foreach \y in {1,...,5}{
+        \pgfmathrandominteger{\colid}{0}{2}
+        \pgfmathsetmacro{\colone}{array(\colours,\colid)}
+
+        \pgfmathrandominteger{\colidplus}{1}{2}
+        \pgfmathsetmacro{\coltwo}{array(\colours,Mod(\colid+\colidplus,3)}
+
+        \pgfmathrandominteger{\dir}{0}{1}
+
+        \ifthenelse{\equal{\dir}{0}}{
+          \draw[color=\colone] (\x,\y) -- (\x+0.5,\y);
+          \draw[color=\coltwo] (\x+0.5,\y) -- (\x+1,\y);
+        }{
+          \draw[color=\colone] (\x+1,\y) -- (\x+0.5,\y);
+          \draw[color=\coltwo] (\x+0.5,\y) -- (\x,\y);
+        }
+      }
+    }
+    \foreach \x in {1,...,10}{
+      \foreach \y in {0,...,5}{
+        \pgfmathrandominteger{\colid}{0}{2}
+        \pgfmathsetmacro{\colone}{array(\colours,\colid)}
+
+        \pgfmathrandominteger{\colidplus}{1}{2}
+        \pgfmathsetmacro{\coltwo}{array(\colours,Mod(\colid+\colidplus,3)}
+
+        \pgfmathrandominteger{\dir}{0}{1}
+
+        \ifthenelse{\equal{\dir}{0}}{
+          \draw[color=\colone] (\x,\y) -- (\x,\y+0.5);
+          \draw[color=\coltwo] (\x,\y+0.5) -- (\x,\y+1);
+        }{
+          \draw[color=\colone] (\x,\y+1) -- (\x,\y+0.5);
+          \draw[color=\coltwo] (\x,\y+0.5) -- (\x,\y);
+        }
+      }
+    }
+
+    \only<1-4>{
+    \node[circle, inner sep=2.5pt, fill=Tropiteal] at (3,4) (up)  {u};
+    \node[circle, inner sep=2.5pt, fill=Marty] at (6,2) (upbar) {u};
+    \draw ([xshift=3pt]upbar.north west) -- ([xshift=-3pt]upbar.north east);
+    }
+
+    \only<1-2>{
+    \draw[lattice-gluon] (up.east) -- (5,4) -- (5,2) -- (upbar.west);
+    }
+    \only<3>{
+      \draw[lattice-gluon] (up.east) -- (4,4) -- (4,3) -- (7,3) -- (7,1) -- (6,1) -- (upbar.south);
+    }
+    \only<4>{
+    \draw[lattice-gluon] (up.south) -- (3,3) -- (5,3) -- (5,2) -- (upbar.west);
+    }
+
+    \only<2>{
+      \draw[TealDrop, dashed] (2.5,1.5) rectangle (6.5,4.5);
+      \node[anchor=west] at (6.54, 3.5) {Pion};
+    }
+
+    \begin{onlyenv}<5>
+      \begin{scope}[shift={(2,1)}]
+        \node[circle, inner sep=2.5pt, fill=Tropiteal] at (3,4) (up-2)  {u};
+        \node[circle, inner sep=2.5pt, fill=Marty] at (6,2) (upbar-2) {u};
+        \draw ([xshift=3pt]upbar-2.north west) -- ([xshift=-3pt]upbar-2.north east);
+        \draw[lattice-gluon] (up-2.south) -- (3,3) -- (5,3) -- (5,2) -- (upbar-2.west);
+      \end{scope}
+    \end{onlyenv}
+
+    \begin{onlyenv}<6>
+      \begin{scope}[shift={(4,-1)}]
+        \node[circle, inner sep=2.5pt, fill=Tropiteal] at (3,4) (up-3)  {u};
+        \node[circle, inner sep=2.5pt, fill=Marty] at (6,2) (upbar-3) {u};
+        \draw ([xshift=3pt]upbar-3.north west) -- ([xshift=-3pt]upbar-3.north east);
+        \draw[lattice-gluon] (up-3.south) -- (3,3) -- (5,3) -- (5,2) -- (upbar-3.west);
+      \end{scope}
+    \end{onlyenv}
+
+    \begin{onlyenv}<7>
+      \begin{scope}[shift={(-2,0)}]
+        \node[circle, inner sep=2.5pt, fill=Tropiteal] at (3,4) (up-4)  {u};
+        \node[circle, inner sep=2.5pt, fill=Marty] at (6,2) (upbar-4) {u};
+        \draw ([xshift=3pt]upbar-4.north west) -- ([xshift=-3pt]upbar-4.north east);
+        \draw[lattice-gluon] (up-4.south) -- (3,3) -- (5,3) -- (5,2) -- (upbar-4.west);
+      \end{scope}
+    \end{onlyenv}
+
+  \end{tikzpicture}
+
+  \end{center}
+  
+\end{frame}
+
+\section{Results}
+\frame{\sectionpage}
+
+\begin{frame}[fragile]{Phase diagram of QCD}
+  \begin{center}
+    \includegraphics[width=\textwidth]{figures/qcd_phase_diagram.pdf}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Baryon parity breaking}
+
+  \begin{center}
+    \includegraphics[]{figures/mirror_symmetry.pdf}
+  \end{center}
+
+\end{frame}
+
+\begin{frame}{Baryon parity restoration}
+
+  \begin{center}
+    \includegraphics[width=0.8\textwidth]{figures/baryon_plot.pdf}
+  \end{center}
+
+\end{frame}
+
+\section{Conclusion}
+\frame{\sectionpage}
+
+\section{Questions?}
+\frame{\sectionpage}
+
+\end{document}

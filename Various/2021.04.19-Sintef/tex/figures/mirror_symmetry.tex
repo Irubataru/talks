@@ -1,0 +1,63 @@
+\documentclass[11pt,tikz]{standalone}
+\usepackage[quiet]{mathspec}
+
+\input{../inputs/colour.tex}
+
+% Sets the font beamer uses, which is sans-serif by default
+\setmainfont[
+ItalicFont={YanoneKaffeesatz-Light},
+Scale=1.3,
+LetterSpace=2.0
+]{YanoneKaffeesatz-Bold}
+
+\usetikzlibrary{decorations.text,decorations.pathmorphing,decorations.markings}
+\usetikzlibrary{arrows.meta}
+
+\pgfdeclarelayer{background}
+
+\pgfsetlayers{background,main}
+
+\begin{document}
+  \begin{tikzpicture}
+    \node[circle,ball color=Tropiteal] at (-2,0) (p) {\strut{}p};
+    \node[circle,ball color=Marty] at (2,0) (pstar) {\strut{}p};
+
+    \begin{pgfonlayer}{background}
+      \draw[thick] (p) -- ++(0,-1);
+      \draw[thick] (pstar) -- ++(0,-1);
+    \end{pgfonlayer}
+
+    \node[scale=0.5, anchor=north east] at ([shift={(-1pt,-0.2pt)}]pstar.north east) {*};
+
+    \draw[thick, -{Stealth}] ([yshift=-2pt]p.north) -- (-2,1);
+    \draw[thick, -{Stealth}] ([yshift=-2pt]pstar.north) -- (2,1);
+
+    \draw[
+      -{Stealth[scale=0.5]},
+      shorten >=2pt,
+      shorten <=3pt
+    ] ([shift={(0,1pt)}]p.north)
+      arc [
+        start angle=90,
+        delta angle=360,
+        x radius=10pt,
+        y radius=2pt];
+
+    \draw[
+      -{Stealth[scale=0.5]},
+      shorten >=2pt,
+      shorten <=3pt
+    ] ([shift={(0,1pt)}]pstar.north)
+      arc [
+        start angle=90,
+        delta angle=-360,
+        x radius=10pt,
+        y radius=2pt];
+
+    \draw[thick, dashed,ICantExpress!60] (0,-2.5) -- (0,2.5);
+
+    \node at (-2,-2) {Mass:  \phantom{1}938 MeV};
+    \node at (2,-2) {Mass:  1535 MeV};
+
+  \end{tikzpicture}
+\end{document}
