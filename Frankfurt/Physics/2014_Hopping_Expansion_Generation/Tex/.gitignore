@@ -1,12 +1,2 @@
-*.aux
-*.log
-*.nav
-*.out
-*.snm
-*.toc
-*.fdb_latexmk
-*.fls
-*.log
+# Ignore figures and output
 *.pdf
-*.swp
-*.vrb
