@@ -1,6 +1,6 @@
 //Created: 11-05-2013
 //Modified: lø. 11. mai 2013 kl. 14.43 +0200
-//Author: Jonas R. Glesaaen
+//Author: Aleksandra R. Glesaaen
 #include<cstdio>
 using namespace std;
 
