@@ -1,0 +1,31 @@
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{textcomp,tikz}
+
+\input{style.tex}
+
+\pagestyle{empty}
+\usepackage[active,tightpage]{preview}
+\PreviewEnvironment{tikzpicture}
+\setlength\PreviewBorder{2mm}
+
+\usetikzlibrary{decorations,decorations.markings}
+
+\begin{document}
+\begin{tikzpicture}
+  \node[inner1] (n1) at (0,0) {};
+  \node[inner1] (n2) at (1,0) {};
+  \node[inner1] (n3) at (1,1) {};
+  \node[outer2] (n12) at (n1) {};
+  \node[inner2] (n4) at (0,1) {}
+    edge[linestyle,col2] (n12);
+  \node[outer3] (n22) at (n2) {}
+    edge[linestyle,col1] (n12);
+  \node[outer3] (n32) at (n3) {}
+    edge[linestyle,col1,bend right=45] (n22)
+    edge[linestyle,col3,bend left=45] (n22);
+\end{tikzpicture}
+\end{document}
+
+

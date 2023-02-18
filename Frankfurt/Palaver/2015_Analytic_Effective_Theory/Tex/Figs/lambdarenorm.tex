@@ -1,0 +1,107 @@
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{textcomp,tikz}
+
+\definecolor{LightUIBase}{RGB}{44,62,80}
+\definecolor{LightUIRed}{RGB}{231,76,60}
+\definecolor{LightUIGray}{RGB}{236,240,241}
+%\definecolor{LightUILightBlue}{RGB}{52,152,219}
+\definecolor{LightUILightBlue}{RGB}{72,172,239}
+\definecolor{LightUIBlue}{RGB}{41,128,185}
+
+\pagestyle{empty}
+\usepackage[active,tightpage]{preview}
+\PreviewEnvironment{tikzpicture}
+\setlength\PreviewBorder{2mm}
+
+\usetikzlibrary{decorations,decorations.markings}
+
+\tikzset{
+  ->-/.style={decoration={
+    markings,
+    mark=at position #1 with {\arrow[LightUIRed]{stealth}}},
+    postaction={decorate}
+  },
+  fermion/.style={
+    circle,
+    inner sep=0pt,
+    minimum size=4pt,
+    fill=LightUIBlue
+  },
+  gluon/.style={
+    draw=LightUIRed,
+    thick
+  },
+  gluonx/.style={
+    gluon,
+    ->-=.55
+  },
+  gluonz/.style={
+    gluon,
+    ->-=.7
+  }
+}
+
+\pgfdeclarelayer{background}
+\pgfsetlayers{background,main}
+
+\begin{document}
+
+\begin{tikzpicture}
+  \begin{pgfonlayer}{background}
+  \foreach \x in {0,...,5} {
+    \foreach \y in {1} {
+      \draw[LightUIBase!50!white] (\x,\y,-.3) -- (\x,\y,1.3);
+    }
+  }
+
+  \foreach \x in {0,...,5} {
+    \draw[LightUIBase!50!white] (\x,.5,0) -- (\x,1.5,0);
+  }
+
+  \foreach \y in {1} {
+    \draw[LightUIBase!50!white] (-.3,\y,0) -- (5.3,\y,0);
+  }
+
+  \fill[LightUIRed,opacity=0.2] (0,1,0) -- (2,1,0) -- (2,1,1) -- (0,1,1) -- cycle;
+  \fill[LightUIRed,opacity=0.2] (3,1,0) -- (5,1,0) -- (5,1,1) -- (3,1,1) -- cycle;
+  \end{pgfonlayer}
+
+  \foreach \x in {0,...,5} {
+    \draw[LightUIBase!50!white] (\x,.5,1) -- (\x,1.5,1);
+  }
+  \foreach \y in {1} {
+    \draw[LightUIBase!50!white] (-.3,\y,1) -- (5.3,\y,1);
+  }
+
+
+
+  \draw[gluon] (-.3,1,1) -- (0,1,1);
+  \draw[gluon,->-=.5] (0,1,1) -- (0,1,0);
+  \draw[gluon] (0,1,0) -- (-.3,1,0);
+
+  \foreach \x in {0,...,4} {
+    \begin{scope}[shift={(\x,0,0)}]
+    \draw[gluonx] (0,1,1) -- (1,1,1);
+    \begin{pgfonlayer}{background}
+    \draw[gluon,->-=.5] (1,1,1) -- (1,1,0);
+    \draw[gluonx] (1,1,0) -- (0,1,0);
+    \draw[gluon,->-=.5] (0,1,0) -- (0,1,1);
+    \end{pgfonlayer}
+  \end{scope}}
+
+  \node[fermion] at (2,1,0) {};
+  \node[fermion] at (3,1,0) {};
+  \node[fermion] at (2,1,1) {};
+  \node[fermion] at (3,1,1) {};
+
+  \draw[gluon] (5.3,1,0) -- (5,1,0);
+  \draw[gluon,->-=.5] (5,1,0) -- (5,1,1);
+  \draw[gluon] (5,1,1) -- (5.3,1,1);
+
+\end{tikzpicture}
+
+\end{document}
+
+

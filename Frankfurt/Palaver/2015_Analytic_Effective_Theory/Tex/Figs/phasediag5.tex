@@ -1,0 +1,54 @@
+\documentclass[11pt]{article}
+\usepackage{droid}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{textcomp,tikz}
+\usepackage{amsmath,amssymb}
+\usepackage{xcolor}
+
+\definecolor{lightlightorange}{RGB}{191,114,86}
+\definecolor{lightlightred}{RGB}{191,42,42}
+
+\definecolor{LightUIBase}{RGB}{44,62,80}
+\definecolor{LightUIRed}{RGB}{231,76,60}
+\definecolor{LightUIGray}{RGB}{236,240,241}
+%\definecolor{LightUILightBlue}{RGB}{52,152,219}
+\definecolor{LightUILightBlue}{RGB}{72,172,239}
+\definecolor{LightUIBlue}{RGB}{41,128,185}
+
+\usetikzlibrary{calc}
+
+\pagestyle{empty}
+\usepackage[active,tightpage]{preview}
+\PreviewEnvironment{tikzpicture}
+\setlength\PreviewBorder{2mm}
+
+\newcommand\lowerbound{1.5}
+\newcommand\lowerboundtwo{3.45}
+
+\begin{document}
+\begin{tikzpicture}[samples=1000,text=LightUIBase]
+  \draw[LightUIRed] plot[domain=\lowerbound:4] (\x, {sqrt(16 - \x*\x)/2});
+  \draw[LightUIBlue] plot[domain=\lowerboundtwo:3.6] (\x, {sqrt(pow(3.6,2) - \x*\x)/3});
+  \node[LightUIRed,circle,fill,inner sep=0pt, minimum size=2pt] at (\lowerbound, {sqrt(16 - pow(\lowerbound,2))/2}) {};
+  \node[LightUIBlue,circle,fill,inner sep=0pt, minimum size=2pt] at (\lowerboundtwo, {sqrt(pow(3.6,2) - pow(\lowerboundtwo,2))/3}) {};
+  %\node[scale=.4,anchor=center,rotate=90] at (.2,2) {crossover};
+  \node[scale=.4] at (3,2.5) [text=LightUIBase] {QGP};
+  \node[scale=.4] at (4.5,.3) [text=LightUIBase,align=center] {Quark\\matter};
+  \node[scale=.4] at (1.5,.7) [text=LightUIBase,align=center] {Hadron\\gas};
+
+  \draw[->,thin,LightUIBase!50] (0,0) -- (5,0)
+    node[text=LightUIBase,midway,below=2pt,scale=.4] {$\mu_B \; [\mathrm{GeV}]$};
+  \draw[->,thin,LightUIBase!50] (0,0) -- (0,3)
+    node[text=LightUIBase,midway,above,xshift=-2pt,yshift=.5cm,scale=.4,rotate=90] {$T \; [\mathrm{MeV}]$};
+
+  \draw[LightUIBase!50] (3.8,0) node[text=LightUIBase,below=2pt,scale=.4] {$1$} -- +(0,.1);
+  \draw[LightUIBase!50] (0,1.2) node[text=LightUIBase,left=2pt,scale=.4] {$1$} -- +(.1,0);
+
+
+  \fill[LightUIRed,opacity=.3] (0,.1) -- (0,-.1) -- (4.5,-.1) -- (4.5,0)
+    -- plot[domain=4.5:\lowerbound] (\x, {sqrt(pow(4.5,2) - pow(\x,2))*2.5/4.5}) -- cycle;
+\end{tikzpicture}
+\end{document}
+
+

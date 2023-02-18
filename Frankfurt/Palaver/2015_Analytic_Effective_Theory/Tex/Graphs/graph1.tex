@@ -1,0 +1,30 @@
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{textcomp,tikz}
+
+\input{style.tex}
+
+\pagestyle{empty}
+\usepackage[active,tightpage]{preview}
+\PreviewEnvironment{tikzpicture}
+\setlength\PreviewBorder{2mm}
+
+\usetikzlibrary{decorations,decorations.markings}
+
+\begin{document}
+\begin{tikzpicture}
+  \node[inner=col1] (n1) {};
+  \node[inner=col1] (n2) at ([shift={(60:1)}] n1) {}
+    edge[linestyle,col1] (n1);
+  \node[inner=col1] (n3) at ([shift={(300:1)}] n2) {};
+  \node[outer=col2] (n32) at (n3) {}
+    edge[linestyle,col1] (n2);
+  \node[inner=col2] (n4) at ([shift={(60:1)}] n3) {}
+    edge[linestyle,col2] (n32);
+  \node[inner=col2] (n5) at ([shift={(300:1)}] n4) {}
+    edge[linestyle,col2] (n4);
+\end{tikzpicture}
+\end{document}
+
+

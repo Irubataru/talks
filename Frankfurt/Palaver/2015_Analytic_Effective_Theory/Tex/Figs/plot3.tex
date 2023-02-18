@@ -1,0 +1,39 @@
+\documentclass[11pt]{article}
+\usepackage{droid}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{textcomp,tikz}
+\usepackage{amsmath,amssymb}
+\usepackage{xcolor}
+
+\definecolor{lightlightorange}{RGB}{191,114,86}
+\definecolor{lightlightred}{RGB}{191,42,42}
+
+\definecolor{LightUIBase}{RGB}{44,62,80}
+\definecolor{LightUIRed}{RGB}{231,76,60}
+\definecolor{LightUIGray}{RGB}{236,240,241}
+%\definecolor{LightUILightBlue}{RGB}{52,152,219}
+\definecolor{LightUILightBlue}{RGB}{72,172,239}
+\definecolor{LightUIBlue}{RGB}{41,128,185}
+
+\usetikzlibrary{calc}
+
+\pagestyle{empty}
+\usepackage[active,tightpage]{preview}
+\PreviewEnvironment{tikzpicture}
+\setlength\PreviewBorder{2mm}
+
+\newcommand\lowerbound{-.34}
+\newcommand\upperbound{1.1}
+
+\begin{document}
+\begin{tikzpicture}[domain=-2.5:2.5,samples=1000]
+  \draw[->,thin,black!50] (-2.5,0) -- (2.5,0);
+  \draw[->,thin,black!50] (-2,-1.5) -- (-2,1.5);
+  \draw[LightUIRed] plot (\x, { 1.5 * exp(-\x * \x) * cos(20*\x r)});
+  \fill[opacity=.3,LightUIRed] (\lowerbound,0) -- plot [domain=\lowerbound:\upperbound] (\x, { 1.5 * exp(-\x * \x) * cos(20*\x r)}) -- (\upperbound,0);
+  \node[align=right,anchor=east,scale=0.75] at (2.5,1.25) {\color{LightUIBase}$\operatorname{Re} f(x)$};
+\end{tikzpicture}
+\end{document}
+
+

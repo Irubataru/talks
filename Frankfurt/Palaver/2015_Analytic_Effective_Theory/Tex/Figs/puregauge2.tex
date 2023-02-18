@@ -1,0 +1,96 @@
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{textcomp,tikz}
+
+\definecolor{LightUIBase}{RGB}{44,62,80}
+\definecolor{LightUIRed}{RGB}{231,76,60}
+\definecolor{LightUIGray}{RGB}{236,240,241}
+%\definecolor{LightUILightBlue}{RGB}{52,152,219}
+\definecolor{LightUILightBlue}{RGB}{72,172,239}
+\definecolor{LightUIBlue}{RGB}{41,128,185}
+
+\pagestyle{empty}
+\usepackage[active,tightpage]{preview}
+\PreviewEnvironment{tikzpicture}
+\setlength\PreviewBorder{2mm}
+
+\usetikzlibrary{decorations,decorations.markings}
+
+\tikzset{
+  ->-/.style={decoration={
+    markings,
+    mark=at position #1 with {\arrow[LightUIRed]{stealth}}},
+    postaction={decorate}
+  },
+  fermion/.style={
+    circle,
+    inner sep=0pt,
+    minimum size=4pt,
+    fill=LightUIBlue
+  },
+  gluon/.style={
+    draw=LightUIRed,
+    thick
+  },
+  gluonx/.style={
+    gluon,
+    ->-=.55
+  },
+  gluonz/.style={decoration={
+    markings,
+    mark=at position .4 with {\arrow[LightUIBase]{stealth}}},
+    postaction={decorate},
+    thick,
+    draw=LightUIBase
+  }
+}
+
+\begin{document}
+
+\begin{tikzpicture}
+  \foreach \x in {0,...,5} {
+    \foreach \y in {0,1,2} {
+      \draw[LightUIBase!50!white] (\x,\y,-.3) -- (\x,\y,1.3);
+    }
+  }
+  \foreach \x in {0,...,5} {
+    \foreach \z in {0,1} {
+      \draw[LightUIBase!50!white] (\x,-.3,\z) -- (\x,2.3,\z);
+    }
+  }
+  \foreach \y in {0,1,2} {
+    \foreach \z in {0,1} {
+      \draw[LightUIBase!50!white] (-.3,\y,\z) -- (5.3,\y,\z);
+    }
+  }
+
+
+  \fill[LightUIRed,opacity=0.2] (0,1,0) -- (5,1,0) -- (5,1,1) -- (0,1,1) -- cycle;
+
+  \draw[gluon] (-.3,1,1) -- (0,1,1);
+  \draw[gluonz] (0,1,1) -- (0,1,0);
+  \draw[gluon] (0,1,0) -- (-.3,1,0);
+
+  \foreach \x in {0,...,4} {
+    \begin{scope}[shift={(\x,0,0)}]
+    \draw[gluonx] (0,1,1) -- (1,1,1);
+    \draw[gluonz] (1,1,1) -- (1,1,0);
+    \draw[gluonx] (1,1,0) -- (0,1,0);
+    \draw[gluonz] (0,1,0) -- (0,1,1);
+  \end{scope}}
+
+  \draw[gluon] (5.3,1,0) -- (5,1,0);
+  \draw[gluonz] (5,1,0) -- (5,1,1);
+  \draw[gluon] (5,1,1) -- (5.3,1,1);
+
+
+  \coordinate (coordcenter) at (-1,0,2.5);
+  \draw[->,>=stealth] (coordcenter) -- +(2,0,0) node[scale=0.75,right] {$t$};
+  \draw[->,>=stealth] (coordcenter) -- +(0,2,0) node[scale=0.75,right] {$y$};
+  \draw[->,>=stealth] (coordcenter) -- +(0,0,-2) node[scale=0.75,right] {$x$};
+\end{tikzpicture}
+
+\end{document}
+
+

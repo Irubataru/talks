@@ -1,0 +1,28 @@
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{textcomp,tikz}
+
+\input{style.tex}
+
+\pagestyle{empty}
+\usepackage[active,tightpage]{preview}
+\PreviewEnvironment{tikzpicture}
+\setlength\PreviewBorder{0mm}
+
+\usetikzlibrary{decorations,decorations.markings}
+
+\begin{document}
+\begin{tikzpicture}
+  \node[inner1] (n1) {};
+  \node[inner2] (n2) at (1,0) {};
+  \node[outer1] (n22) at (n2) {};
+  \node[outer2] (n12) at (n1) {}
+    edge[linestyle,col1,bend left] (n22)
+    edge[linestyle,col1,bend right] (n22)
+    edge[linestyle,col2,bend left=60] (n22)
+    edge[linestyle,col2,bend right=60] (n22);
+\end{tikzpicture}
+\end{document}
+
+
