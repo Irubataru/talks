@@ -2,7 +2,7 @@
 /*
  * Created: 22-02-2018
  * Modified: Thu 22 Feb 2018 15:08:39 GMT
- * Author: Jonas R. Glesaaen (jonas@glesaaen.com)
+ * Author: Aleksandra R. Glesaaen (aleksandra@glesaaen.com)
  */
 
 #include <boost/hana.hpp>

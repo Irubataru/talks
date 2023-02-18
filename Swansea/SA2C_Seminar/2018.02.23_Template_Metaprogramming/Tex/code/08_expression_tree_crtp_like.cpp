@@ -2,7 +2,7 @@
 /*
  * Created: 23-02-2018
  * Modified: Fri 23 Feb 2018 12:27:16 GMT
- * Author: Jonas R. Glesaaen (jonas@glesaaen.com)
+ * Author: Aleksandra R. Glesaaen (aleksandra@glesaaen.com)
  */
 
 template <typename T>

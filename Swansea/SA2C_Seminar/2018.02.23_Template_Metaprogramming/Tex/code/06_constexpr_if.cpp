@@ -2,7 +2,7 @@
 /*
  * Created: 22-02-2018
  * Modified: Thu 22 Feb 2018 22:58:58 GMT
- * Author: Jonas R. Glesaaen (jonas@glesaaen.com)
+ * Author: Aleksandra R. Glesaaen (aleksandra@glesaaen.com)
  */
 
 #include <string>

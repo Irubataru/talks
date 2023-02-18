@@ -1,2 +1,5 @@
 # Ignore figures and output
 *.pdf
+
+input/
+code/00_ast_expr_template_gen
