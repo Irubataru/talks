@@ -1,7 +1,7 @@
 
 /*
  * Created: 31-05-2018
- * Author: Jonas R. Glesaaen (jonas@glesaaen.com)
+ * Author: Aleksandra R. Glesaaen (aleksandra@glesaaen.com)
  */
 
 #include "tinyxml2.h"

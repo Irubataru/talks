@@ -4,7 +4,7 @@
 \input{inputs/style.tex}
 \input{inputs/functions.tex}
 
-\author{Jonas Rylund Glesaaen}
+\author{Aleksandra Rylund Glesaaen}
 \title[%
 Why are there no good build systems? An introduction to Bazel]{%
 Why are there no good build systems? \\ An introduction to Bazel}
@@ -140,21 +140,21 @@ $(DEPS): .deps/%.d: src/%.cpp | .deps
 
 \begin{frame}{Bazel concepts}
 
-  \begin{alertblock}{Workspace} \\[5pt]
+  \begin{alertblock}{Workspace} \vspace{1pt}
     The folder that contains your project.\\
     May or may not reference external projects.
   \end{alertblock}
 
   \vspace{2mm}
 
-  \begin{alertblock}{Packages} \\[5pt]
+  \begin{alertblock}{Packages} \vspace{1pt}
     Any directory in your workspace that has a {\ttfamily BUILD} file in it.\\
     Contains related files and dependence specifications.
   \end{alertblock}
 
   \vspace{2mm}
 
-  \begin{alertblock}{Targets} \\[5pt]
+  \begin{alertblock}{Targets} \vspace{1pt}
     Files and rules the package provides.\\
     Every target has a label.
   \end{alertblock}
