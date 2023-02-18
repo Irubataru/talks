@@ -1,7 +1,7 @@
 /*
  * Created: 04-02-2016
  * Modified: Fri 05 Feb 2016 10:52:38 CET
- * Author: Jonas R. Glesaaen (jonas@glesaaen.com)
+ * Author: Aleksandra R. Glesaaen (aleksandra@glesaaen.com)
  */
 
 #include<iostream>
