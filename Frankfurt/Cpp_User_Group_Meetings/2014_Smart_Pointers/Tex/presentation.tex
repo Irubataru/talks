@@ -10,8 +10,6 @@
 
 \usepackage{listings,algpseudocode}
 
-\usepackage{tikz-uml}
-
 \DeclareGraphicsExtensions{.pdf}
 
 \useinnertheme{cleancode}
@@ -19,25 +17,59 @@
 \setbeamertemplate{navigation symbols}{} %Remove beamer navigation symbols
 \setbeamertemplate{bibliography item}{\insertbiblabel}
 
-%\setbeameroption{show notes}
+\colorlet{codeblockcolor}{OliveGreen!80!Black}
 
-\usetikzlibrary{calc,intersections,positioning,matrix,chains,scopes}
+\setbeameroption{show notes}
+
+\usetikzlibrary{calc,intersections,positioning,matrix,chains,scopes,arrows.meta}
 \newcommand{\tikzmark}[1]{\tikz[overlay,remember picture] \node (#1) {};}
 
-\tikzumlset{fill class=RoyalBlue!20}
+\tikzset{
+  startnode/.style = {
+    circle,
+    draw,
+    fill=Bittersweet!20,
+    minimum size=10pt,
+    inner sep=0
+  },
+  stopnode/.style = {
+    startnode
+  },
+  process/.style = {
+    rectangle,
+    minimum width=2cm,
+    minimum height=.7cm,
+    text centered,
+    draw,
+    fill=OliveGreen!20,
+    align=center,
+    font=\scriptsize
+  },
+  dangerprocess/.style = {
+    process,
+    fill=BrickRed!20,
+    draw=BrickRed,
+    thick
+  },
+  flowarrow/.style = {
+    ->, >=stealth, thick
+  },
+  uml-class/.style = {
+    draw,
+    fill=RoyalBlue!20,
+    inner sep=7,
+    align=left
+  }
+}
 
-\tikzstyle{startnode} = [circle, draw, fill=Bittersweet!20, minimum size=10pt, inner sep = 0]
-\tikzstyle{stopnode} = [startnode]
-\tikzstyle{process} = [rectangle, minimum width=2cm, minimum height=.7cm, text centered, draw, fill=OliveGreen!20, align=center, font=\scriptsize]
-\tikzstyle{dangerprocess} = [process, fill=BrickRed!20, draw=BrickRed, thick]
-\tikzstyle{flowarrow} = [->, >=stealth, thick]
-
-\lstset{%
+\lstset{
   language=C++, basicstyle=\scriptsize\ttfamily, 
   keywordstyle=\color{OliveGreen}, identifierstyle=\color{RoyalBlue}, 
   commentstyle=\color{Brown}, stringstyle=\color{Bittersweet}, showstringspaces=false,  
-  breaklines=true, prebreak=\mbox{{\color{Bittersweet}\tiny\ $\hookleftarrow$}}, 
-  postbreak=\mbox{{\color{Bittersweet}\tiny$\to$\ }}, tabsize=5,
+  breaklines=true,
+  % prebreak=\mbox{{\color{Bittersweet}\tiny\ $\hookleftarrow$}}, 
+  % postbreak=\mbox{{\color{Bittersweet}\tiny$\to$\ }},
+  tabsize=5,
   morekeywords={%
     MyClass,unique_ptr,shared_ptr,weak_ptr,auto_ptr,
     make_unique, make_shared, default_delete,
@@ -59,7 +91,7 @@
 \newcommand{\autoptr}{\std{auto\_ptr}}
 
 \title[Smart Pointers]{Smart Pointers in C++}
-\author{Jonas R. Glesaaen \\ \texttt{glesaaen@th.physik.uni-frankfurt.de}}
+\author{Aleksandra R. Glesaaen \\ \texttt{aleksandra@glesaaen.com}}
 \date{September 24th 2014}
 
 \begin{document}
@@ -180,7 +212,8 @@
   \end{exampleblock}
 
   \begin{tikzpicture}[overlay, remember picture]
-    \draw[<-,>=stealth, font=\scriptsize] ($ (assignment) + (.1em,.4ex)$) -- +(1,0) node[right] {What happens here?};
+    \node[scale=0.6, anchor=east] at ([shift={(-2.5cm, 0.77cm)}] current page.east) (text) {What happens here?};
+    \draw[-{Stealth[scale=0.8]}] (text.west) -- +(-1.2cm,0);
   \end{tikzpicture}
 
   \begin{center}
@@ -369,18 +402,22 @@ if(wp.expired()) {
 
   \begin{center}
     \begin{tikzpicture}[scale=.6, every node/.style={scale=.6}]
-      \umlclass[x=0, y=0]{Drawing}{shapes}{}
+
+      \node[uml-class, inner sep=7, align=left] (drawing) {\textbf{Drawing} \\[12pt] Shapes};
+      \draw (drawing.west) -- (drawing.east);
+
 
       \only<1>{
-        \umlclass[x=0,y=-3]{Shape}{}{}
-        \umlunicompo{Drawing}{Shape}
+        \node[uml-class] [below=of drawing] (shape) {\textbf{Shape} };
+        \draw[{Diamond}-{Stealth}] (drawing.south) -- (shape.north);
       }
 
       \only<2>{
-        \umlclass[x=0, y=-3]{std::unique\_ptr}{shape\_ptr}{}
-        \umlclass[x=0,y=-6]{Shape}{}{}
-        \umlunicompo{Drawing}{std::unique\_ptr}
-        \umlunicompo{std::unique\_ptr}{Shape}
+        \node[uml-class] [below=of drawing] (unique-ptr) { \textbf{std::unique\_ptr} \\[12pt] shape\_ptr };
+        \draw (unique-ptr.west) -- (unique-ptr.east);
+        \draw[{Diamond}-{Stealth}] (drawing.south) -- ( unique-ptr.north);
+        \node[uml-class] [below=of unique-ptr] (shape) {\textbf{Shape} };
+        \draw[{Diamond}-{Stealth}] (unique-ptr.south) -- (shape.north);
       }
 
     \end{tikzpicture}
@@ -401,28 +438,34 @@ if(wp.expired()) {
 
   \begin{center}
     \begin{tikzpicture}[scale=.6, every node/.style={scale=.6}]
-      \umlclass[x=0, y=0]{Drawing}{shapes}{}
+      \node[uml-class, inner sep=7, align=left] (drawing) {\textbf{Drawing} \\[12pt] Shapes};
+      \draw (drawing.west) -- (drawing.east);
 
-      \umlclass[x=0, y=-3]{std::unique\_ptr}{shape\_ptr}{}
-      \umlclass[x=0,y=-6]{Shape}{brush}{}
-      \umlunicompo{Drawing}{std::unique\_ptr}
-      \umlunicompo{std::unique\_ptr}{Shape}
+      \node[uml-class] [below=of drawing] (unique-ptr) { \textbf{std::unique\_ptr} \\[12pt] shape\_ptr };
+      \draw (unique-ptr.west) -- (unique-ptr.east);
+      \draw[{Diamond}-{Stealth}] (drawing.south) -- ( unique-ptr.north);
+
+      \node[uml-class] [below=of unique-ptr] (shape) {\textbf{Shape} };
+      \draw[{Diamond}-{Stealth}] (unique-ptr.south) -- (shape.north);
+
+      \node[uml-class] [right=2cm of shape] (brush) {\textbf{Brush} };
 
       \only<1>{
-        \umlclass[x=5,y=-6]{Brush}{}{}
-        \umluniaggreg{Shape}{Brush}
+        \draw[{Diamond[open]}-{Stealth}] (shape.east) -- (brush.west);
       }
 
       \only<2->{
-        \umlclass[x=5,y=-3]{std::shared\_ptr}{brush\_ptr}{}
-        \umlclass[x=5,y=-6]{Brush}{}{}
-        \umluniaggreg[geometry=-|-]{Shape}{std::shared\_ptr}
-        \umluniaggreg{std::shared\_ptr}{Brush}
+        \node[uml-class] [above=of brush] (brush-ptr) { \textbf{std::shared\_ptr} \\[12pt] brush\_ptr };
+        \draw (brush-ptr.west) -- (brush-ptr.east);
+
+        \draw[{Diamond[open]}-{Stealth}] (shape.east) -- +(1.5cm, 0) |- (brush-ptr.west);
+        \draw[{Diamond[open]}-{Stealth}] (brush-ptr.south) -- (brush.north);
       }
       
       \only<3->{
-        \umlclass[x=5,y=0]{Drawing tool}{brush}{}
-        \umluniaggreg{Drawing tool}{std::shared\_ptr}
+        \node[uml-class] [above=of brush-ptr] (drawing-tool) { \textbf{Drawing tool} \\[12pt] brush };
+        \draw (drawing-tool.west) -- (drawing-tool.east);
+        \draw[{Diamond[open]}-{Stealth}] (drawing-tool.south) -- (brush-ptr.north);
       }
 
     \end{tikzpicture}
@@ -691,26 +734,32 @@ std::shared_ptr<int[]> ap(new int[10]);(*\tikzmark{specdeleter}*)
   \end{exampleblock}
 
   \begin{tikzpicture}[overlay, remember picture]
-    \draw[<-,>=stealth, font=\scriptsize] ($(nodeleter) + (.1em,.4ex)$) -- +(1,0) node[right] 
+
+    \node[scale=0.7, anchor=east] at ([shift={(-1.5cm, -0.74cm)}] current page.east) (text-1) 
     {
-      \begin{varwidth}{2cm}
+      \begin{varwidth}{3cm}
         Destructs using \object{delete}
       \end{varwidth}
     };
+    \draw[-{Stealth[scale=0.8]}] (text-1.west) -- +(-1.2cm,0);
 
-    \draw[<-,>=stealth, font=\scriptsize] ($(withdeleter) + (.1em,-.4ex)$) -- +(1,0) node[right] 
+
+    \node[scale=0.7, anchor=east] at ([shift={(-1.5cm, -1.5cm)}] current page.east) (text-2) 
     {
-      \begin{varwidth}{2cm}
+      \begin{varwidth}{3cm}
         Destructs using \lstinline!delete[]!
       \end{varwidth}
     };
+    \draw[-{Stealth[scale=0.8]}] (text-2.west) -- +(-1.5cm,0);
 
-    \draw[<-,>=stealth, font=\scriptsize] ($(specdeleter) + (.1em,.4ex)$) -- +(.65,0) node[right] 
+    \node[scale=0.7, anchor=east] at ([shift={(-1.5cm, -2.42cm)}] current page.east) (text-3) 
     {
-      \begin{varwidth}{2cm}
+      \begin{varwidth}{3cm}
         Destructs using \lstinline!delete[]!
       \end{varwidth}
     };
+    \draw[-{Stealth[scale=0.8]}] (text-3.west) -- +(-0.8cm,0);
+
   \end{tikzpicture}
 
   Very important that the deleter doesn't throw.
@@ -780,9 +829,23 @@ void foo(std::shared_ptr<MyClass> &);
 
   \begin{center}
     \begin{tikzpicture}[scale=.6, every node/.style={scale=.6}]
-      \umlclass[x=0,y=0]{Base}{}{void print();\\void print() const;}
-      \umlclass[x=0,y=-4]{Derived}{}{void print();\\void sum();}
-      \umlinherit{Base}{Derived}
+
+      \node[uml-class] (base) {
+          \textbf{Base} \\[12pt]
+          \texttt{void print();} \\
+          \texttt{void print() const;}
+      };
+      \draw ([yshift=8pt]base.west) -- ([yshift=8pt]base.east);
+
+      \node[uml-class] [below=of base] (derived) {
+          \textbf{Derived} \\[12pt]
+          \texttt{void print();} \\
+          \texttt{void sum();}
+      };
+      \draw ([yshift=8pt]derived.west) -- ([yshift=8pt]derived.east);
+
+      \draw[-{Latex[open,scale=1.3]}] (base.south) -- (derived.north);
+
     \end{tikzpicture}
   \end{center}
 
