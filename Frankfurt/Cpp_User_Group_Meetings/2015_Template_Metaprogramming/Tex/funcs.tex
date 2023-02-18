@@ -1,9 +1,7 @@
 \newcommand{\dimtext}[2]%
 {
-  { \transparent{0.7}
   \begin{tikzpicture}[overlay, remember picture]
-    \fill[white] ( #1 -| current page.north west) -- ++(0,.8em) -- ++(\paperwidth,0) -- (#2 -| current page.north east)
+    \fill[white, fill opacity=0.7] ( #1 -| current page.north west) -- ++(0,.8em) -- ++(\paperwidth,0) -- (#2 -| current page.north east)
    -- ++(0,-.5em) -- ++(-\paperwidth,0) -- cycle;
   \end{tikzpicture}
-  }
 }

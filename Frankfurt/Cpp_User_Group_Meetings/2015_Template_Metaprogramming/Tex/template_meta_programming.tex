@@ -10,15 +10,16 @@
 \usepackage{listings,algpseudocode}
 \usepackage[normalem]{ulem}
 \usepackage{transparent}
+\usepackage{graphicx}
 
 \input{defs.tex}
 \input{style.tex}
 \input{funcs.tex}
 
-%\setbeameroption{show notes}
+% \setbeameroption{show notes}
 
 \title[TMP]{Template Meta Programming}
-\author{Jonas R. Glesaaen \\ \texttt{glesaaen@th.physik.uni-frankfurt.de}}
+\author{Aleksandra R. Glesaaen \\ \texttt{aleksandra@glesaaen.com}}
 \date{May 27th 2015}
 
 \begin{document}
@@ -258,16 +259,15 @@ struct iterator_traits
     template <class Type, unsigned N>
     void foo(int x)
     {
-      Type::(*\tikzmark{template1}*)template(*\tikzmark{template2}*) function<N>(x);
+      Type::template function<N>(x);
     };
     \end{lstlisting}
   \end{exampleblock}
 
   \begin{tikzpicture}[overlay, remember picture]
     \draw[decoration={snake,amplitude=.5pt,segment length=3pt,post length=0pt},decorate, RoyalPurple] 
-      ($ (template1) + (0,-.1cm)$) -- ( $ (template2) + (0,-.1cm) $);
+      ($ (current page.center) + (-2.9cm,-0.7cm)$) -- +(1.4cm,0);
   \end{tikzpicture}
-
   \vfill
 
   \object{template} is required when a \textbf{dependent} name access a template via \inline{.}, \inline{->} or \inline{::}.
@@ -668,7 +668,7 @@ int main(int, char**)
 {
   typedef integer<5> five;
   nest<
-    (*\tikzmark{lambda7}*)mpl::lambda< multiply<_1,_1> >::type(*\tikzmark{lambda8}*),five,3
+    mpl::lambda< multiply<_1,_1> >::type,five,3
   >::type::value;
 }
   \end{lstlisting}
@@ -676,7 +676,7 @@ int main(int, char**)
 
   \begin{tikzpicture}[overlay, remember picture,decoration={snake,amplitude=.5pt,segment length=3pt,post length=0pt}]
     \draw[decorate, RoyalPurple] 
-      ($ (lambda7) + (0,-.1cm)$) -- ( $ (lambda8) + (0,-.1cm) $);
+      ($(current page.center) + (-4.4cm, -2.4cm)$) -- +(6.5cm, 0);
   \end{tikzpicture}
 
   \end{onlyenv}
@@ -704,9 +704,9 @@ int main(int, char**)
 
   \begin{tikzpicture}[overlay, remember picture]
     \draw[decoration={snake,amplitude=.5pt,segment length=3pt,post length=0pt},decorate, RoyalPurple] 
-      ($ (lambda1) + (0,-.1cm)$) -- ( $ (lambda2) + (0,-.1cm) $);
+      ($ (current page.center) + (-2.9cm,1.3cm)$) -- +(5.4cm, 0);
     \draw[decoration={snake,amplitude=.5pt,segment length=3pt,post length=0pt},decorate, RoyalPurple] 
-      ($ (lambda3) + (0,-.1cm)$) -- ( $ (lambda4) + (0,-.1cm) $);
+      ($ (current page.center) + (-4.7cm, -2.37cm)$) -- +(7.4cm, 0);
   \end{tikzpicture}
 
   \end{onlyenv}
@@ -748,20 +748,19 @@ struct algorithm
   }
 };
 
-template <class Type>(*\tikzmark{safebegin}*)
+template <class Type>
 struct algorithm<Type,false>
 {
   void operator() (const Type &)
   {
     // safer algorithm
   }
-};(*\tikzmark{safeend}*)
+};
     \end{lstlisting}
   \end{exampleblock}
 
   \begin{tikzpicture}[overlay, remember picture]
-    \coordinate (safeupper) at ($(safebegin) + (2.5cm,.6em)$);
-    \draw[decorate,decoration=brace] (safeupper) -- (safeupper |- safeend)
+    \draw[decorate,decoration=brace] ($(current page.east) + (-5cm, -1cm)$) -- +(0, -2.6cm)
       node[midway,right=.5cm,font=\footnotesize,align=center] {Specialised for \\ \lstinline!FastImpl = false!};
   \end{tikzpicture}
 
@@ -876,7 +875,6 @@ struct algorithm
 
   \vspace{1em}
   
-  \begin{overprint}
   \begin{lstlisting}[escapeinside={(*}{*)}]
 typedef mpl::vector<
   integer<3>, integer<7>, integer<-1> > my_vector;(*\tikzmark{vec1}*)
@@ -924,7 +922,6 @@ mpl::is_same<
     \tikz \node {\inline{true}};
   \end{center}
   }
-  \end{overprint}
 
   \begin{tikzpicture}[overlay, remember picture]
     \coordinate (p1s) at ($(vec1) + (1em,.4ex)$);
