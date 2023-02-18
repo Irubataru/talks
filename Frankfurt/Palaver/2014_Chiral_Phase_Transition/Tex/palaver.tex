@@ -5,9 +5,8 @@
 \usepackage{xcolor,amsmath,tikz,graphicx,mathtools}
 \usepackage{listings,algpseudocode,url}
 \usepackage{slashed}
-\usepackage{jonasextra}
 
-\usetheme{jonascoop}
+\usetheme{corporate}
 \usefonttheme[onlymath]{serif}
 
 \usetikzlibrary{calc,positioning}
@@ -29,15 +28,20 @@
 
 \title[Chiral Phase Transition]{The Chrial Phase Transition in QCD}
 \subtitle{Mean-Field $\leftrightarrow$ Funtional Renormalisation Group}
-\author[Glesaaen]{Jonas R. Glesaaen}
+\author[Glesaaen]{Aleksandra R. Glesaaen}
 \institute[Goethe-Uni]{Goethe Universit\"{a}t Frankfurt am Main}
-\collaborator[NTNU]{Prof. J.O. Andersen}
 \date{3. February 2014}
 
 \begin{document}
 
 \begin{frame}[plain]
   \titlepage
+
+  \begin{tikzpicture}[overlay, remember picture]
+    \node[color=white, scale=0.8, anchor=west] at ([shift={(-3cm, -3cm)}] current page.center) {
+        in collaboration with Prof. J.O. Andersen (NTNU)
+      };
+  \end{tikzpicture}
 \end{frame}
 
 \addtocounter{framenumber}{-1}
