@@ -28,6 +28,7 @@ $(FIGPDF): %.pdf: %.tex
 $(PLOTPDF): %.pdf: %.p
 	cd $(dir $<); \
 	$(GNUPLOT) $(notdir $<); \
+	sed -ie 's/\\SetUnicodeOption/\\usepackage{ucs}\n&/' $(notdir $(<:.p=.tex)); \
 	$(LATEX) $(notdir $(<:.p=.tex))
 
 clean: $(FIGTEX) $(MAINTEX)

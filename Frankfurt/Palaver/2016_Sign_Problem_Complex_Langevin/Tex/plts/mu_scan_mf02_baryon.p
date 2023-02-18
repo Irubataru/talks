@@ -4,7 +4,7 @@ set output "mu_scan_mf02_baryon.tex"
 set xlabel "$\\mu$"
 set ylabel "$\\Re \\langle \\eta^{\\dagger} \\eta \\rangle / N$"
 
-#set size ratio 0.4
+set size ratio 0.4
 
 set key at graph 0.98,0.2
 
