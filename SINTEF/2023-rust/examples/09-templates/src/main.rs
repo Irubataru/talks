@@ -58,19 +58,19 @@ fn lifetime_parameter_example() {
 
     let message = pass_user(&irubataru, &lucinellia);
 
-    // irubataru.change_username("Aleksandra"); // Compile error, mutate after borrow
-    lucinellia.change_username("Caroline"); // Ok, borrow ended at function end
+    irubataru.change_username("Aleksandra"); // Compile error, mutate after borrow
+    // lucinellia.change_username("Caroline"); // Ok, borrow ended at function end
 
     display_chat(message);
 }
 
 fn main() {
-    template_example_chat();
-    template_example_vec();
-    template_example_iter();
+    // template_example_chat();
+    // template_example_vec();
+    // template_example_iter();
     lifetime_parameter_example();
 
-    display_chat("Hello");
-    display_chat(String::from("Hello"));
-    display_chat(42 as u32);
+    // display_chat("Hello");
+    // display_chat(String::from("Hello"));
+    // display_chat(42 as u32);
 }
