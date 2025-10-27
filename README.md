@@ -21,5 +21,4 @@ my own custom beamer themes. They are available
 
 * I also gave an introductory lecture to the C++ programming language, which can
   be found [here](https://github.com/Irubataru/cpp-lecture-2015).
-
 * My Ph.D. disputation can be found [here](https://github.com/Irubataru/phd-defence).
