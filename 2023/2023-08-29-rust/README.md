@@ -1,10 +1,8 @@
 # 2023 The Rust programming language
 
- * Title: The Rust programming language
- * Date: 2023-08-29
-
-## Abstract
-
+* Title: The Rust programming language
+* Date: 2023-08-29
+* Made with [lookatme](https://github.com/d0c-s4vage/lookatme)
 
 ## Building
 

@@ -1,7 +1,8 @@
 # 2014 - Smart Pointers
 
- * Title: Smart Pointers in C++
- * Date: 24-09-2014
+* Title: Smart Pointers in C++
+* Date: 24-09-2014
+* Made with beamer
 
 ## Building
 

@@ -1,7 +1,8 @@
 # 2018.02.09 - C++ Templates
 
- * Title: Introduction to C++ templates
- * Date: 09-02-2018
+* Title: Introduction to C++ templates
+* Date: 09-02-2018
+* Made with beamer
 
 ## Abstract
 
@@ -25,5 +26,5 @@ TTF fonts.
 
 ### Fonts used
 
- * [Yanone Kaffeesatz](https://www.yanone.de/fonts/kaffeesatz/)
- * [Fira Code](https://github.com/tonsky/FiraCode)
+* [Yanone Kaffeesatz](https://www.yanone.de/fonts/kaffeesatz/)
+* [Fira Code](https://github.com/tonsky/FiraCode)

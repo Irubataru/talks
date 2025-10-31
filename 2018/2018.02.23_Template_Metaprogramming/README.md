@@ -1,7 +1,8 @@
 # 2018.02.23 - Template Metaprogramming
 
- * Title: Introduction to Template Metaprogramming
- * Date: 23-02-2018
+* Title: Introduction to Template Metaprogramming
+* Date: 23-02-2018
+* Made with beamer
 
 ## Abstract
 
@@ -24,5 +25,5 @@ TTF fonts.
 
 ### Fonts used
 
- * [Yanone Kaffeesatz](https://www.yanone.de/fonts/kaffeesatz/)
- * [Fira Code](https://github.com/tonsky/FiraCode)
+* [Yanone Kaffeesatz](https://www.yanone.de/fonts/kaffeesatz/)
+* [Fira Code](https://github.com/tonsky/FiraCode)

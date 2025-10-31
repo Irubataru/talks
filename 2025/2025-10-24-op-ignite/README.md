@@ -3,6 +3,7 @@
 - Title: Local dev environment for the Academy Platform
 - Event: op:ignite
 - Date: 2025-10-24
+- Made with Figma presentation
 
 ## Abstract
 

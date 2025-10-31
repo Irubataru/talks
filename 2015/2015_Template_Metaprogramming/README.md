@@ -1,7 +1,8 @@
 # 2015 - Template Metaprogramming
 
- * Title: Template metaprogramming
- * Date: 27-05-15
+* Title: Template metaprogramming
+* Date: 27-05-15
+* Made with beamer
 
 ## Building
 

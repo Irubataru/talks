@@ -2,6 +2,7 @@
 
 - Event: Omegapoint Norge kompetansedag
 - Date: 2025.10.30
+- Made with Figma presentation
 
 ## Sammendrag
 

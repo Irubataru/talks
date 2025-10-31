@@ -1,7 +1,8 @@
 # 2018.06.06 - SA2C User Group Lightning Talk
 
- * Title: Studying baryons at high temperature using supercomputers
- * Date: 06-06-2018
+* Title: Studying baryons at high temperature using supercomputers
+* Date: 06-06-2018
+* Made with beamer
 
 ## About
 
@@ -16,5 +17,5 @@ TTF fonts.
 
 ### Fonts used
 
- * [Yanone Kaffeesatz](https://www.yanone.de/fonts/kaffeesatz/)
- * [Fira Code](https://github.com/tonsky/FiraCode)
+* [Yanone Kaffeesatz](https://www.yanone.de/fonts/kaffeesatz/)
+* [Fira Code](https://github.com/tonsky/FiraCode)

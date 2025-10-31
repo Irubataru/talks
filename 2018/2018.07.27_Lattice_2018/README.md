@@ -1,7 +1,8 @@
-# 2018.07.27 - Lattice Conference 2018 
+# 2018.07.27 - Lattice Conference 2018
 
- * Title: Hadronic spectrum calculations in the quark-gluon plasma
- * Date: 27-07-2018
+* Title: Hadronic spectrum calculations in the quark-gluon plasma
+* Date: 27-07-2018
+* Made with beamer
 
 ## Abstract
 

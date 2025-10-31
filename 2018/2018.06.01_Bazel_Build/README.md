@@ -1,7 +1,8 @@
 # 2018 - Bazel build
 
- * Title: Why are there no good build systems? An introduction to Bazel
- * Date: 01-06-2018
+* Title: Why are there no good build systems? An introduction to Bazel
+* Date: 01-06-2018
+* Made with beamer
 
 ## Abstract
 

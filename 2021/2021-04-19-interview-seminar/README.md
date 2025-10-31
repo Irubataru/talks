@@ -1,8 +1,9 @@
 # 2021.04.19 - Squeezing water from a stone
 
- * Title: Squeezing water from a stone
- * Subtitle: A brief overview of lattice QCD
- * Date: 19-04-2021
+* Title: Squeezing water from a stone
+* Subtitle: A brief overview of lattice QCD
+* Date: 19-04-2021
+* Made with beamer
 
 ## Abstract
 
@@ -21,4 +22,4 @@ TTF fonts. The talk uses the "Code Course" theme from my
 
 ### Fonts used
 
- * [Yanone Kaffeesatz](https://www.yanone.de/fonts/kaffeesatz/)
+* [Yanone Kaffeesatz](https://www.yanone.de/fonts/kaffeesatz/)
